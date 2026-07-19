@@ -428,7 +428,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Sort, reverse, shuffle, trim, and remove duplicate or empty lines.',
     keywords: ['sort lines', 'dedupe', 'duplicate', 'unique', 'reverse', 'shuffle'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-lorem-ipsum',
