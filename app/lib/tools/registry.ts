@@ -488,7 +488,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Encode text to Base64 or decode Base64 back to text.',
     keywords: ['base64', 'encode', 'decode', 'atob', 'btoa'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-url',
