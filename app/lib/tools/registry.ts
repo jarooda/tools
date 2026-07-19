@@ -218,7 +218,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Pick colors from an image and read them as HEX, RGB, and HSL.',
     keywords: ['color picker', 'eyedropper', 'hex', 'rgb', 'hsl', 'sample'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-base64',

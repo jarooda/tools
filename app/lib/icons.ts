@@ -41,6 +41,7 @@ export const UI_ICON = {
   rotateRight: 'mdi:rotate-right',
   flipHorizontal: 'mdi:flip-horizontal',
   flipVertical: 'mdi:flip-vertical',
+  eyedropper: 'mdi:eyedropper-variant',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */
