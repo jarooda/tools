@@ -528,7 +528,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Escape text to HTML entities or decode entities back to text.',
     keywords: ['html encode', 'entities', 'escape', 'unescape', 'amp'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-jwt',
