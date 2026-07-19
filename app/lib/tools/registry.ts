@@ -600,6 +600,16 @@ export const tools: Tool[] = [
     keywords: ['qr scanner', 'barcode', 'scan', 'read qr', 'decode', 'camera'],
     status: 'live',
   },
+  {
+    id: 'generate-palette',
+    title: 'Color Palette Generator',
+    category: 'generate',
+    slug: 'palette',
+    tag: 'client',
+    description: 'Build harmonious color palettes and CSS gradients from a base color.',
+    keywords: ['palette', 'colors', 'gradient', 'scheme', 'complementary', 'analogous'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
