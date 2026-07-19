@@ -59,6 +59,17 @@ export const UI_ICON = {
   pause: 'mdi:pause',
   stop: 'mdi:stop',
   volumeOff: 'mdi:volume-off',
+  qrcode: 'mdi:qrcode',
+  qrScan: 'mdi:qrcode-scan',
+  camera: 'mdi:camera-outline',
+  cameraOff: 'mdi:camera-off-outline',
+  key: 'mdi:key-variant',
+  dice: 'mdi:dice-multiple-outline',
+  shuffle: 'mdi:shuffle-variant',
+  palette: 'mdi:palette-swatch-outline',
+  contrast: 'mdi:contrast-circle',
+  gradient: 'mdi:gradient-horizontal',
+  eyeCheck: 'mdi:eye-check-outline',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */

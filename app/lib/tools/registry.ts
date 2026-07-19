@@ -570,6 +570,16 @@ export const tools: Tool[] = [
     keywords: ['uuid', 'guid', 'unique id', 'random', 'v4'],
     status: 'live',
   },
+  {
+    id: 'generate-qr-code',
+    title: 'QR Code Generator',
+    category: 'generate',
+    slug: 'qr-code',
+    tag: 'client',
+    description: 'Create a QR code from any text or URL and download it as PNG or SVG.',
+    keywords: ['qr code', 'qrcode', 'generate', 'url', 'wifi', 'barcode'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
