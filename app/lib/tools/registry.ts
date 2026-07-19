@@ -308,7 +308,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Render each page of a PDF to a PNG or JPG image.',
     keywords: ['pdf to images', 'pdf to png', 'pdf to jpg', 'render', 'export pages'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-organize',
