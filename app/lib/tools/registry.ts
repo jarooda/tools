@@ -630,6 +630,16 @@ export const tools: Tool[] = [
     keywords: ['placeholder', 'image', 'dummy', 'mockup', 'svg', 'png'],
     status: 'live',
   },
+  {
+    id: 'color-convert',
+    title: 'HEX ↔ RGB ↔ HSL',
+    category: 'color',
+    slug: 'convert',
+    tag: 'client',
+    description: 'Convert colors between HEX, RGB, and HSL notations.',
+    keywords: ['hex', 'rgb', 'hsl', 'color convert', 'color code'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
