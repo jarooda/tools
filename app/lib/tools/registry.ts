@@ -158,7 +158,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Overlay text watermarks on an image, with position and opacity control.',
     keywords: ['watermark', 'text overlay', 'copyright', 'stamp', 'brand'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-resize',
