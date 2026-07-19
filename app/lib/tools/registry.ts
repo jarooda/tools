@@ -508,7 +508,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Format, validate, and minify JSON with clear error messages.',
     keywords: ['json', 'format', 'beautify', 'minify', 'validate', 'pretty print'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-xml-yaml',
