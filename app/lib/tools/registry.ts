@@ -238,7 +238,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Generate favicon PNGs and an .ico from a single source image.',
     keywords: ['favicon', 'ico', 'icon', 'app icon', 'apple touch'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-meme',
