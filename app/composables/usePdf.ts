@@ -15,6 +15,14 @@ export function usePdf() {
     return await import('pdf-lib')
   }
 
+  /**
+   * Lazy-load the `@cantoo/pdf-lib` fork, which adds AES encryption/decryption
+   * that stock pdf-lib lacks. Used only by Protect (3.8) and Unlock (3.9).
+   */
+  async function loadPdfCrypto() {
+    return await import('@cantoo/pdf-lib')
+  }
+
   /** Lazy-load pdf.js (the renderer engine), wiring its worker on first use. */
   async function loadPdfjs() {
     const pdfjs = await import('pdfjs-dist')
@@ -67,5 +75,13 @@ export function usePdf() {
     })
   }
 
-  return { loadPdfLib, loadPdfjs, readBytes, openForRender, renderPageToCanvas, canvasToBlob }
+  return {
+    loadPdfLib,
+    loadPdfCrypto,
+    loadPdfjs,
+    readBytes,
+    openForRender,
+    renderPageToCanvas,
+    canvasToBlob,
+  }
 }

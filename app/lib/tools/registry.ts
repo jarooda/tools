@@ -348,7 +348,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Add a password to encrypt and protect a PDF.',
     keywords: ['protect', 'encrypt', 'password', 'secure', 'lock'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-unlock',
@@ -358,7 +358,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Remove the password from a PDF you can already open.',
     keywords: ['unlock', 'decrypt', 'remove password', 'unprotect'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-extract-text',
@@ -378,7 +378,7 @@ export const tools: Tool[] = [
     tag: 'hybrid',
     description: 'Reduce the file size of a PDF document.',
     keywords: ['compress', 'reduce size', 'optimize', 'shrink'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-office-to-pdf',

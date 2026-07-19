@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@cantoo/pdf-lib": "^2.7.4",
     "@iconify-json/mdi": "^1.2.3",
     "@imgly/background-removal": "^1.7.0",
     "@nuxt/icon": "^2.3.1",
