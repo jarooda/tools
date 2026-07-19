@@ -580,6 +580,16 @@ export const tools: Tool[] = [
     keywords: ['qr code', 'qrcode', 'generate', 'url', 'wifi', 'barcode'],
     status: 'live',
   },
+  {
+    id: 'generate-password',
+    title: 'Password Generator',
+    category: 'generate',
+    slug: 'password',
+    tag: 'client',
+    description: 'Generate strong, random passwords with adjustable length and character sets.',
+    keywords: ['password', 'passphrase', 'random', 'secure', 'strong', 'generator'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
