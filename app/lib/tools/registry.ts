@@ -108,7 +108,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between bytes, KB, MB, GB, and TB.',
     keywords: ['bytes', 'kilobytes', 'megabytes', 'gigabytes', 'file size'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'number-base',
