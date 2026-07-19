@@ -138,7 +138,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert a date and time between world time zones.',
     keywords: ['timezone', 'time zone', 'utc', 'gmt', 'world clock'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'currency',
