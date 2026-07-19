@@ -98,7 +98,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between seconds, minutes, hours, days, weeks, and years.',
     keywords: ['duration', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'data-storage',
