@@ -558,7 +558,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Generate MD5, SHA-1, SHA-256, and SHA-512 hashes of text.',
     keywords: ['hash', 'md5', 'sha1', 'sha256', 'sha512', 'checksum', 'digest'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'uuid',
