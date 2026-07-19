@@ -168,7 +168,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Resize or scale an image by pixels or percentage, keeping aspect ratio.',
     keywords: ['resize', 'scale', 'dimensions', 'width', 'height', 'shrink', 'enlarge'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-convert',
