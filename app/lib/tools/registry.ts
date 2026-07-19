@@ -548,7 +548,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert CSV to a JSON array and JSON back to CSV.',
     keywords: ['csv', 'json', 'convert', 'spreadsheet', 'table'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-hash',
