@@ -27,6 +27,7 @@
   "dependencies": {
     "@iconify-json/mdi": "^1.2.3",
     "@nuxt/icon": "^2.3.1",
+    "heic2any": "^0.0.4",
     "jalutils": "^1.0.1",
     "nuxt": "^4.4.8",
     "vue": "^3.5.39",

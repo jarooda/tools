@@ -258,7 +258,7 @@ export const tools: Tool[] = [
     tag: 'hybrid',
     description: 'Convert Apple HEIC/HEIF photos to JPG, entirely in your browser.',
     keywords: ['heic', 'heif', 'apple', 'iphone photo', 'jpg', 'convert'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-remove-bg',
