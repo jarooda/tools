@@ -538,7 +538,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Decode a JSON Web Token’s header and payload without a key.',
     keywords: ['jwt', 'json web token', 'decode', 'bearer', 'claims'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-csv-json',
