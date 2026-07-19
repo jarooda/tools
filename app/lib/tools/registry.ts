@@ -78,7 +78,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between square metres, acres, hectares, square feet, and more.',
     keywords: ['square metre', 'acre', 'hectare', 'square feet', 'sq ft', 'land'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'speed',
