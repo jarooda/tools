@@ -518,7 +518,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Pretty-print XML and convert between YAML and JSON.',
     keywords: ['xml', 'yaml', 'format', 'beautify', 'yaml to json', 'json to yaml'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-html',
