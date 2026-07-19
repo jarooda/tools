@@ -198,7 +198,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Crop an image to a custom rectangle by dragging on the preview.',
     keywords: ['crop', 'trim', 'cut', 'rectangle', 'selection'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-rotate',
