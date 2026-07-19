@@ -590,6 +590,16 @@ export const tools: Tool[] = [
     keywords: ['password', 'passphrase', 'random', 'secure', 'strong', 'generator'],
     status: 'live',
   },
+  {
+    id: 'generate-qr-scanner',
+    title: 'QR & Barcode Scanner',
+    category: 'generate',
+    slug: 'qr-scanner',
+    tag: 'client',
+    description: 'Scan a QR code or barcode from an image or your camera.',
+    keywords: ['qr scanner', 'barcode', 'scan', 'read qr', 'decode', 'camera'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
