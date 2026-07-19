@@ -228,7 +228,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Encode an image to a Base64 data URL, or decode one back to an image.',
     keywords: ['base64', 'data url', 'encode', 'decode', 'inline image'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-favicon',
