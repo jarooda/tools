@@ -188,7 +188,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Shrink image file size with an adjustable quality slider.',
     keywords: ['compress', 'optimize', 'reduce size', 'quality', 'shrink'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-crop',

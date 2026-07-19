@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import { UI_ICON } from '@/lib/icons'
+import { formatBytes } from '@/utils/fileSize'
 
 /**
  * Action row for a generated image result: shows the output size and a
@@ -18,17 +19,6 @@ const props = defineProps<{
 const { downloadBlob } = useDownload()
 
 const sizeLabel = computed(() => (props.blob ? formatBytes(props.blob.size) : ''))
-
-function formatBytes(n: number): string {
-  if (n < 1024) return `${n} B`
-  const units = ['KB', 'MB', 'GB']
-  let i = -1
-  do {
-    n /= 1024
-    i++
-  } while (n >= 1024 && i < units.length - 1)
-  return `${n.toFixed(n < 10 ? 1 : 0)} ${units[i]}`
-}
 
 function download() {
   if (props.blob) downloadBlob(props.blob, props.filename)
