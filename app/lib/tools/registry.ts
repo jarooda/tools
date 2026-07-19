@@ -458,7 +458,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Turn any text into a clean, URL-friendly slug.',
     keywords: ['slug', 'slugify', 'url', 'permalink', 'kebab'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-markdown-html',
