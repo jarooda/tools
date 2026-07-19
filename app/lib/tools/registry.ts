@@ -248,7 +248,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Add classic top and bottom captions to an image.',
     keywords: ['meme', 'caption', 'impact', 'top text', 'bottom text'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-heic-to-jpg',
