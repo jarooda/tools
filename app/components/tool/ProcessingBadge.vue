@@ -10,7 +10,7 @@ const meta = computed(() => PROCESSING_META[props.tag])
 </script>
 
 <template>
-  <Tag :color="meta.color" :title="meta.hint">
+  <Tag :color="meta.color" :title="meta.hint" style="cursor: help">
     <span class="processing-badge__dot" :style="{ background: meta.dotVar }" aria-hidden="true" />
     {{ meta.label }}
   </Tag>
