@@ -368,7 +368,7 @@ export const tools: Tool[] = [
     tag: 'hybrid',
     description: 'Pull the selectable text out of a PDF, page by page.',
     keywords: ['extract text', 'pdf to text', 'copy text', 'ocr', 'read'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-compress',
