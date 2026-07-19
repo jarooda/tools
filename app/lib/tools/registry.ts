@@ -88,7 +88,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between km/h, mph, m/s, knots, and feet per second.',
     keywords: ['velocity', 'kmh', 'mph', 'knots', 'meters per second', 'ft/s'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'time',
