@@ -620,6 +620,16 @@ export const tools: Tool[] = [
     keywords: ['random', 'number', 'dice', 'coin', 'picker', 'shuffle', 'lottery'],
     status: 'live',
   },
+  {
+    id: 'generate-placeholder',
+    title: 'Placeholder Image Generator',
+    category: 'generate',
+    slug: 'placeholder',
+    tag: 'client',
+    description: 'Generate solid placeholder images with custom size, colors, and label.',
+    keywords: ['placeholder', 'image', 'dummy', 'mockup', 'svg', 'png'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
