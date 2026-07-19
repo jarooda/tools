@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { LENGTH_UNITS, convertToAll, type LengthUnit } from '@/utils/length'
@@ -15,6 +17,13 @@ const tool = getTool('length')!
 
 const value = ref<number | null>(1)
 const from = ref<LengthUnit>('m')
+
+// Loading state: the tool is interactive, so results only exist once the
+// client has hydrated. Until then we render a skeleton (never a blank panel).
+const ready = ref(false)
+onMounted(() => {
+  ready.value = true
+})
 
 // Grouped picker: metric units first, then imperial/US.
 const unitOptions = [
@@ -96,7 +105,31 @@ async function copyResult(unit: LengthUnit, text: string) {
       <!-- Right: converted values, each copyable -->
       <div class="conv__results">
         <span class="conv__results-label">Converts to</span>
-        <ul class="conv__list">
+
+        <!-- Loading: skeleton rows while the client hydrates -->
+        <ul v-if="!ready" class="conv__list" aria-hidden="true">
+          <li v-for="u in LENGTH_UNITS" :key="u.unit" class="conv__row conv__row--skel">
+            <Skeleton variant="text" width="88px" />
+            <Skeleton variant="rect" width="72px" height="30px" radius="8px" />
+          </li>
+        </ul>
+
+        <!-- Empty: user cleared the input -->
+        <EmptyState
+          v-else-if="value == null"
+          class="conv__empty"
+          bordered
+          size="sm"
+          title="Nothing to convert yet"
+          description="Enter a value on the left to see it in every unit."
+        >
+          <template #icon>
+            <Icon :name="UI_ICON.emptyInput" size="22" />
+          </template>
+        </EmptyState>
+
+        <!-- Results -->
+        <ul v-else class="conv__list">
           <li
             v-for="r in results"
             :key="r.unit"
@@ -173,6 +206,12 @@ async function copyResult(unit: LengthUnit, text: string) {
 .conv__row--source {
   border-color: var(--accent-muted, var(--accent));
   background: var(--accent-subtle);
+}
+.conv__row--skel {
+  justify-content: space-between;
+}
+.conv__empty {
+  width: 100%;
 }
 .conv__row-main {
   display: flex;

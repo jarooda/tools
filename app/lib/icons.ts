@@ -35,6 +35,8 @@ export const UI_ICON = {
   copy: 'mdi:content-copy',
   check: 'mdi:check',
   menu: 'mdi:menu',
+  /** Empty-state glyph for tools awaiting user input. */
+  emptyInput: 'mdi:keyboard-outline',
 } as const
 
 /** JLDS Tag/Badge colour tokens. */

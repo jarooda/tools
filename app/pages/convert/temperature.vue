@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import {
@@ -20,6 +22,13 @@ const tool = getTool('temperature')!
 
 const value = ref<number | null>(0)
 const from = ref<TemperatureUnit>('c')
+
+// Loading state: the tool is interactive, so results only exist once the
+// client has hydrated. Until then we render a skeleton (never a blank panel).
+const ready = ref(false)
+onMounted(() => {
+  ready.value = true
+})
 
 const unitOptions = TEMPERATURE_UNITS.map((u) => ({ value: u.unit, label: u.symbol }))
 
@@ -89,7 +98,31 @@ async function copyResult(unit: TemperatureUnit, text: string) {
       <!-- Right: converted values, each copyable -->
       <div class="temp__results">
         <span class="temp__results-label">Converts to</span>
-        <ul class="temp__list">
+
+        <!-- Loading: skeleton rows while the client hydrates -->
+        <ul v-if="!ready" class="temp__list" aria-hidden="true">
+          <li v-for="u in TEMPERATURE_UNITS" :key="u.unit" class="temp__row temp__row--skel">
+            <Skeleton variant="text" width="88px" />
+            <Skeleton variant="rect" width="72px" height="30px" radius="8px" />
+          </li>
+        </ul>
+
+        <!-- Empty: user cleared the input -->
+        <EmptyState
+          v-else-if="value == null"
+          class="temp__empty"
+          bordered
+          size="sm"
+          title="Nothing to convert yet"
+          description="Enter a temperature on the left to see it in every unit."
+        >
+          <template #icon>
+            <Icon :name="UI_ICON.emptyInput" size="22" />
+          </template>
+        </EmptyState>
+
+        <!-- Results -->
+        <ul v-else class="temp__list">
           <li
             v-for="r in results"
             :key="r.unit"
@@ -171,6 +204,12 @@ async function copyResult(unit: TemperatureUnit, text: string) {
 .temp__row--source {
   border-color: var(--accent-muted, var(--accent));
   background: var(--accent-subtle);
+}
+.temp__row--skel {
+  justify-content: space-between;
+}
+.temp__empty {
+  width: 100%;
 }
 .temp__row-main {
   display: flex;
