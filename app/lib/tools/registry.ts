@@ -328,7 +328,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Rotate some or all pages of a PDF in 90° steps.',
     keywords: ['rotate', 'turn', 'landscape', 'portrait', 'orientation'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-watermark',
