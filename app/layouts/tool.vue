@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { AppShell, AppShellMenuButton } from '@/components/ui/app-shell'
 import {
   Sidebar,
@@ -53,10 +53,20 @@ const crumbs = computed(() => {
 function isActive(path: string) {
   return route.path === path
 }
+
+// Mobile drawer state is controlled here so navigating (tapping a sidebar item)
+// closes the overlay. Any route change collapses the drawer.
+const mobileNavOpen = ref(false)
+watch(
+  () => route.path,
+  () => {
+    mobileNavOpen.value = false
+  },
+)
 </script>
 
 <template>
-  <AppShell>
+  <AppShell v-model:mobile-open="mobileNavOpen">
     <template #sidebar>
       <Sidebar>
         <SidebarHeader>

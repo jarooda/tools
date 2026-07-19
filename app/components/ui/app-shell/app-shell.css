@@ -83,6 +83,17 @@
 .jl-appshell[data-mobile='true'] .jl-appshell__menubtn {
   display: inline-flex;
 }
+/* On mobile the whole main column scrolls as one, so the header scrolls away
+   with the content instead of staying pinned. Desktop keeps the sticky header
+   (content scrolls under a fixed header). */
+.jl-appshell[data-mobile='true'] .jl-appshell__main {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.jl-appshell[data-mobile='true'] .jl-appshell__content {
+  overflow: visible;
+}
 .jl-appshell[data-mobile='true'] .jl-appshell__aside {
   position: fixed;
   inset: 0 auto 0 0;
