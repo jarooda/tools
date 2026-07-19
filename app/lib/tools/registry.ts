@@ -38,7 +38,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between Celsius, Fahrenheit, and Kelvin.',
     keywords: ['celsius', 'fahrenheit', 'kelvin', 'c to f', 'degrees'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'length',
