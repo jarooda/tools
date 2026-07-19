@@ -568,7 +568,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Generate random RFC 4122 v4 UUIDs, one or many at a time.',
     keywords: ['uuid', 'guid', 'unique id', 'random', 'v4'],
-    status: 'planned',
+    status: 'live',
   },
 ]
 
