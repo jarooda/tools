@@ -408,7 +408,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert text between UPPER, lower, Title, camelCase, snake_case, and more.',
     keywords: ['uppercase', 'lowercase', 'title case', 'camelcase', 'snake case', 'kebab'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-find-replace',
