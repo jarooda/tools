@@ -148,7 +148,7 @@ export const tools: Tool[] = [
     tag: 'server',
     description: 'Convert between world currencies at recent exchange rates.',
     keywords: ['currency', 'money', 'exchange rate', 'forex', 'usd', 'eur'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'base64',
