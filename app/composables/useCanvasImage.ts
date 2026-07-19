@@ -15,16 +15,6 @@ export interface LoadedImage {
   revoke: () => void
 }
 
-/** Encodable output formats, mapped to their MIME type + file extension. */
-export const IMAGE_FORMATS = {
-  png: { mime: 'image/png', ext: 'png', label: 'PNG', lossy: false },
-  jpeg: { mime: 'image/jpeg', ext: 'jpg', label: 'JPG', lossy: true },
-  webp: { mime: 'image/webp', ext: 'webp', label: 'WebP', lossy: true },
-  avif: { mime: 'image/avif', ext: 'avif', label: 'AVIF', lossy: true },
-} as const
-
-export type ImageFormat = keyof typeof IMAGE_FORMATS
-
 export function useCanvasImage() {
   /** Load a File into an `<img>`, resolving once it has real dimensions. */
   function loadImage(file: File): Promise<LoadedImage> {

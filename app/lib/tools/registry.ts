@@ -178,7 +178,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert images between PNG, JPG, WebP, and AVIF.',
     keywords: ['convert', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'format'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-compress',
