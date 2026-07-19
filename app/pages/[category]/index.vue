@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PageHeader } from '@/components/ui/page-header'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import ToolCard from '@/components/tool/ToolCard.vue'
 import { APP_NAME, SITE_URL } from '@/lib/config'
 
@@ -9,6 +10,11 @@ const { getCategory, toolsInCategory } = useToolRegistry()
 const slug = computed(() => String(route.params.category))
 const category = computed(() => getCategory(slug.value))
 const tools = computed(() => (category.value ? toolsInCategory(category.value.slug) : []))
+
+const crumbs = computed(() => {
+  if (!category.value) return []
+  return [{ label: 'All tools', href: '/' }, { label: category.value.title }]
+})
 
 // Unknown category → 404.
 if (!category.value) {
@@ -29,6 +35,12 @@ useHead({
 <template>
   <div v-if="category" class="category">
     <PageHeader variant="plain" :title="category.title" :description="category.description">
+      <template #breadcrumb>
+        <div class="tool-head__crumb">
+          <AppShellMenuButton />
+          <Breadcrumb :items="crumbs" />
+        </div>
+      </template>
       <template #leading>
         <span class="category__icon" aria-hidden="true">
           <Icon :name="category.icon" size="20" />
