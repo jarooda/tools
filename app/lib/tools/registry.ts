@@ -498,7 +498,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Percent-encode text for URLs or decode it back to plain text.',
     keywords: ['url encode', 'percent encoding', 'uri', 'escape', 'decode'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'encode-json',
