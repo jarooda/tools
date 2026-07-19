@@ -208,7 +208,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Rotate an image in 90° steps and flip it horizontally or vertically.',
     keywords: ['rotate', 'flip', 'mirror', 'turn', 'orientation'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'image-color-picker',
