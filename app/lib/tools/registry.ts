@@ -268,7 +268,7 @@ export const tools: Tool[] = [
     tag: 'hybrid',
     description: 'Cut out the background from an image to make it transparent.',
     keywords: ['remove background', 'transparent', 'cutout', 'subject', 'png'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'base64',

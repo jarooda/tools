@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@iconify-json/mdi": "^1.2.3",
+    "@imgly/background-removal": "^1.7.0",
     "@nuxt/icon": "^2.3.1",
     "heic2any": "^0.0.4",
     "jalutils": "^1.0.1",
