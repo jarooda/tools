@@ -36,10 +36,7 @@ useHead({
   <div v-if="category" class="category">
     <PageHeader variant="plain" :title="category.title" :description="category.description">
       <template #breadcrumb>
-        <div class="tool-head__crumb">
-          <AppShellMenuButton />
-          <Breadcrumb :items="crumbs" />
-        </div>
+        <Breadcrumb :items="crumbs" />
       </template>
       <template #leading>
         <span class="category__icon" aria-hidden="true">
