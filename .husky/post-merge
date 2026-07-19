@@ -1,0 +1,9 @@
+#!/bin/sh
+changed_files=$(git diff --name-only HEAD@{1} HEAD)
+
+if echo "$changed_files" | grep -qE '^(package\.json|pnpm-lock\.yaml)$'; then
+  echo "Dependencies changed. Running pnpm install..."
+  pnpm install
+else
+  echo "No dependency changes. Skipping pnpm install."
+fi

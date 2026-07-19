@@ -1,0 +1,13 @@
+{
+  "framework": "vue",
+  "typescript": true,
+  "tailwind": {
+    "config": "",
+    "css": "app/assets/css/main.css"
+  },
+  "paths": {
+    "components": "app/components/ui",
+    "utils": "app/lib/utils"
+  },
+  "registry": "https://cdn.jsdelivr.net/gh/jarooda/jlds@v1.3.0/registry"
+}

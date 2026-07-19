@@ -1,0 +1,9 @@
+pnpm-lock.yaml
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+node_modules
+public
