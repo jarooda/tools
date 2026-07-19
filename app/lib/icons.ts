@@ -35,9 +35,32 @@ export const UI_ICON = {
   copy: 'mdi:content-copy',
   check: 'mdi:check',
   menu: 'mdi:menu',
+  download: 'mdi:tray-arrow-down',
+  reset: 'mdi:refresh',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
+  /** Empty-state glyph for tools awaiting an uploaded image/file. */
+  emptyImage: 'mdi:image-plus-outline',
 } as const
+
+/**
+ * Per-tool glyphs for the image category. Keyed by the registry tool `id`.
+ * Kept here (not hard-coded in pages) so icons stay centralised and themeable.
+ */
+export const IMAGE_TOOL_ICON: Record<string, string> = {
+  'image-watermark': 'mdi:watermark',
+  'image-resize': 'mdi:resize',
+  'image-convert': 'mdi:file-image-outline',
+  'image-compress': 'mdi:zip-box-outline',
+  'image-crop': 'mdi:crop',
+  'image-rotate': 'mdi:rotate-right',
+  'image-color-picker': 'mdi:eyedropper-variant',
+  'image-base64': 'mdi:code-braces',
+  'image-favicon': 'mdi:star-box-outline',
+  'image-meme': 'mdi:format-text',
+  'image-heic-to-jpg': 'mdi:image-sync-outline',
+  'image-remove-bg': 'mdi:image-off-outline',
+}
 
 /** JLDS Tag/Badge colour tokens. */
 type StatusColor = 'success' | 'info' | 'warning'
