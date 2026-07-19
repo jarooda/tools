@@ -640,6 +640,16 @@ export const tools: Tool[] = [
     keywords: ['hex', 'rgb', 'hsl', 'color convert', 'color code'],
     status: 'live',
   },
+  {
+    id: 'color-contrast',
+    title: 'Contrast Checker',
+    category: 'color',
+    slug: 'contrast',
+    tag: 'client',
+    description: 'Check color contrast ratios against WCAG AA and AAA accessibility levels.',
+    keywords: ['contrast', 'accessibility', 'wcag', 'a11y', 'ratio', 'readable'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
