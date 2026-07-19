@@ -448,7 +448,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Compare two blocks of text and highlight added and removed lines.',
     keywords: ['diff', 'compare', 'difference', 'changes', 'merge'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-slug',
