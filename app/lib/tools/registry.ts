@@ -338,7 +338,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Stamp a text watermark across every page of a PDF.',
     keywords: ['watermark', 'stamp', 'confidential', 'draft', 'overlay'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-protect',
