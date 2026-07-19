@@ -288,7 +288,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Extract page ranges or split a PDF into multiple documents.',
     keywords: ['split', 'extract pages', 'divide', 'separate', 'page range'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-images-to-pdf',
