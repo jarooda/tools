@@ -54,6 +54,7 @@ export const UI_ICON = {
   lockOpen: 'mdi:lock-open-variant-outline',
   eye: 'mdi:eye-outline',
   eyeOff: 'mdi:eye-off-outline',
+  fileWord: 'mdi:file-word-outline',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */
@@ -96,6 +97,7 @@ export const PDF_TOOL_ICON: Record<string, string> = {
   'pdf-unlock': 'mdi:lock-open-variant-outline',
   'pdf-extract-text': 'mdi:text-box-outline',
   'pdf-compress': 'mdi:zip-box-outline',
+  'pdf-office-to-pdf': 'mdi:file-word-outline',
 }
 
 /** JLDS Tag/Badge colour tokens. */

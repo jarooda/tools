@@ -382,13 +382,13 @@ export const tools: Tool[] = [
   },
   {
     id: 'pdf-office-to-pdf',
-    title: 'Office to PDF',
+    title: 'Word to PDF',
     category: 'pdf',
     slug: 'office-to-pdf',
-    tag: 'server',
-    description: 'Convert Word, Excel, and PowerPoint files to PDF.',
-    keywords: ['office to pdf', 'word to pdf', 'docx', 'xlsx', 'pptx'],
-    status: 'planned',
+    tag: 'client',
+    description: 'Convert Word (.docx) documents to PDF, entirely in your browser.',
+    keywords: ['office to pdf', 'word to pdf', 'docx', 'doc', 'document'],
+    status: 'live',
   },
   {
     id: 'base64',
