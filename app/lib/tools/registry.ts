@@ -438,7 +438,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Generate placeholder paragraphs, sentences, or words of lorem ipsum.',
     keywords: ['lorem ipsum', 'placeholder', 'dummy text', 'filler'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-diff',
