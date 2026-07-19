@@ -610,6 +610,16 @@ export const tools: Tool[] = [
     keywords: ['palette', 'colors', 'gradient', 'scheme', 'complementary', 'analogous'],
     status: 'live',
   },
+  {
+    id: 'generate-random',
+    title: 'Random Number & Picker',
+    category: 'generate',
+    slug: 'random',
+    tag: 'client',
+    description: 'Roll dice, flip coins, pick from a list, or generate random numbers.',
+    keywords: ['random', 'number', 'dice', 'coin', 'picker', 'shuffle', 'lottery'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
