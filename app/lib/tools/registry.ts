@@ -318,7 +318,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Reorder and delete pages with a visual page thumbnail grid.',
     keywords: ['organize', 'reorder', 'delete pages', 'rearrange', 'remove page'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-rotate',
