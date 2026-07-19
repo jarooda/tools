@@ -118,7 +118,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between binary, octal, decimal, and hexadecimal.',
     keywords: ['binary', 'hex', 'octal', 'decimal', 'radix'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'base64',
