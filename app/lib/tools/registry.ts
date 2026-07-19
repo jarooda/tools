@@ -58,7 +58,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between kilograms, pounds, ounces, and grams.',
     keywords: ['mass', 'kg', 'pounds', 'lbs', 'ounces', 'grams'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'data-storage',
