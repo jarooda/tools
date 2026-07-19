@@ -650,6 +650,16 @@ export const tools: Tool[] = [
     keywords: ['contrast', 'accessibility', 'wcag', 'a11y', 'ratio', 'readable'],
     status: 'live',
   },
+  {
+    id: 'color-css-generator',
+    title: 'Shadow & Gradient CSS',
+    category: 'color',
+    slug: 'css-generator',
+    tag: 'client',
+    description: 'Generate box-shadow and CSS gradient code with a live preview.',
+    keywords: ['box shadow', 'gradient', 'css', 'generator', 'linear', 'radial'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
