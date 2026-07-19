@@ -48,7 +48,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert between meters, feet, miles, inches, and more.',
     keywords: ['distance', 'meters', 'feet', 'miles', 'inches', 'km'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'weight',
