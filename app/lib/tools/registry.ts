@@ -478,7 +478,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Read text aloud with your browser’s built-in speech voices.',
     keywords: ['text to speech', 'tts', 'speak', 'voice', 'read aloud'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'base64',

@@ -55,6 +55,10 @@ export const UI_ICON = {
   eye: 'mdi:eye-outline',
   eyeOff: 'mdi:eye-off-outline',
   fileWord: 'mdi:file-word-outline',
+  play: 'mdi:play',
+  pause: 'mdi:pause',
+  stop: 'mdi:stop',
+  volumeOff: 'mdi:volume-off',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */
