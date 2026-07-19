@@ -43,10 +43,19 @@ export const UI_ICON = {
   flipVertical: 'mdi:flip-vertical',
   eyedropper: 'mdi:eyedropper-variant',
   magic: 'mdi:auto-fix',
+  add: 'mdi:plus',
+  remove: 'mdi:close',
+  trash: 'mdi:trash-can-outline',
+  dragHandle: 'mdi:drag-vertical',
+  arrowUp: 'mdi:arrow-up',
+  arrowDown: 'mdi:arrow-down',
+  filePdf: 'mdi:file-pdf-box',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */
   emptyImage: 'mdi:image-plus-outline',
+  /** Empty-state glyph for tools awaiting an uploaded PDF/document. */
+  emptyFile: 'mdi:file-upload-outline',
 } as const
 
 /**
@@ -66,6 +75,20 @@ export const IMAGE_TOOL_ICON: Record<string, string> = {
   'image-meme': 'mdi:format-text',
   'image-heic-to-jpg': 'mdi:image-sync-outline',
   'image-remove-bg': 'mdi:image-off-outline',
+}
+
+/**
+ * Per-tool glyphs for the PDF category. Keyed by the registry tool `id`.
+ */
+export const PDF_TOOL_ICON: Record<string, string> = {
+  'pdf-merge': 'mdi:call-merge',
+  'pdf-split': 'mdi:call-split',
+  'pdf-images-to-pdf': 'mdi:image-multiple-outline',
+  'pdf-to-images': 'mdi:file-image-outline',
+  'pdf-organize': 'mdi:file-document-multiple-outline',
+  'pdf-rotate': 'mdi:rotate-right',
+  'pdf-watermark': 'mdi:watermark',
+  'pdf-extract-text': 'mdi:text-box-outline',
 }
 
 /** JLDS Tag/Badge colour tokens. */
