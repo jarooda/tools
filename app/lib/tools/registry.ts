@@ -468,7 +468,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Convert Markdown to HTML and HTML back to Markdown.',
     keywords: ['markdown', 'html', 'md', 'convert', 'render'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-tts',
