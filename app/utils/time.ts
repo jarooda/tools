@@ -25,6 +25,6 @@ export function convertTime(value: number, from: TimeUnit, to: TimeUnit): number
   return convertLinear(value, from, to, TIME_UNITS)
 }
 
-export function convertToAll(value: number, from: TimeUnit) {
+export function convertTimeToAll(value: number, from: TimeUnit) {
   return convertLinearAll(value, from, TIME_UNITS)
 }

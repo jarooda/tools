@@ -29,6 +29,6 @@ export function convertArea(value: number, from: AreaUnit, to: AreaUnit): number
   return convertLinear(value, from, to, AREA_UNITS)
 }
 
-export function convertToAll(value: number, from: AreaUnit) {
+export function convertAreaToAll(value: number, from: AreaUnit) {
   return convertLinearAll(value, from, AREA_UNITS)
 }

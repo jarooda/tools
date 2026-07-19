@@ -24,6 +24,6 @@ export function convertSpeed(value: number, from: SpeedUnit, to: SpeedUnit): num
   return convertLinear(value, from, to, SPEED_UNITS)
 }
 
-export function convertToAll(value: number, from: SpeedUnit) {
+export function convertSpeedToAll(value: number, from: SpeedUnit) {
   return convertLinearAll(value, from, SPEED_UNITS)
 }

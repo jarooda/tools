@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertLength, convertToAll, LENGTH_UNITS } from '@/utils/length'
+import { convertLength, convertLengthToAll, LENGTH_UNITS } from '@/utils/length'
 
 const approx = (a: number, b: number, eps = 1e-9) => Math.abs(a - b) < eps
 
@@ -40,14 +40,14 @@ describe('convertLength', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertLengthToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'm')
+    const all = convertLengthToAll(1, 'm')
     expect(all.map((r) => r.unit)).toEqual(LENGTH_UNITS.map((u) => u.unit))
   })
 
   it('computes each target value correctly', () => {
-    const all = convertToAll(1, 'km')
+    const all = convertLengthToAll(1, 'km')
     expect(all.find((r) => r.unit === 'm')!.value).toBe(1000)
     expect(approx(all.find((r) => r.unit === 'mi')!.value, 0.621371192237334)).toBe(true)
   })

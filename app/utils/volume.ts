@@ -24,6 +24,6 @@ export function convertVolume(value: number, from: VolumeUnit, to: VolumeUnit): 
   return convertLinear(value, from, to, VOLUME_UNITS)
 }
 
-export function convertToAll(value: number, from: VolumeUnit) {
+export function convertVolumeToAll(value: number, from: VolumeUnit) {
   return convertLinearAll(value, from, VOLUME_UNITS)
 }

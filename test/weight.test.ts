@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertWeight, convertToAll, WEIGHT_UNITS } from '@/utils/weight'
+import { convertWeight, convertWeightToAll, WEIGHT_UNITS } from '@/utils/weight'
 
 const approx = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps
 
@@ -32,9 +32,9 @@ describe('convertWeight', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertWeightToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'kg')
+    const all = convertWeightToAll(1, 'kg')
     expect(all.map((r) => r.unit)).toEqual(WEIGHT_UNITS.map((u) => u.unit))
     expect(all.find((r) => r.unit === 'g')!.value).toBe(1000)
   })

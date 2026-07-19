@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertCurrency, convertToAll, CURRENCIES, type Rates } from '@/utils/currency'
+import { convertCurrency, convertCurrencyToAll, CURRENCIES, type Rates } from '@/utils/currency'
 
 // Fixture rates relative to USD (base). No network involved.
 const RATES: Rates = { USD: 1, EUR: 0.9, GBP: 0.8, JPY: 150 }
@@ -29,9 +29,9 @@ describe('convertCurrency', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertCurrencyToAll', () => {
   it('only includes currencies present in both the list and the rates', () => {
-    const all = convertToAll(1, 'USD', RATES)
+    const all = convertCurrencyToAll(1, 'USD', RATES)
     const codes = all.map((r) => r.code)
     expect(codes).toEqual(['USD', 'EUR', 'GBP', 'JPY'])
     // Every returned code is a known currency.
@@ -39,7 +39,7 @@ describe('convertToAll', () => {
   })
 
   it('computes each value', () => {
-    const all = convertToAll(10, 'USD', RATES)
+    const all = convertCurrencyToAll(10, 'USD', RATES)
     expect(all.find((r) => r.code === 'EUR')!.value).toBe(9)
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertVolume, convertToAll, VOLUME_UNITS } from '@/utils/volume'
+import { convertVolume, convertVolumeToAll, VOLUME_UNITS } from '@/utils/volume'
 
 const approx = (a: number, b: number, eps = 1e-9) => Math.abs(a - b) < eps
 
@@ -36,9 +36,9 @@ describe('convertVolume', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertVolumeToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'l')
+    const all = convertVolumeToAll(1, 'l')
     expect(all.map((r) => r.unit)).toEqual(VOLUME_UNITS.map((u) => u.unit))
     expect(all.find((r) => r.unit === 'ml')!.value).toBe(1000)
   })

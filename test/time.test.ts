@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertTime, convertToAll, TIME_UNITS } from '@/utils/time'
+import { convertTime, convertTimeToAll, TIME_UNITS } from '@/utils/time'
 
 const approx = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps
 
@@ -32,9 +32,9 @@ describe('convertTime', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertTimeToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'h')
+    const all = convertTimeToAll(1, 'h')
     expect(all.map((r) => r.unit)).toEqual(TIME_UNITS.map((u) => u.unit))
     expect(all.find((r) => r.unit === 'min')!.value).toBe(60)
   })

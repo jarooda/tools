@@ -63,7 +63,7 @@ export interface CurrencyResult extends Currency {
  * Convert `amount` (in `from`) to every currency we have both a definition and
  * a rate for, in `CURRENCIES` order.
  */
-export function convertToAll(
+export function convertCurrencyToAll(
   amount: number,
   from: string,
   rates: Rates,

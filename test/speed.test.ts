@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertSpeed, convertToAll, SPEED_UNITS } from '@/utils/speed'
+import { convertSpeed, convertSpeedToAll, SPEED_UNITS } from '@/utils/speed'
 
 const approx = (a: number, b: number, eps = 1e-9) => Math.abs(a - b) < eps
 
@@ -26,9 +26,9 @@ describe('convertSpeed', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertSpeedToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'mps')
+    const all = convertSpeedToAll(1, 'mps')
     expect(all.map((r) => r.unit)).toEqual(SPEED_UNITS.map((u) => u.unit))
     expect(approx(all.find((r) => r.unit === 'kmh')!.value, 3.6)).toBe(true)
   })

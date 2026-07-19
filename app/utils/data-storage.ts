@@ -28,6 +28,6 @@ export function convertData(value: number, from: DataUnit, to: DataUnit): number
   return convertLinear(value, from, to, DATA_UNITS)
 }
 
-export function convertToAll(value: number, from: DataUnit) {
+export function convertDataToAll(value: number, from: DataUnit) {
   return convertLinearAll(value, from, DATA_UNITS)
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertArea, convertToAll, AREA_UNITS } from '@/utils/area'
+import { convertArea, convertAreaToAll, AREA_UNITS } from '@/utils/area'
 
 const approx = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps
 
@@ -36,9 +36,9 @@ describe('convertArea', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertAreaToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'm2')
+    const all = convertAreaToAll(1, 'm2')
     expect(all.map((r) => r.unit)).toEqual(AREA_UNITS.map((u) => u.unit))
     expect(all.find((r) => r.unit === 'cm2')!.value).toBe(10_000)
   })

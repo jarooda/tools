@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { convertData, convertToAll, DATA_UNITS } from '@/utils/data-storage'
+import { convertData, convertDataToAll, DATA_UNITS } from '@/utils/data-storage'
 
 const approx = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps
 
@@ -40,9 +40,9 @@ describe('convertData', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertDataToAll', () => {
   it('produces every unit in registry order', () => {
-    const all = convertToAll(1, 'B')
+    const all = convertDataToAll(1, 'B')
     expect(all.map((r) => r.unit)).toEqual(DATA_UNITS.map((u) => u.unit))
     expect(all.find((r) => r.unit === 'bit')!.value).toBe(8)
   })

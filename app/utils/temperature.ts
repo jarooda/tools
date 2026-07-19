@@ -64,7 +64,7 @@ export function convertTemperature(
  * Convert `value` (in `from` unit) to every supported unit, in
  * `TEMPERATURE_UNITS` order. Handy for showing all results at once.
  */
-export function convertToAll(
+export function convertTemperatureToAll(
   value: number,
   from: TemperatureUnit,
 ): Array<TemperatureUnitMeta & { value: number }> {

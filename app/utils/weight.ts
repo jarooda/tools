@@ -21,6 +21,6 @@ export function convertWeight(value: number, from: WeightUnit, to: WeightUnit): 
   return convertLinear(value, from, to, WEIGHT_UNITS)
 }
 
-export function convertToAll(value: number, from: WeightUnit) {
+export function convertWeightToAll(value: number, from: WeightUnit) {
   return convertLinearAll(value, from, WEIGHT_UNITS)
 }

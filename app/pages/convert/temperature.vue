@@ -11,7 +11,7 @@ import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import {
   TEMPERATURE_UNITS,
-  convertToAll,
+  convertTemperatureToAll,
   isBelowAbsoluteZero,
   type TemperatureUnit,
 } from '@/utils/temperature'
@@ -58,7 +58,7 @@ watch(
       belowAbsoluteZero.value = false
       return
     }
-    results.value = convertToAll(val, unit).map((r) => ({
+    results.value = convertTemperatureToAll(val, unit).map((r) => ({
       unit: r.unit,
       name: r.name,
       symbol: r.symbol,

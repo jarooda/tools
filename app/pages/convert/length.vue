@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
-import { LENGTH_UNITS, convertToAll, type LengthUnit } from '@/utils/length'
+import { LENGTH_UNITS, convertLengthToAll, type LengthUnit } from '@/utils/length'
 
 definePageMeta({ layout: 'tool' })
 
@@ -69,7 +69,7 @@ watch(
       results.value = []
       return
     }
-    results.value = convertToAll(val, unit).map((r) => ({
+    results.value = convertLengthToAll(val, unit).map((r) => ({
       unit: r.unit,
       name: r.name,
       symbol: r.symbol,

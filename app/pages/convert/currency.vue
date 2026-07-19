@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
-import { CURRENCIES, convertToAll, type Rates, type CurrencyResult } from '@/utils/currency'
+import { CURRENCIES, convertCurrencyToAll, type Rates, type CurrencyResult } from '@/utils/currency'
 
 definePageMeta({ layout: 'tool' })
 
@@ -48,7 +48,7 @@ watch(
       results.value = []
       return
     }
-    results.value = convertToAll(amt, unit, table).map((r) => ({
+    results.value = convertCurrencyToAll(amt, unit, table).map((r) => ({
       ...r,
       display: format(r.value, r.code),
       isSource: r.code === unit,

@@ -53,7 +53,7 @@ export function convertLength(value: number, from: LengthUnit, to: LengthUnit): 
  * Convert `value` (in `from` unit) to every supported unit, in
  * `LENGTH_UNITS` order. Handy for showing all results at once.
  */
-export function convertToAll(
+export function convertLengthToAll(
   value: number,
   from: LengthUnit,
 ): Array<LengthUnitMeta & { value: number }> {

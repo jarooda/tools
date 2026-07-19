@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   convertTemperature,
-  convertToAll,
+  convertTemperatureToAll,
   isBelowAbsoluteZero,
   ABSOLUTE_ZERO_C,
 } from '@/utils/temperature'
@@ -44,9 +44,9 @@ describe('convertTemperature', () => {
   })
 })
 
-describe('convertToAll', () => {
+describe('convertTemperatureToAll', () => {
   it('produces all three units in order with correct values', () => {
-    const all = convertToAll(0, 'c')
+    const all = convertTemperatureToAll(0, 'c')
     expect(all.map((r) => r.unit)).toEqual(['c', 'f', 'k'])
     expect(all.find((r) => r.unit === 'f')!.value).toBe(32)
     expect(all.find((r) => r.unit === 'k')!.value).toBe(273.15)
