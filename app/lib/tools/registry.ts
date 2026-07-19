@@ -418,7 +418,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Find and replace text with plain or regular-expression matching.',
     keywords: ['find replace', 'regex', 'substitute', 'search', 'pattern'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'text-lines',
