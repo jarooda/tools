@@ -298,7 +298,7 @@ export const tools: Tool[] = [
     tag: 'client',
     description: 'Combine JPG and PNG images into a single PDF document.',
     keywords: ['images to pdf', 'jpg to pdf', 'png to pdf', 'photos', 'convert'],
-    status: 'planned',
+    status: 'live',
   },
   {
     id: 'pdf-to-images',
