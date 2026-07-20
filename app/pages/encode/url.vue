@@ -51,7 +51,8 @@ const result = computed(() => {
       :error="result.error"
       :ready="ready"
       :input-invalid="!!result.error"
-      mono
+      code-output
+      language="url"
       download-name="url.txt"
       empty-description="Enter a URL or text to percent-encode or decode."
     >

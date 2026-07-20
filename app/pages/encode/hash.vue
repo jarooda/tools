@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
@@ -45,13 +45,6 @@ async function compute() {
 }
 
 watch(input, compute)
-
-const { copy, copied } = useCopy()
-const copiedAlgo = ref<Algo | null>(null)
-async function copyHash(algo: Algo, value: string) {
-  await copy(value)
-  copiedAlgo.value = algo
-}
 </script>
 
 <template>
@@ -87,19 +80,8 @@ async function copyHash(algo: Algo, value: string) {
         </EmptyState>
 
         <ul v-else class="hash__list">
-          <li v-for="a in ALGOS" :key="a" class="hash__row">
-            <span class="hash__algo">{{ a }}</span>
-            <code class="hash__value">{{ hashes[a] }}</code>
-            <Button
-              variant="ghost"
-              size="sm"
-              :aria-label="`Copy ${a} hash`"
-              @click="copyHash(a, hashes[a])"
-            >
-              <template #icon>
-                <Icon :name="copied && copiedAlgo === a ? UI_ICON.check : UI_ICON.copy" size="15" />
-              </template>
-            </Button>
+          <li v-for="a in ALGOS" :key="a">
+            <Snippet variant="block" :title="a" :code="hashes[a]" />
           </li>
         </ul>
       </div>
@@ -136,9 +118,10 @@ async function copyHash(algo: Algo, value: string) {
   flex-direction: column;
   gap: 0.5rem;
 }
+/* Skeleton placeholder rows (the real results render as JLDS Snippet blocks). */
 .hash__row {
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) auto;
+  grid-template-columns: 84px minmax(0, 1fr);
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0.5rem 0.5rem 0.85rem;
@@ -146,21 +129,10 @@ async function copyHash(algo: Algo, value: string) {
   border-radius: var(--radius-control, 0.625rem);
   background: var(--surface-card);
 }
-.hash__algo {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-tertiary);
-}
-.hash__value {
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.8125rem;
-  color: var(--text-primary);
-  word-break: break-all;
-}
 
 @media (max-width: 640px) {
   .hash__row {
-    grid-template-columns: 72px minmax(0, 1fr) auto;
+    grid-template-columns: 72px minmax(0, 1fr);
   }
 }
 </style>

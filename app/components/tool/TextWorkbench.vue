@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
@@ -28,6 +29,16 @@ const props = withDefaults(
     emptyDescription?: string
     /** Render the output in a monospace font (code-ish results). */
     mono?: boolean
+    /**
+     * Render the output as a JLDS `Snippet` code block (title bar, language
+     * label, optional line numbers, built-in copy) instead of a plain `<pre>`.
+     * Use for code-shaped results — JSON, XML/YAML, HTML, Base64, …
+     */
+    codeOutput?: boolean
+    /** Language label shown in the Snippet bar (implies `codeOutput`'s bar). */
+    language?: string
+    /** Number the lines of the Snippet block. */
+    lineNumbers?: boolean
     /** Filename used by the download button. */
     downloadName?: string
     /** MIME type used by the download button. */
@@ -46,6 +57,9 @@ const props = withDefaults(
     emptyTitle: 'Nothing to show yet',
     emptyDescription: 'Enter some text on the left to see the result.',
     mono: false,
+    codeOutput: false,
+    language: '',
+    lineNumbers: false,
     downloadName: 'output.txt',
     downloadMime: 'text/plain;charset=utf-8',
     noDownload: false,
@@ -103,7 +117,14 @@ const { downloadText } = useDownload()
               <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
               Download
             </Button>
-            <Button variant="ghost" size="sm" aria-label="Copy output" @click="copy(output)">
+            <!-- Snippet ships its own copy button, so skip ours in code mode. -->
+            <Button
+              v-if="!codeOutput"
+              variant="ghost"
+              size="sm"
+              aria-label="Copy output"
+              @click="copy(output)"
+            >
               <template #icon>
                 <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
               </template>
@@ -133,6 +154,14 @@ const { downloadText } = useDownload()
         <p v-else-if="error" class="tw__error" role="alert">{{ error }}</p>
 
         <!-- Results -->
+        <Snippet
+          v-else-if="codeOutput"
+          class="tw__code"
+          variant="block"
+          :code="output"
+          :language="language"
+          :line-numbers="lineNumbers"
+        />
         <pre v-else class="tw__output" :class="{ 'tw__output--mono': mono }">{{ output }}</pre>
 
         <slot name="output-footer" />
@@ -201,6 +230,9 @@ const { downloadText } = useDownload()
   white-space: pre-wrap;
   word-break: break-word;
   overflow-x: auto;
+}
+.tw__code {
+  min-height: 220px;
 }
 .tw__output--mono {
   font-family: var(--font-mono, ui-monospace, monospace);

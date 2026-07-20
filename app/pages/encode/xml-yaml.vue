@@ -61,9 +61,14 @@ onMounted(async () => {
 watch([input, mode], convert)
 
 const labels = {
-  xml: { in: 'XML', out: 'Formatted XML', ph: '<root><item>value</item></root>' },
-  yaml2json: { in: 'YAML', out: 'JSON', ph: 'name: toolkit\nitems:\n  - a\n  - b' },
-  json2yaml: { in: 'JSON', out: 'YAML', ph: '{ "name": "toolkit", "items": ["a", "b"] }' },
+  xml: { in: 'XML', out: 'Formatted XML', ph: '<root><item>value</item></root>', lang: 'xml' },
+  yaml2json: { in: 'YAML', out: 'JSON', ph: 'name: toolkit\nitems:\n  - a\n  - b', lang: 'json' },
+  json2yaml: {
+    in: 'JSON',
+    out: 'YAML',
+    ph: '{ "name": "toolkit", "items": ["a", "b"] }',
+    lang: 'yaml',
+  },
 }
 </script>
 
@@ -78,7 +83,9 @@ const labels = {
       :input-label="labels[mode].in"
       :output-label="labels[mode].out"
       :input-placeholder="labels[mode].ph"
-      mono
+      code-output
+      :language="labels[mode].lang"
+      line-numbers
       download-name="output.txt"
       empty-description="Enter data on the left to format or convert it."
     >

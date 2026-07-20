@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
@@ -49,8 +49,6 @@ const timeClaims = computed(() => {
     (c) => c.value != null,
   )
 })
-
-const { copy } = useCopy()
 </script>
 
 <template>
@@ -84,25 +82,20 @@ const { copy } = useCopy()
       <p v-else-if="decoded.error" class="jwt__error" role="alert">{{ decoded.error }}</p>
 
       <div v-else class="jwt__result">
-        <div class="jwt__panel">
-          <div class="jwt__panel-head">
-            <span class="jwt__label">Header</span>
-            <Button variant="ghost" size="sm" aria-label="Copy header" @click="copy(headerJson)">
-              <template #icon><Icon :name="UI_ICON.copy" size="15" /></template>
-            </Button>
-          </div>
-          <pre class="jwt__json">{{ headerJson }}</pre>
-        </div>
-
-        <div class="jwt__panel">
-          <div class="jwt__panel-head">
-            <span class="jwt__label">Payload</span>
-            <Button variant="ghost" size="sm" aria-label="Copy payload" @click="copy(payloadJson)">
-              <template #icon><Icon :name="UI_ICON.copy" size="15" /></template>
-            </Button>
-          </div>
-          <pre class="jwt__json">{{ payloadJson }}</pre>
-        </div>
+        <Snippet
+          class="jwt__panel"
+          variant="block"
+          title="Header"
+          language="json"
+          :code="headerJson"
+        />
+        <Snippet
+          class="jwt__panel"
+          variant="block"
+          title="Payload"
+          language="json"
+          :code="payloadJson"
+        />
 
         <div v-if="timeClaims.length" class="jwt__claims">
           <div v-for="c in timeClaims" :key="c.key" class="jwt__claim">
@@ -143,30 +136,7 @@ const { copy } = useCopy()
   gap: 20px;
 }
 .jwt__panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   min-width: 0;
-}
-.jwt__panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 30px;
-}
-.jwt__json {
-  margin: 0;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--surface-card);
-  color: var(--text-primary);
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-x: auto;
 }
 .jwt__claims {
   grid-column: 1 / -1;

@@ -37,7 +37,8 @@ const output = computed(() =>
       :ready="ready"
       :input-label="direction === 'encode' ? 'Text' : 'HTML entities'"
       :output-label="direction === 'encode' ? 'HTML entities' : 'Text'"
-      mono
+      code-output
+      :language="direction === 'encode' ? 'html' : 'text'"
       download-name="html.txt"
       empty-description="Enter text to escape into HTML entities, or entities to decode."
     >

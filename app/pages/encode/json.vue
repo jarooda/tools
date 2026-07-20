@@ -54,7 +54,9 @@ const errorText = computed(() => {
       input-label="JSON"
       output-label="Result"
       input-placeholder='{ "hello": "world" }'
-      mono
+      code-output
+      language="json"
+      line-numbers
       download-name="formatted.json"
       download-mime="application/json;charset=utf-8"
       empty-description="Paste JSON to format, validate, or minify it."

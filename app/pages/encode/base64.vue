@@ -50,7 +50,8 @@ const result = computed(() => {
       :input-label="direction === 'encode' ? 'Text' : 'Base64'"
       :output-label="direction === 'encode' ? 'Base64' : 'Text'"
       :input-invalid="!!result.error"
-      mono
+      code-output
+      :language="direction === 'encode' ? 'base64' : 'text'"
       download-name="base64.txt"
       empty-description="Enter text to encode, or Base64 to decode."
     >

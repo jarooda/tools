@@ -62,7 +62,9 @@ const result = computed(() => {
       :input-label="direction === 'csv2json' ? 'CSV' : 'JSON'"
       :output-label="direction === 'csv2json' ? 'JSON' : 'CSV'"
       :input-placeholder="placeholder"
-      mono
+      code-output
+      :language="direction === 'csv2json' ? 'json' : 'csv'"
+      line-numbers
       :download-name="direction === 'csv2json' ? 'data.json' : 'data.csv'"
       :download-mime="
         direction === 'csv2json' ? 'application/json;charset=utf-8' : 'text/csv;charset=utf-8'
