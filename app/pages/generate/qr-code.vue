@@ -221,6 +221,9 @@ async function downloadSvg() {
   display: block;
   width: 100%;
   max-width: 240px;
+  /* A QR code is always square. Pin the ratio so the box stays 1:1 even before
+     the first render, when a canvas falls back to its default 300×150. */
+  aspect-ratio: 1 / 1;
   height: auto;
   image-rendering: pixelated;
 }
