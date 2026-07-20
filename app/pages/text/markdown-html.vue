@@ -71,7 +71,9 @@ watch([input, direction], convert)
       :ready="ready"
       :input-label="direction === 'mdToHtml' ? 'Markdown' : 'HTML'"
       :output-label="direction === 'mdToHtml' ? 'HTML' : 'Markdown'"
-      mono
+      code-output
+      :language="direction === 'mdToHtml' ? 'html' : 'markdown'"
+      line-numbers
       :download-name="direction === 'mdToHtml' ? 'output.html' : 'output.md'"
       :download-mime="
         direction === 'mdToHtml' ? 'text/html;charset=utf-8' : 'text/markdown;charset=utf-8'

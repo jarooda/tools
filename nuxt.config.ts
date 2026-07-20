@@ -17,6 +17,8 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      // Screen readers and translation tools need an explicit document language.
+      htmlAttrs: { lang: 'en' },
       // Native controls/scrollbars follow the active theme (no white flash in dark).
       meta: [{ name: 'color-scheme', content: 'light dark' }],
       // Synchronous, pre-paint theme resolution to avoid a light→dark flash on
