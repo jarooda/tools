@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { NumberInput } from '@/components/ui/number-input'
@@ -141,9 +142,12 @@ watch([mode, rangeSpec, chunkSize], () => {
     </EmptyState>
 
     <div v-else class="sp">
-      <p class="sp__source">
-        {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
-      </p>
+      <div class="sp__file">
+        <PdfPreview :file="sourceFile" :page-count="pageCount" />
+        <p class="sp__source">
+          {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
+        </p>
+      </div>
 
       <Field label="Split mode">
         <SegmentedControl v-model="mode" :options="modeOptions" full-width />
@@ -195,6 +199,11 @@ watch([mode, rangeSpec, chunkSize], () => {
 .sp {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+.sp__file {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .sp__source {

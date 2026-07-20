@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -125,9 +126,12 @@ async function run() {
     </EmptyState>
 
     <div v-else class="rt">
-      <p class="rt__source">
-        {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
-      </p>
+      <div class="rt__file">
+        <PdfPreview :file="sourceFile" :page-count="pageCount" />
+        <p class="rt__source">
+          {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
+        </p>
+      </div>
 
       <Field label="Rotation">
         <SegmentedControl v-model="angle" :options="angleOptions" full-width />
@@ -171,6 +175,11 @@ async function run() {
 .rt {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+.rt__file {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .rt__source {

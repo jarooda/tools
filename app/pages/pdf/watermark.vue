@@ -2,6 +2,7 @@
 import { onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -135,7 +136,10 @@ async function run() {
     </EmptyState>
 
     <div v-else class="wm">
-      <p class="wm__source">{{ sourceFile.name }}</p>
+      <div class="wm__file">
+        <PdfPreview :file="sourceFile" />
+        <p class="wm__source">{{ sourceFile.name }}</p>
+      </div>
 
       <Field label="Watermark text">
         <Input v-model="text" placeholder="CONFIDENTIAL" />
@@ -198,6 +202,11 @@ async function run() {
 .wm {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+.wm__file {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .wm__source {

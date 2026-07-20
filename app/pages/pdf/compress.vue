@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Field } from '@/components/ui/field'
 import { SegmentedControl } from '@/components/ui/segmented-control'
@@ -129,7 +130,10 @@ async function run() {
     </EmptyState>
 
     <div v-else class="cp">
-      <p class="cp__source">{{ sourceFile.name }} · {{ formatBytes(originalSize) }}</p>
+      <div class="cp__file">
+        <PdfPreview :file="sourceFile" />
+        <p class="cp__source">{{ sourceFile.name }} · {{ formatBytes(originalSize) }}</p>
+      </div>
 
       <Field label="Method">
         <SegmentedControl v-model="mode" :options="modeOptions" full-width />
@@ -206,6 +210,11 @@ async function run() {
 .cp {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+.cp__file {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .cp__source {

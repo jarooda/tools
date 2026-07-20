@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import { Field } from '@/components/ui/field'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Slider } from '@/components/ui/slider'
@@ -128,7 +129,10 @@ function downloadAll() {
     </EmptyState>
 
     <div v-else class="ti">
-      <p class="ti__source">{{ sourceFile.name }}</p>
+      <div class="ti__file">
+        <PdfPreview :file="sourceFile" />
+        <p class="ti__source">{{ sourceFile.name }}</p>
+      </div>
 
       <div class="ti__opts">
         <Field label="Format">
@@ -204,6 +208,11 @@ function downloadAll() {
 .ti {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+.ti__file {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .ti__source {

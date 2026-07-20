@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
+import PdfPreview from '@/components/tool/PdfPreview.vue'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -106,9 +107,12 @@ async function extract() {
     </EmptyState>
 
     <div v-else class="ex">
-      <div class="ex__bar">
-        <span class="ex__source">{{ sourceFile.name }}</span>
-        <Switch v-model="pageBreaks" label="Page markers" @update:model-value="extract" />
+      <div class="ex__file">
+        <PdfPreview :file="sourceFile" />
+        <div class="ex__bar">
+          <span class="ex__source">{{ sourceFile.name }}</span>
+          <Switch v-model="pageBreaks" label="Page markers" @update:model-value="extract" />
+        </div>
       </div>
 
       <Progress
@@ -165,6 +169,15 @@ async function extract() {
   justify-content: space-between;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+.ex__file {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.ex__file .ex__bar {
+  flex: 1;
+  min-width: 0;
 }
 .ex__source {
   font-size: 0.8125rem;
