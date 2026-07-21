@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
+import MediaPreview from '@/components/tool/MediaPreview.vue'
 import { Field } from '@/components/ui/field'
 import { Select } from '@/components/ui/select'
 import { SegmentedControl } from '@/components/ui/segmented-control'
@@ -52,6 +53,7 @@ const outputName = computed(() => {
 
 const output = shallowRef<Blob | null>(null)
 const outputUrl = ref('')
+const sourceUrl = ref('')
 
 function revokeOutput() {
   if (outputUrl.value) URL.revokeObjectURL(outputUrl.value)
@@ -59,11 +61,18 @@ function revokeOutput() {
   output.value = null
 }
 
+function revokeSource() {
+  if (sourceUrl.value) URL.revokeObjectURL(sourceUrl.value)
+  sourceUrl.value = ''
+}
+
 async function onSelect(file: File) {
   error.value = ''
   revokeOutput()
+  revokeSource()
   sourceFile.value = file
   info.value = null
+  sourceUrl.value = URL.createObjectURL(file)
   try {
     info.value = await probeMedia(file)
   } catch {
@@ -73,6 +82,7 @@ async function onSelect(file: File) {
 
 function reset() {
   revokeOutput()
+  revokeSource()
   sourceFile.value = null
   info.value = null
   error.value = ''
@@ -111,7 +121,10 @@ async function extract() {
   }
 }
 
-onBeforeUnmount(revokeOutput)
+onBeforeUnmount(() => {
+  revokeOutput()
+  revokeSource()
+})
 
 const busy = computed(() => loading.value || running.value)
 </script>
@@ -147,6 +160,13 @@ const busy = computed(() => loading.value || running.value)
           <template v-if="info && !info.hasVideo"> · already audio-only</template>
         </p>
       </div>
+
+      <MediaPreview
+        v-if="sourceUrl"
+        :src="sourceUrl"
+        :video="info?.hasVideo ?? true"
+        :label="`Preview of ${sourceFile.name}`"
+      />
 
       <div class="ea__opts">
         <Field label="Save audio as" :hint="targetMeta.note">
@@ -184,7 +204,7 @@ const busy = computed(() => loading.value || running.value)
       />
 
       <div v-if="output" class="ea__result">
-        <audio class="ea__audio" :src="outputUrl" controls />
+        <MediaPreview :src="outputUrl" :video="false" :label="`Preview of ${outputName}`" />
         <p class="ea__delta">{{ outputName }}</p>
         <ResultActions :blob="output" :filename="outputName" no-copy />
       </div>
@@ -232,9 +252,6 @@ const busy = computed(() => loading.value || running.value)
   gap: 0.75rem;
   padding-top: 0.25rem;
   border-top: 1px solid var(--border-subtle);
-}
-.ea__audio {
-  width: 100%;
 }
 .ea__delta {
   margin: 0;

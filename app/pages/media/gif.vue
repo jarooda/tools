@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vu
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
+import MediaPreview from '@/components/tool/MediaPreview.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
@@ -184,7 +185,7 @@ const hasVideo = computed(() => info.value?.hasVideo ?? false)
       </div>
 
       <template v-if="hasVideo">
-        <video class="mg__player" :src="sourceUrl" controls playsinline />
+        <MediaPreview :src="sourceUrl" :label="`Preview of ${sourceFile.name}`" />
 
         <Field label="Section to capture">
           <Slider v-model="range" range :min="0" :max="duration" :step="0.05" />
@@ -275,12 +276,6 @@ const hasVideo = computed(() => info.value?.hasVideo ?? false)
   margin: 0;
   font-size: 0.8125rem;
   color: var(--text-tertiary);
-}
-.mg__player {
-  width: 100%;
-  max-height: 320px;
-  border-radius: var(--radius-control, 0.625rem);
-  background: #000;
 }
 .mg__times,
 .mg__opts {

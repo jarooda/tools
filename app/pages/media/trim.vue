@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vu
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
+import MediaPreview from '@/components/tool/MediaPreview.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -118,15 +119,15 @@ function reset() {
 }
 
 /** Play just the selected range in the preview player. */
-const player = ref<HTMLMediaElement | null>(null)
+const preview = ref<InstanceType<typeof MediaPreview> | null>(null)
 function previewRange() {
-  const el = player.value
+  const el = preview.value?.el
   if (!el) return
   el.currentTime = start.value
   el.play()
 }
 function onTimeUpdate() {
-  const el = player.value
+  const el = preview.value?.el
   if (el && el.currentTime >= end.value) el.pause()
 }
 
@@ -200,21 +201,11 @@ const isVideo = computed(() => info.value?.hasVideo ?? false)
         </p>
       </div>
 
-      <video
-        v-if="isVideo"
-        ref="player"
-        class="mt__player"
+      <MediaPreview
+        ref="preview"
         :src="sourceUrl"
-        controls
-        playsinline
-        @timeupdate="onTimeUpdate"
-      />
-      <audio
-        v-else
-        ref="player"
-        class="mt__audio"
-        :src="sourceUrl"
-        controls
+        :video="isVideo"
+        :label="`Preview of ${sourceFile.name}`"
         @timeupdate="onTimeUpdate"
       />
 
@@ -269,8 +260,7 @@ const isVideo = computed(() => info.value?.hasVideo ?? false)
       />
 
       <div v-if="output" class="mt__result">
-        <video v-if="isVideo" class="mt__player" :src="outputUrl" controls playsinline />
-        <audio v-else class="mt__audio" :src="outputUrl" controls />
+        <MediaPreview :src="outputUrl" :video="isVideo" :label="`Preview of ${outputName}`" />
         <p class="mt__delta">{{ outputName }}</p>
         <ResultActions :blob="output" :filename="outputName" no-copy />
       </div>
@@ -301,15 +291,6 @@ const isVideo = computed(() => info.value?.hasVideo ?? false)
   margin: 0;
   font-size: 0.8125rem;
   color: var(--text-tertiary);
-}
-.mt__player {
-  width: 100%;
-  max-height: 320px;
-  border-radius: var(--radius-control, 0.625rem);
-  background: #000;
-}
-.mt__audio {
-  width: 100%;
 }
 .mt__times {
   display: grid;

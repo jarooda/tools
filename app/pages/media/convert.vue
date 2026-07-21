@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
+import MediaPreview from '@/components/tool/MediaPreview.vue'
 import { Field } from '@/components/ui/field'
 import { Select } from '@/components/ui/select'
 import { SegmentedControl } from '@/components/ui/segmented-control'
@@ -58,6 +59,7 @@ const outputName = computed(() =>
 
 const output = shallowRef<Blob | null>(null)
 const outputUrl = ref('')
+const sourceUrl = ref('')
 
 function revokeOutput() {
   if (outputUrl.value) URL.revokeObjectURL(outputUrl.value)
@@ -65,11 +67,18 @@ function revokeOutput() {
   output.value = null
 }
 
+function revokeSource() {
+  if (sourceUrl.value) URL.revokeObjectURL(sourceUrl.value)
+  sourceUrl.value = ''
+}
+
 async function onSelect(file: File) {
   error.value = ''
   revokeOutput()
+  revokeSource()
   sourceFile.value = file
   info.value = null
+  sourceUrl.value = URL.createObjectURL(file)
   try {
     info.value = await probeMedia(file)
     // A video source defaults to MP4; an audio-only source defaults to MP3, so
@@ -82,6 +91,7 @@ async function onSelect(file: File) {
 
 function reset() {
   revokeOutput()
+  revokeSource()
   sourceFile.value = null
   info.value = null
   error.value = ''
@@ -108,7 +118,10 @@ async function convert() {
   }
 }
 
-onBeforeUnmount(revokeOutput)
+onBeforeUnmount(() => {
+  revokeOutput()
+  revokeSource()
+})
 
 const busy = computed(() => loading.value || running.value)
 const sizeDelta = computed(() => {
@@ -153,6 +166,13 @@ const sizeDelta = computed(() => {
         </p>
       </div>
 
+      <MediaPreview
+        v-if="sourceUrl"
+        :src="sourceUrl"
+        :video="info?.hasVideo ?? true"
+        :label="`Preview of ${sourceFile.name}`"
+      />
+
       <div class="mc__opts">
         <Field label="Convert to" :hint="targetMeta.note">
           <Select v-model="format" :options="formatOptions" />
@@ -185,14 +205,11 @@ const sizeDelta = computed(() => {
       </p>
 
       <div v-if="output" class="mc__result">
-        <video
-          v-if="targetMeta.kind === 'video'"
-          class="mc__player"
+        <MediaPreview
           :src="outputUrl"
-          controls
-          playsinline
+          :video="targetMeta.kind === 'video'"
+          :label="`Preview of ${outputName}`"
         />
-        <audio v-else class="mc__audio" :src="outputUrl" controls />
         <p class="mc__delta">{{ outputName }} — {{ sizeDelta }}</p>
         <ResultActions :blob="output" :filename="outputName" no-copy />
       </div>
@@ -245,15 +262,6 @@ const sizeDelta = computed(() => {
   gap: 0.75rem;
   padding-top: 0.25rem;
   border-top: 1px solid var(--border-subtle);
-}
-.mc__player {
-  width: 100%;
-  max-height: 360px;
-  border-radius: var(--radius-control, 0.625rem);
-  background: #000;
-}
-.mc__audio {
-  width: 100%;
 }
 .mc__delta {
   margin: 0;
