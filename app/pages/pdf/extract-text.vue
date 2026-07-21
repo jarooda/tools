@@ -108,11 +108,11 @@ async function extract() {
 
     <div v-else class="ex">
       <div class="ex__file">
-        <PdfPreview :file="sourceFile" />
         <div class="ex__bar">
           <span class="ex__source">{{ sourceFile.name }}</span>
           <Switch v-model="pageBreaks" label="Page markers" @update:model-value="extract" />
         </div>
+        <PdfPreview :file="sourceFile" />
       </div>
 
       <Progress
@@ -172,12 +172,8 @@ async function extract() {
 }
 .ex__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-.ex__file .ex__bar {
-  flex: 1;
-  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .ex__source {
   font-size: 0.8125rem;

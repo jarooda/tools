@@ -130,8 +130,8 @@ function downloadAll() {
 
     <div v-else class="ti">
       <div class="ti__file">
-        <PdfPreview :file="sourceFile" />
         <p class="ti__source">{{ sourceFile.name }}</p>
+        <PdfPreview :file="sourceFile" />
       </div>
 
       <div class="ti__opts">
@@ -212,8 +212,8 @@ function downloadAll() {
 }
 .ti__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .ti__source {
   margin: 0;

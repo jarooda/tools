@@ -47,6 +47,46 @@ const layoutOptions = [
   { value: 'horizontal', label: 'Horizontal' },
 ]
 
+/**
+ * Approximate HelveticaBold advance width, in points. Close enough to pdf-lib's
+ * real font metrics to lay the *preview* out; `run()` still uses exact metrics.
+ */
+let measureCtx: CanvasRenderingContext2D | null = null
+function measureText(label: string, size: number) {
+  if (!import.meta.client) return label.length * size * 0.55
+  measureCtx ||= document.createElement('canvas').getContext('2d')
+  if (!measureCtx) return label.length * size * 0.55
+  measureCtx.font = `bold ${size}px Helvetica, Arial, sans-serif`
+  return measureCtx.measureText(label).width
+}
+
+/** Stamp centres for the live preview — mirrors the layout maths in `run()`. */
+function stamps(width: number, height: number) {
+  const label = text.value.trim()
+  if (!label) return []
+  if (!tile.value) return [{ x: width / 2, y: height / 2 }]
+  const out: Array<{ x: number; y: number }> = []
+  const stepX = Math.max(measureText(label, fontSize.value), width / 3) + 40
+  const stepY = fontSize.value * 4
+  for (let y = stepY / 2; y < height; y += stepY) {
+    for (let x = stepX / 2; x < width + stepX; x += stepX) out.push({ x, y })
+  }
+  return out
+}
+
+/** Place one stamp, converting PDF points (origin bottom-left) to CSS. */
+function stampStyle(s: { x: number; y: number }, width: number, height: number) {
+  return {
+    left: `${(s.x / width) * 100}%`,
+    top: `${((height - s.y) / height) * 100}%`,
+    // The page box is a size container, so cqw tracks the real page width.
+    fontSize: `${(fontSize.value / width) * 100}cqw`,
+    color: color.value,
+    opacity: opacity.value / 100,
+    transform: `translate(-50%, -50%) rotate(${layout.value === 'diagonal' ? -45 : 0}deg)`,
+  }
+}
+
 function onSelect(file: File) {
   error.value = ''
   outputBlob.value = null
@@ -137,8 +177,18 @@ async function run() {
 
     <div v-else class="wm">
       <div class="wm__file">
-        <PdfPreview :file="sourceFile" />
         <p class="wm__source">{{ sourceFile.name }}</p>
+        <PdfPreview :file="sourceFile">
+          <template #overlay="{ width, height }">
+            <span
+              v-for="(s, i) in stamps(width, height)"
+              :key="i"
+              class="wm__stamp"
+              :style="stampStyle(s, width, height)"
+              >{{ text }}</span
+            >
+          </template>
+        </PdfPreview>
       </div>
 
       <Field label="Watermark text">
@@ -206,8 +256,15 @@ async function run() {
 }
 .wm__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.wm__stamp {
+  position: absolute;
+  white-space: nowrap;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1;
 }
 .wm__source {
   margin: 0;

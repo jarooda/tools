@@ -1,91 +1,234 @@
 <script setup lang="ts">
 import type { PDFDocumentProxy } from 'pdfjs-dist'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { UI_ICON } from '@/lib/icons'
 
 /**
- * First-page thumbnail preview of an uploaded PDF, so users can confirm they
- * picked the right file before running a tool. Renders client-side via the lazy
- * pdf.js engine (`usePdf`) — nothing is uploaded. Self-contained: it manages its
- * own loading state and object URL, and degrades to a quiet notice if the page
- * can't be rendered (e.g. an encrypted file), leaving the tool's own validation
- * to surface the real error.
+ * Live preview of an uploaded PDF, rendered client-side with the lazy pdf.js
+ * engine (`usePdf`) — nothing is uploaded.
+ *
+ * It shows **several pages**, not just the first, and is *tool-aware*: pages can
+ * be visually rotated (`rotationFor`, used by Rotate) and tools can paint their
+ * own effect on top through the `#overlay` slot (used by Watermark). Each page
+ * box is a CSS **size container** matching the real page, so overlays can size
+ * themselves in `cqw`/`cqh` and stay accurate at any thumbnail size.
+ *
+ * Degrades to a quiet notice if pages can't be rendered (e.g. an encrypted
+ * file), leaving the tool's own validation to surface the real error.
  */
+
+// eslint-disable-next-line no-unused-vars
+type RotationFor = (pageNumber: number) => number
+
 const props = withDefaults(
   defineProps<{
     /** The PDF to preview. */
     file: File
-    /** Total page count, shown in the caption when > 1. */
-    pageCount?: number
-    /** Render scale for the first page. */
-    scale?: number
+    /** Pages rendered before the "show all" affordance. */
+    initialPages?: number
+    /** Extra visual rotation in degrees, per page — for the Rotate tool. */
+    rotationFor?: RotationFor
   }>(),
-  { pageCount: 0, scale: 1 },
+  { initialPages: 4, rotationFor: undefined },
 )
+
+/** Render scale for thumbnails — enough detail without rendering full pages. */
+const THUMB_SCALE = 0.5
+/** Hard ceiling for "show all" — rendering a 500-page book would lock the tab. */
+const MAX_PAGES = 50
+
+interface PageThumb {
+  page: number
+  url: string
+  /** Real page size in PDF points, so overlays can scale against it. */
+  width: number
+  height: number
+}
 
 const { openForRender, closeDoc, renderPageToCanvas, canvasToBlob } = usePdf()
 
-const src = ref('')
+const thumbs = shallowRef<PageThumb[]>([])
+const total = ref(0)
 const loading = ref(true)
 const failed = ref(false)
+const showAll = ref(false)
 
 function revoke() {
-  if (src.value) URL.revokeObjectURL(src.value)
-  src.value = ''
+  thumbs.value.forEach((t) => URL.revokeObjectURL(t.url))
+  thumbs.value = []
 }
 
-async function render(file: File) {
+let runId = 0
+async function render() {
+  const file = props.file
+  const myRun = ++runId
   loading.value = true
   failed.value = false
   revoke()
+
   let doc: PDFDocumentProxy | undefined
   try {
     doc = await openForRender(file)
-    const canvas = await renderPageToCanvas(doc, 1, props.scale)
-    const blob = await canvasToBlob(canvas, 'image/png')
-    src.value = URL.createObjectURL(blob)
+    if (myRun !== runId) return
+    total.value = doc.numPages
+    const limit = Math.min(showAll.value ? MAX_PAGES : props.initialPages, doc.numPages)
+
+    const list: PageThumb[] = []
+    for (let p = 1; p <= limit; p++) {
+      const viewport = (await doc.getPage(p)).getViewport({ scale: 1 })
+      const canvas = await renderPageToCanvas(doc, p, THUMB_SCALE)
+      const blob = await canvasToBlob(canvas, 'image/png')
+      if (myRun !== runId) return
+      list.push({
+        page: p,
+        url: URL.createObjectURL(blob),
+        width: viewport.width,
+        height: viewport.height,
+      })
+      // Publish progressively so pages appear as they finish.
+      thumbs.value = [...list]
+    }
   } catch {
-    failed.value = true
+    if (myRun === runId) failed.value = true
   } finally {
     await closeDoc(doc)
-    loading.value = false
+    if (myRun === runId) loading.value = false
   }
 }
 
-watch(() => props.file, render, { immediate: true })
+watch(
+  () => props.file,
+  () => {
+    showAll.value = false
+    render()
+  },
+  { immediate: true },
+)
+watch(showAll, (all) => all && render())
 onBeforeUnmount(revoke)
+
+/**
+ * Size each page box to its real aspect ratio and fit it inside the square
+ * cell — a rectangle that fits unrotated also fits at 90°/270°.
+ */
+function pageStyle(t: PageThumb) {
+  const rotation = props.rotationFor?.(t.page) ?? 0
+  const portrait = t.height >= t.width
+  return {
+    aspectRatio: `${t.width} / ${t.height}`,
+    [portrait ? 'height' : 'width']: '100%',
+    transform: rotation ? `rotate(${rotation}deg)` : undefined,
+  }
+}
 </script>
 
 <template>
-  <figure class="pdf-preview">
-    <Skeleton v-if="loading" variant="rect" width="180px" height="240px" radius="8px" />
-    <div v-else-if="failed" class="pdf-preview__fallback">
+  <div class="pdf-preview">
+    <div v-if="failed" class="pdf-preview__fallback">
       <Icon :name="UI_ICON.filePdf" size="28" />
       <span>Preview unavailable</span>
     </div>
-    <img v-else :src="src" class="pdf-preview__page" alt="First page of the uploaded PDF" />
-    <figcaption v-if="pageCount > 1" class="pdf-preview__caption">
-      Page 1 of {{ pageCount }}
-    </figcaption>
-  </figure>
+
+    <template v-else>
+      <ul class="pdf-preview__grid">
+        <li v-for="t in thumbs" :key="t.page" class="pdf-preview__cell">
+          <div class="pdf-preview__box">
+            <div class="pdf-preview__page" :style="pageStyle(t)">
+              <img :src="t.url" :alt="`Page ${t.page}`" class="pdf-preview__img" />
+              <div class="pdf-preview__overlay">
+                <slot name="overlay" :page="t.page" :width="t.width" :height="t.height" />
+              </div>
+            </div>
+          </div>
+          <span class="pdf-preview__num">{{ t.page }}</span>
+        </li>
+
+        <li v-if="loading" class="pdf-preview__cell" aria-hidden="true">
+          <div class="pdf-preview__box">
+            <Skeleton variant="rect" width="100%" height="100%" radius="6px" />
+          </div>
+        </li>
+      </ul>
+
+      <div v-if="!loading && total > thumbs.length" class="pdf-preview__more">
+        <Button v-if="!showAll" variant="ghost" size="sm" @click="showAll = true">
+          Show all {{ Math.min(total, MAX_PAGES) }} pages
+        </Button>
+        <span v-else class="pdf-preview__note">
+          Previewing the first {{ thumbs.length }} of {{ total }} pages
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <style scoped>
 .pdf-preview {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+.pdf-preview__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+.pdf-preview__cell {
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  margin: 0;
+  gap: 0.3rem;
+  min-width: 0;
+}
+/* Square box: any 90° rotation of a fitting rectangle still fits. */
+.pdf-preview__box {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 .pdf-preview__page {
-  max-width: 180px;
-  max-height: 240px;
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--neutral-0);
   box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 0.08));
+  overflow: hidden;
+  transition: transform 0.15s var(--ease-standard, ease);
+  /* Overlays size themselves against the real page via cqw/cqh. */
+  container-type: size;
+}
+.pdf-preview__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.pdf-preview__overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pdf-preview__num {
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.pdf-preview__more {
+  display: flex;
+  justify-content: center;
+}
+.pdf-preview__note {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
 }
 .pdf-preview__fallback {
   display: flex;
@@ -93,15 +236,17 @@ onBeforeUnmount(revoke)
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  width: 180px;
-  height: 240px;
+  width: 100%;
+  min-height: 140px;
   border: 1px dashed var(--border-subtle);
   border-radius: 8px;
   color: var(--text-tertiary);
   font-size: 0.8125rem;
 }
-.pdf-preview__caption {
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
+
+@media (prefers-reduced-motion: reduce) {
+  .pdf-preview__page {
+    transition: none;
+  }
 }
 </style>

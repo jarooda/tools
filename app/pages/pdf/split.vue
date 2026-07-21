@@ -143,10 +143,10 @@ watch([mode, rangeSpec, chunkSize], () => {
 
     <div v-else class="sp">
       <div class="sp__file">
-        <PdfPreview :file="sourceFile" :page-count="pageCount" />
         <p class="sp__source">
           {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
         </p>
+        <PdfPreview :file="sourceFile" />
       </div>
 
       <Field label="Split mode">
@@ -203,8 +203,8 @@ watch([mode, rangeSpec, chunkSize], () => {
 }
 .sp__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .sp__source {
   margin: 0;

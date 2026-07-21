@@ -132,8 +132,8 @@ async function run() {
 
     <div v-else class="cp">
       <div class="cp__file">
-        <PdfPreview :file="sourceFile" />
         <p class="cp__source">{{ sourceFile.name }} · {{ formatBytes(originalSize) }}</p>
+        <PdfPreview :file="sourceFile" />
       </div>
 
       <Field label="Method">
@@ -215,8 +215,8 @@ async function run() {
 }
 .cp__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .cp__source {
   margin: 0;

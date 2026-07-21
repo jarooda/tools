@@ -104,8 +104,8 @@ async function run() {
 
     <div v-else class="pr">
       <div class="pr__file">
-        <PdfPreview :file="sourceFile" />
         <p class="pr__source">{{ sourceFile.name }}</p>
+        <PdfPreview :file="sourceFile" />
       </div>
 
       <Field
@@ -173,8 +173,8 @@ async function run() {
 }
 .pr__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .pr__source {
   margin: 0;

@@ -65,6 +65,27 @@ function reset() {
   error.value = ''
 }
 
+/**
+ * Pages the current scope targets, as a Set for the preview to test against.
+ * Invalid range input simply previews nothing rather than throwing.
+ */
+const targetPages = computed(() => {
+  if (!pageCount.value) return new Set<number>()
+  if (scope.value === 'all') {
+    return new Set(Array.from({ length: pageCount.value }, (_, i) => i + 1))
+  }
+  try {
+    return new Set(parsePdfPageList(rangeSpec.value, pageCount.value))
+  } catch {
+    return new Set<number>()
+  }
+})
+
+/** Live preview rotation — only the pages this run would actually turn. */
+function previewRotation(page: number) {
+  return targetPages.value.has(page) ? Number(angle.value) : 0
+}
+
 const summary = computed(() =>
   scope.value === 'all'
     ? `Rotating all ${pageCount.value} pages`
@@ -127,10 +148,10 @@ async function run() {
 
     <div v-else class="rt">
       <div class="rt__file">
-        <PdfPreview :file="sourceFile" :page-count="pageCount" />
         <p class="rt__source">
           {{ sourceFile.name }} · {{ pageCount }} page{{ pageCount === 1 ? '' : 's' }}
         </p>
+        <PdfPreview :file="sourceFile" :rotation-for="previewRotation" />
       </div>
 
       <Field label="Rotation">
@@ -179,8 +200,8 @@ async function run() {
 }
 .rt__file {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .rt__source {
   margin: 0;
