@@ -123,7 +123,12 @@ watch(
         <ProcessingBadge :tag="tool.tag" />
         <template #actions>
           <IconButton variant="ghost" aria-label="Toggle theme" @click="toggleTheme">
-            <Icon :name="isDark ? UI_ICON.themeLight : UI_ICON.themeDark" size="18" />
+            <!-- Client-only glyph: the theme is read from localStorage / the OS
+                 preference, so an SSR'd icon would mismatch on hydration. -->
+            <ClientOnly>
+              <Icon :name="isDark ? UI_ICON.themeLight : UI_ICON.themeDark" size="18" />
+              <template #fallback><Icon :name="UI_ICON.themeDark" size="18" /></template>
+            </ClientOnly>
           </IconButton>
         </template>
       </PageHeader>

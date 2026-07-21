@@ -20,7 +20,13 @@ const { isDark, toggle: toggleTheme } = useTheme()
       100% private
     </span>
     <IconButton variant="ghost" aria-label="Toggle theme" @click="toggleTheme">
-      <Icon :name="isDark ? UI_ICON.themeLight : UI_ICON.themeDark" size="18" />
+      <!-- The active theme comes from localStorage / the OS preference, which the
+           server can't know — render the glyph client-side only so it never
+           hydration-mismatches. The button itself stays SSR'd for stable layout. -->
+      <ClientOnly>
+        <Icon :name="isDark ? UI_ICON.themeLight : UI_ICON.themeDark" size="18" />
+        <template #fallback><Icon :name="UI_ICON.themeDark" size="18" /></template>
+      </ClientOnly>
     </IconButton>
   </div>
 </template>
