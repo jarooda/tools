@@ -12,6 +12,7 @@ import {
 import { PageHeader } from '@/components/ui/page-header'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { IconButton } from '@/components/ui/icon-button'
+import { Tooltip } from '@/components/ui/tooltip'
 import ProcessingBadge from '@/components/tool/ProcessingBadge.vue'
 import SiteFooter from '@/components/tool/SiteFooter.vue'
 import { APP_NAME } from '@/lib/config'
@@ -70,12 +71,19 @@ watch(
     <template #sidebar>
       <Sidebar>
         <SidebarHeader>
-          <NuxtLink to="/" class="brand" title="Back to all tools">
-            <span class="brand__mark" aria-hidden="true">
-              <Icon :name="UI_ICON.brand" size="18" />
-            </span>
-            <span class="brand__name">{{ APP_NAME }}</span>
-          </NuxtLink>
+          <Tooltip side="bottom" content="Back to all tools">
+            <NuxtLink to="/" class="brand">
+              <img
+                class="brand__mark"
+                src="/android-chrome-192x192.png"
+                alt=""
+                width="30"
+                height="30"
+                aria-hidden="true"
+              />
+              <span class="brand__name">{{ APP_NAME }}</span>
+            </NuxtLink>
+          </Tooltip>
         </SidebarHeader>
         <SidebarBody>
           <SidebarGroup label="Browse">
@@ -153,14 +161,12 @@ watch(
   text-decoration: none;
 }
 .brand__mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: var(--accent);
-  color: var(--text-on-brand);
+  /* The icon file ships its own white plate and padding, so no accent
+     background or glyph colour here — those would sit behind an opaque image. */
+  object-fit: contain;
 }
 .brand__name {
   line-height: 1;

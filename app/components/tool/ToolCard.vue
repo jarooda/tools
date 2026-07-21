@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { computed, resolveComponent } from 'vue'
 import ProcessingBadge from '@/components/tool/ProcessingBadge.vue'
-import { CATEGORY_ICON } from '@/lib/icons'
+import { Tooltip } from '@/components/ui/tooltip'
+import { CATEGORY_ICON, UI_ICON } from '@/lib/icons'
 import { toolRoute, type Tool } from '@/lib/tools/registry'
 
 const props = defineProps<{ tool: Tool }>()
 const to = toolRoute(props.tool)
-const disabled = computed(() => props.tool.status !== 'live')
 const icon = computed(() => CATEGORY_ICON[props.tool.category])
+
+const { isUnavailableOffline, offlineHint } = useOfflineTools()
+
+const comingSoon = computed(() => props.tool.status !== 'live')
+// Only meaningful for live tools — a planned one is already unreachable.
+const offlineBlocked = computed(() => !comingSoon.value && isUnavailableOffline(props.tool))
+const disabled = computed(() => comingSoon.value || offlineBlocked.value)
 
 // Resolve the real NuxtLink component — passing the string "NuxtLink" to
 // `<component :is>` fails to resolve during SSR and renders a plain element.
@@ -21,6 +28,7 @@ const rootEl = computed(() => (disabled.value ? 'div' : NuxtLink))
     :to="disabled ? undefined : to"
     class="tool-card"
     :class="{ 'tool-card--disabled': disabled }"
+    :aria-disabled="disabled ? 'true' : undefined"
   >
     <div class="tool-card__top">
       <span class="tool-card__icon" aria-hidden="true">
@@ -32,7 +40,15 @@ const rootEl = computed(() => (disabled.value ? 'div' : NuxtLink))
       <h3 class="tool-card__title">{{ tool.title }}</h3>
       <p class="tool-card__desc">{{ tool.description }}</p>
     </div>
-    <span v-if="disabled" class="tool-card__soon">Coming soon</span>
+    <span v-if="comingSoon" class="tool-card__soon">Coming soon</span>
+    <!-- The hint hangs off the pill rather than the card: the card is a grid
+         item, and the tooltip's inline-flex wrapper would collapse it. -->
+    <Tooltip v-else-if="offlineBlocked" class="tool-card__offline-tip" :content="offlineHint(tool)">
+      <span class="tool-card__offline">
+        <Icon :name="UI_ICON.offline" size="13" />
+        Unavailable offline
+      </span>
+    </Tooltip>
   </component>
 </template>
 
@@ -92,6 +108,26 @@ const rootEl = computed(() => (disabled.value ? 'div' : NuxtLink))
 }
 .tool-card__soon {
   font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+/* Full-sentence hint — wrap it instead of letting the default nowrap run past
+   the card. Scoped to this one tooltip: a bare `.tool-card :deep(…)` also hits
+   the ProcessingBadge tooltip nested in the card and squashes it into a narrow
+   column, since its positioning context is only as wide as the badge. */
+.tool-card__offline-tip :deep(.jl-tooltip__pop) {
+  white-space: normal;
+  /* max-content so the box grows to the 220px cap instead of shrink-to-fitting
+     to the width of the pill it hangs off. */
+  width: max-content;
+  max-width: 220px;
+  text-align: center;
+}
+.tool-card__offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 550;
   color: var(--text-tertiary);
 }
 </style>

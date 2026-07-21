@@ -6,6 +6,7 @@ import { Select } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip } from '@/components/ui/tooltip'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import {
@@ -74,17 +75,21 @@ onMounted(() => {
       </div>
       <template v-else>
         <div class="pal__swatches">
-          <button
+          <Tooltip
             v-for="hex in palette"
             :key="hex"
-            type="button"
-            class="pal__swatch"
-            :style="{ background: hex }"
-            :title="`Copy ${hex}`"
-            @click="copySwatch(hex)"
+            class="pal__swatch-tip"
+            :content="`Copy ${hex}`"
           >
-            <span class="pal__swatch-label">{{ lastCopied === hex ? 'Copied!' : hex }}</span>
-          </button>
+            <button
+              type="button"
+              class="pal__swatch"
+              :style="{ background: hex }"
+              @click="copySwatch(hex)"
+            >
+              <span class="pal__swatch-label">{{ lastCopied === hex ? 'Copied!' : hex }}</span>
+            </button>
+          </Tooltip>
         </div>
 
         <!-- Gradient -->
@@ -155,7 +160,13 @@ onMounted(() => {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 0.75rem;
 }
+/* The tooltip wrapper takes the swatch's place as the grid item, so it has to
+   pass the full cell width down to the button. */
+.pal__swatch-tip {
+  display: flex;
+}
 .pal__swatch {
+  flex: 1;
   display: flex;
   align-items: flex-end;
   height: 110px;

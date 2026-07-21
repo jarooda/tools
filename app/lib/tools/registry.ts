@@ -15,6 +15,20 @@ export type ProcessingTag = 'client' | 'server' | 'hybrid'
 /** `live` = page exists and works. `planned` = registered but not built yet. */
 export type ToolStatus = 'live' | 'planned'
 
+/**
+ * What a tool must fetch before it can run, beyond the precached app shell.
+ * Deliberately separate from `tag`: that says *where* processing happens, which
+ * isn't the same question as whether the tool works with no connection.
+ *
+ * Omitted (the common case) = works offline the moment the shell is cached.
+ *
+ *   • `network`     — every run needs a live server round-trip; never offline.
+ *   • `ffmpeg-core` — the ~31 MB wasm core. Too big to precache, so the service
+ *                     worker caches it on first use; offline-capable after that.
+ *   • `ml-model`    — segmentation weights fetched from a CDN on first use.
+ */
+export type ToolRequirement = 'network' | 'ffmpeg-core' | 'ml-model'
+
 export interface Tool {
   /** Globally unique id, also used as a stable key. */
   id: string
@@ -27,6 +41,8 @@ export interface Tool {
   /** Extra search terms for ⌘K (title/description are always searched). */
   keywords: string[]
   status: ToolStatus
+  /** Runtime dependency that affects offline availability. See ToolRequirement. */
+  requires?: ToolRequirement
 }
 
 export const tools: Tool[] = [
@@ -149,6 +165,7 @@ export const tools: Tool[] = [
     description: 'Convert between world currencies at recent exchange rates.',
     keywords: ['currency', 'money', 'exchange rate', 'forex', 'usd', 'eur'],
     status: 'live',
+    requires: 'network',
   },
   {
     id: 'image-watermark',
@@ -269,6 +286,7 @@ export const tools: Tool[] = [
     description: 'Cut out the background from an image to make it transparent.',
     keywords: ['remove background', 'transparent', 'cutout', 'subject', 'png'],
     status: 'live',
+    requires: 'ml-model',
   },
   {
     id: 'pdf-merge',
@@ -669,6 +687,7 @@ export const tools: Tool[] = [
     description: 'Convert video and audio between MP4, WebM, MP3, WAV, and more in your browser.',
     keywords: ['video', 'audio', 'convert', 'mp4', 'webm', 'mp3', 'wav', 'transcode', 'ffmpeg'],
     status: 'live',
+    requires: 'ffmpeg-core',
   },
   {
     id: 'media-trim',
@@ -679,6 +698,7 @@ export const tools: Tool[] = [
     description: 'Cut a clip out of a video or audio file without uploading it anywhere.',
     keywords: ['trim', 'cut', 'clip', 'crop video', 'shorten', 'split', 'ffmpeg'],
     status: 'live',
+    requires: 'ffmpeg-core',
   },
   {
     id: 'media-extract-audio',
@@ -689,6 +709,7 @@ export const tools: Tool[] = [
     description: 'Pull the soundtrack out of a video as MP3, M4A, WAV, or FLAC.',
     keywords: ['extract audio', 'video to mp3', 'rip audio', 'soundtrack', 'mp3', 'ffmpeg'],
     status: 'live',
+    requires: 'ffmpeg-core',
   },
   {
     id: 'media-gif',
@@ -699,6 +720,7 @@ export const tools: Tool[] = [
     description: 'Turn a section of a video into an animated GIF, entirely in your browser.',
     keywords: ['gif', 'animated gif', 'video to gif', 'gif maker', 'ffmpeg'],
     status: 'live',
+    requires: 'ffmpeg-core',
   },
 ]
 

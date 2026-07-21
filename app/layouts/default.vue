@@ -2,7 +2,6 @@
 import HeaderActions from '@/components/tool/HeaderActions.vue'
 import SiteFooter from '@/components/tool/SiteFooter.vue'
 import { APP_NAME } from '@/lib/config'
-import { UI_ICON } from '@/lib/icons'
 
 /**
  * Marketing / browse layout — a plain sticky top header, no sidebar.
@@ -15,9 +14,14 @@ import { UI_ICON } from '@/lib/icons'
   <div class="site">
     <header class="site__header">
       <NuxtLink to="/" class="brand">
-        <span class="brand__mark" aria-hidden="true">
-          <Icon :name="UI_ICON.brand" size="18" />
-        </span>
+        <img
+          class="brand__mark"
+          src="/android-chrome-192x192.png"
+          alt=""
+          width="30"
+          height="30"
+          aria-hidden="true"
+        />
         <span class="brand__name">{{ APP_NAME }}</span>
       </NuxtLink>
       <nav class="site__nav">
@@ -65,14 +69,12 @@ import { UI_ICON } from '@/lib/icons'
   text-decoration: none;
 }
 .brand__mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: var(--accent);
-  color: var(--text-on-brand);
+  /* The icon file ships its own white plate and padding, so no accent
+     background or glyph colour here — those would sit behind an opaque image. */
+  object-fit: contain;
 }
 .site__nav {
   display: flex;

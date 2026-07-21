@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { IconButton } from '@/components/ui/icon-button'
 import { Kbd } from '@/components/ui/kbd'
+import { Tooltip } from '@/components/ui/tooltip'
 import { UI_ICON } from '@/lib/icons'
 
 /** Right-hand header cluster shared by both layouts: ⌘K search, privacy pill, theme toggle. */
 const { openPalette } = usePalette()
 const { isDark, toggle: toggleTheme } = useTheme()
+const { offline } = useOfflineTools()
 </script>
 
 <template>
@@ -15,6 +17,18 @@ const { isDark, toggle: toggleTheme } = useTheme()
       <span class="header-actions__search-label">Search tools</span>
       <Kbd>⌘K</Kbd>
     </button>
+    <!-- Only surfaced when the connection drops; online is the unremarkable
+         default and doesn't need a permanent badge. -->
+    <Tooltip
+      v-if="offline"
+      side="bottom"
+      content="You are offline. Tools that need a connection are disabled."
+    >
+      <span class="header-actions__offline" role="status" aria-label="You are offline">
+        <Icon :name="UI_ICON.offline" size="13" />
+        <span class="header-actions__offline-label">Offline</span>
+      </span>
+    </Tooltip>
     <span class="header-actions__private">
       <Icon :name="UI_ICON.private" size="13" />
       100% private
@@ -66,11 +80,42 @@ const { isDark, toggle: toggleTheme } = useTheme()
   font-weight: 600;
   white-space: nowrap;
 }
+/* The offline hint is a full sentence — let it wrap instead of running off the
+   right edge of the viewport, which the tooltip's default nowrap would do. */
+.header-actions :deep(.jl-tooltip__pop) {
+  white-space: normal;
+  /* max-content so the box grows to the 220px cap instead of shrink-to-fitting
+     to the width of the small offline badge. */
+  width: max-content;
+  max-width: 220px;
+  text-align: center;
+}
+.header-actions__offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--warning-subtle);
+  color: var(--warning-text);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 @media (max-width: 640px) {
   .header-actions__private {
     display: none;
   }
   .header-actions__search-label {
+    display: none;
+  }
+  /* The offline badge survives the mobile cull — unlike the privacy pill it
+     reports a state change the user needs to see. Icon-only to save room. */
+  .header-actions__offline {
+    padding: 0 8px;
+  }
+  .header-actions__offline-label {
     display: none;
   }
 }
