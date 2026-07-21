@@ -19,8 +19,26 @@ const ready = ref(false)
 /** 0–1 progress of the running command (ffmpeg's own estimate). */
 const progress = ref(0)
 const running = ref(false)
-/** Last line ffmpeg logged — handy for surfacing a real failure reason. */
-const lastLog = ref('')
+/**
+ * Rolling tail of ffmpeg's log for the current run. The real reason a command
+ * failed is rarely the final line — a wasm abort prints "Aborted()" *after*
+ * the message that explains it — so we keep a window rather than just the last
+ * line, and pages can pattern-match it for a friendlier error.
+ */
+const logTail = ref<string[]>([])
+const LOG_TAIL_LINES = 40
+
+/** Lines that never explain anything on their own. */
+const NOISE = /^\s*$|^Aborted\(\)$/
+
+/** The most informative recent log line, for use as an error message. */
+function bestLogLine(): string {
+  for (let i = logTail.value.length - 1; i >= 0; i--) {
+    const line = logTail.value[i]!
+    if (!NOISE.test(line)) return line.trim()
+  }
+  return ''
+}
 
 let loadPromise: Promise<FFmpeg> | null = null
 
@@ -64,7 +82,10 @@ export function useFfmpeg() {
         import('@ffmpeg/core/wasm?url').then((m) => m.default),
       ])
       const ffmpeg = new FFmpeg()
-      ffmpeg.on('log', ({ message }) => (lastLog.value = message))
+      ffmpeg.on('log', ({ message }) => {
+        const next = [...logTail.value, message]
+        logTail.value = next.length > LOG_TAIL_LINES ? next.slice(-LOG_TAIL_LINES) : next
+      })
       ffmpeg.on('progress', (event) => {
         // ffmpeg's estimate can overshoot past 1 near the end of a run.
         progress.value = Math.min(Math.max(event.progress, 0), 1)
@@ -113,6 +134,9 @@ export function useFfmpeg() {
 
     running.value = true
     progress.value = 0
+    // Start each run with a clean log so a stale line from the previous command
+    // can never be reported as this one's failure.
+    logTail.value = []
     try {
       await ffmpeg.writeFile(input, await fetchFile(file))
       let code: number
@@ -127,10 +151,10 @@ export function useFfmpeg() {
         // ffmpeg.wasm rejects with a bare string or an event for these, so
         // `err.message` is often empty — ffmpeg's own last log line is the
         // only thing carrying a real reason.
-        throw new Error(lastLog.value || String(err) || 'ffmpeg failed to run.')
+        throw new Error(bestLogLine() || String(err) || 'ffmpeg failed to run.')
       }
       if (code !== 0) {
-        throw new Error(lastLog.value || `ffmpeg exited with code ${code}.`)
+        throw new Error(bestLogLine() || `ffmpeg exited with code ${code}.`)
       }
       const data = await ffmpeg.readFile(output)
       // readFile hands back a Uint8Array for binary output; copy into a Blob
@@ -199,6 +223,7 @@ export function useFfmpeg() {
     ready: readonly(ready),
     running: readonly(running),
     progress: readonly(progress),
-    lastLog: readonly(lastLog),
+    /** Recent ffmpeg output, newest last — for pattern-matching failures. */
+    logTail: readonly(logTail),
   }
 }

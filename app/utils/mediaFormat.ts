@@ -188,6 +188,33 @@ export function buildMediaConvertArgs({
   return args
 }
 
+export interface AudioExtractOptions {
+  input: string
+  output: string
+  /** Target format id — must be one of {@link MEDIA_AUDIO_FORMATS}. */
+  format: string
+  quality: MediaQuality
+  /** Zero-based audio track to pull out, for files carrying several. */
+  track?: number
+}
+
+/**
+ * Full ffmpeg argv for pulling the audio track out of a video.
+ *
+ * `-map 0:a:<n>` picks one specific audio stream rather than letting ffmpeg
+ * guess, which matters for files carrying several language tracks; ffmpeg
+ * fails loudly if the file has no audio at all, which is what we want.
+ */
+export function buildAudioExtractArgs({
+  input,
+  output,
+  format,
+  quality,
+  track = 0,
+}: AudioExtractOptions): string[] {
+  return ['-i', input, '-vn', '-map', `0:a:${track}`, ...audioCodecArgs(format, quality), output]
+}
+
 /**
  * The format a precise (re-encoding) trim should target for a given source.
  *

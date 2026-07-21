@@ -680,6 +680,16 @@ export const tools: Tool[] = [
     keywords: ['trim', 'cut', 'clip', 'crop video', 'shorten', 'split', 'ffmpeg'],
     status: 'live',
   },
+  {
+    id: 'media-extract-audio',
+    title: 'Extract Audio from Video',
+    category: 'media',
+    slug: 'extract-audio',
+    tag: 'hybrid',
+    description: 'Pull the soundtrack out of a video as MP3, M4A, WAV, or FLAC.',
+    keywords: ['extract audio', 'video to mp3', 'rip audio', 'soundtrack', 'mp3', 'ffmpeg'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

@@ -3,6 +3,7 @@ import {
   MEDIA_AUDIO_FORMATS,
   MEDIA_FORMATS,
   MEDIA_VIDEO_FORMATS,
+  buildAudioExtractArgs,
   buildMediaConvertArgs,
   buildMediaTrimArgs,
   getMediaFormat,
@@ -187,5 +188,43 @@ describe('buildMediaTrimArgs', () => {
   it('puts the output path last', () => {
     expect(buildMediaTrimArgs({ ...base, reencode: false }).at(-1)).toBe('out.mp4')
     expect(buildMediaTrimArgs({ ...base, reencode: true }).at(-1)).toBe('out.mp4')
+  })
+})
+
+describe('buildAudioExtractArgs', () => {
+  const base = { input: 'in.mp4', output: 'out.mp3', quality: 'balanced' as const }
+
+  it('drops video and maps one explicit audio track', () => {
+    const args = buildAudioExtractArgs({ ...base, format: 'mp3' })
+    expect(args.slice(0, 2)).toEqual(['-i', 'in.mp4'])
+    expect(args).toContain('-vn')
+    expect(flag(args, '-map')).toBe('0:a:0')
+    expect(flag(args, '-c:a')).toBe('libmp3lame')
+    expect(args.at(-1)).toBe('out.mp3')
+  })
+
+  it('can target a later audio track on multi-language files', () => {
+    const args = buildAudioExtractArgs({ ...base, format: 'mp3', track: 2 })
+    expect(flag(args, '-map')).toBe('0:a:2')
+  })
+
+  it('honours the quality preset for lossy targets', () => {
+    const args = buildAudioExtractArgs({ ...base, format: 'm4a', quality: 'high' })
+    expect(flag(args, '-c:a')).toBe('aac')
+    expect(flag(args, '-b:a')).toBe('256k')
+  })
+
+  it('emits no bitrate for lossless targets', () => {
+    for (const format of ['wav', 'flac']) {
+      const args = buildAudioExtractArgs({ ...base, format, output: `out.${format}` })
+      expect(args).not.toContain('-b:a')
+    }
+  })
+
+  it('never routes to an encoder the core cannot run', () => {
+    for (const f of MEDIA_AUDIO_FORMATS) {
+      const args = buildAudioExtractArgs({ ...base, format: f.value, output: `out.${f.ext}` })
+      for (const codec of ['libopus', 'libvorbis']) expect(args).not.toContain(codec)
+    }
   })
 })
