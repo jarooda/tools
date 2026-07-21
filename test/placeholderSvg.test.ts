@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { placeholderSvg, placeholderLabel, placeholderFontSize } from '@/utils/placeholderSvg'
+import { placeholderSvg, placeholderLabel, placeholderFontSize } from '#shared/utils/placeholderSvg'
 
 describe('placeholderLabel', () => {
   it('falls back to dimensions when text is blank', () => {

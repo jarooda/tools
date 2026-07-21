@@ -4,11 +4,14 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { Input } from '@/components/ui/input'
+import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
-import { placeholderSvg, placeholderLabel } from '@/utils/placeholderSvg'
+import { placeholderSvg, placeholderLabel } from '#shared/utils/placeholderSvg'
+import { PLACEHOLD_FONTS, buildPlaceholdPath, type PlaceholdFont } from '#shared/utils/placeholdUrl'
 
 definePageMeta({ layout: 'tool' })
 
@@ -19,7 +22,14 @@ const height = ref<number | null>(400)
 const bg = ref('#e2e8f0')
 const fg = ref('#475569')
 const label = ref('')
+const font = ref<PlaceholdFont>('sans')
 const ready = ref(false)
+
+const fontOptions = [
+  { value: 'sans', label: 'Sans' },
+  { value: 'serif', label: 'Serif' },
+  { value: 'mono', label: 'Mono' },
+]
 
 const w = computed(() => Math.max(1, Math.round(width.value ?? 1)))
 const h = computed(() => Math.max(1, Math.round(height.value ?? 1)))
@@ -31,7 +41,26 @@ const svg = computed(() =>
     bg: bg.value,
     fg: fg.value,
     text: label.value,
+    fontFamily: PLACEHOLD_FONTS[font.value],
   }),
+)
+
+/**
+ * Shareable URL for the same image, served by `/placehold/*`. The preview above
+ * is generated locally; this link is the one thing that hits the server.
+ */
+const requestUrl = useRequestURL()
+const shareUrl = computed(
+  () =>
+    requestUrl.origin +
+    buildPlaceholdPath({
+      width: w.value,
+      height: h.value,
+      bg: bg.value,
+      fg: fg.value,
+      text: label.value,
+      font: font.value,
+    }),
 )
 const dataUrl = computed(() => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.value)}`)
 const shownLabel = computed(() => placeholderLabel(w.value, h.value, label.value))
@@ -76,6 +105,9 @@ onMounted(() => {
         <Field label="Label (optional)" class="ph__label-field">
           <Input v-model="label" :placeholder="`${w}×${h}`" />
         </Field>
+        <Field label="Font" class="ph__font-field">
+          <SegmentedControl v-model="font" :options="fontOptions" size="sm" />
+        </Field>
         <div class="ph__colors">
           <label class="ph__color">
             <span>Background</span>
@@ -105,6 +137,14 @@ onMounted(() => {
               <template #icon><Icon :name="UI_ICON.download" size="16" /></template>
               SVG
             </Button>
+          </div>
+
+          <div class="ph__url">
+            <Snippet variant="block" title="Image URL" :code="shareUrl" />
+            <p class="ph__url-hint">
+              Drop this straight into an <code>&lt;img src&gt;</code>. Unlike the preview above —
+              which is generated in your browser — this URL is rendered by our server.
+            </p>
           </div>
         </template>
       </div>
@@ -179,5 +219,20 @@ onMounted(() => {
 .ph__actions {
   display: flex;
   gap: 0.5rem;
+}
+.ph__url {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+.ph__url-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}
+.ph__url-hint code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
 }
 </style>

@@ -10,6 +10,8 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./app', import.meta.url)),
       '~': fileURLToPath(new URL('./app', import.meta.url)),
+      // Mirrors the `#shared` alias Nuxt wires into both the app and Nitro.
+      '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
     },
   },
 })

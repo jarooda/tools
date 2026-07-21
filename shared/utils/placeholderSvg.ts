@@ -13,6 +13,12 @@ export interface PlaceholderOptions {
   text?: string
   /** Font size in px; auto-derived from the smaller side when omitted. */
   fontSize?: number
+  /**
+   * CSS font-family stack. Must be a family the *viewer* already has: an SVG
+   * loaded through `<img src>` cannot fetch external resources, so webfonts
+   * never apply. Defaults to the system sans stack.
+   */
+  fontFamily?: string
 }
 
 const escapeXml = (s: string) =>
@@ -43,7 +49,8 @@ export function placeholderSvg(opts: PlaceholderOptions): string {
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`,
     `<rect width="100%" height="100%" fill="${escapeXml(opts.bg)}"/>`,
-    `<text x="50%" y="50%" fill="${escapeXml(opts.fg)}" font-family="system-ui, sans-serif"` +
+    `<text x="50%" y="50%" fill="${escapeXml(opts.fg)}"` +
+      ` font-family="${escapeXml(opts.fontFamily ?? 'system-ui, sans-serif')}"` +
       ` font-size="${fontSize}" font-weight="600" text-anchor="middle"` +
       ` dominant-baseline="central">${escapeXml(label)}</text>`,
     `</svg>`,
