@@ -2,11 +2,11 @@
  * Colour parsing & conversion — pure, DOM-free logic (unit-tested in `test/`).
  * Complements `colorFormat.ts` (which owns `rgbToHex` / `rgbToHsl`) with the
  * inverse directions (`hexToRgb`, `hslToRgb`) and a lenient string parser.
- * Names are unique across `app/utils/` so Nuxt auto-import stays unambiguous.
+ * Names are unique across `app/utils/` so Nuxt auto-import stays unambiguous —
+ * in particular the `Rgb`/`Hsl` types are owned solely by `colorFormat.ts` and
+ * must NOT be re-exported here, or auto-import reports a duplicate.
  */
 import { rgbToHex, rgbToHsl, type Rgb, type Hsl } from '@/utils/colorFormat'
-
-export type { Rgb, Hsl }
 
 const clampByte = (n: number) => Math.max(0, Math.min(255, Math.round(n)))
 
