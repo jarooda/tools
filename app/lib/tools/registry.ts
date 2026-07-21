@@ -670,6 +670,16 @@ export const tools: Tool[] = [
     keywords: ['video', 'audio', 'convert', 'mp4', 'webm', 'mp3', 'wav', 'transcode', 'ffmpeg'],
     status: 'live',
   },
+  {
+    id: 'media-trim',
+    title: 'Trim Audio & Video',
+    category: 'media',
+    slug: 'trim',
+    tag: 'hybrid',
+    description: 'Cut a clip out of a video or audio file without uploading it anywhere.',
+    keywords: ['trim', 'cut', 'clip', 'crop video', 'shorten', 'split', 'ffmpeg'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

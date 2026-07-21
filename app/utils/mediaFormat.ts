@@ -11,6 +11,7 @@
  * are intentionally not listed. Verified against @ffmpeg/core 0.12.6 & 0.12.10
  * with both an audio-only WAV and a real video file.
  */
+import { formatTimecode } from './mediaTime'
 
 export type MediaKind = 'video' | 'audio'
 
@@ -181,6 +182,83 @@ export function buildMediaConvertArgs({
   } else {
     args.push(...videoCodecArgs(quality), ...audioCodecArgs(format, quality))
     if (format === 'mp4') args.push('-movflags', '+faststart')
+  }
+
+  args.push(output)
+  return args
+}
+
+/**
+ * The format a precise (re-encoding) trim should target for a given source.
+ *
+ * Stream-copy trims keep the source container untouched, but a re-encode has
+ * to land in something this core can actually write — so audio sources keep
+ * their own format where we support it, and everything else becomes MP4.
+ */
+export function trimReencodeFormat(sourceName: string, hasVideo: boolean): string {
+  if (hasVideo) return 'mp4'
+  const ext = /\.([^./\\]+)$/.exec(sourceName)?.[1]?.toLowerCase()
+  switch (ext) {
+    case 'mp3':
+      return 'mp3'
+    case 'wav':
+      return 'wav'
+    case 'flac':
+      return 'flac'
+    case 'm4a':
+    case 'aac':
+      return 'm4a'
+    default:
+      // Unknown or unencodable audio container (ogg, opus, webm audio…).
+      return 'm4a'
+  }
+}
+
+export interface MediaTrimOptions {
+  input: string
+  output: string
+  /** Cut points in seconds, relative to the start of the source. */
+  start: number
+  end: number
+  /** Re-encode for an exact cut instead of copying streams at keyframes. */
+  reencode: boolean
+  /** Target format id, required when `reencode` is set. */
+  format?: string
+  quality?: MediaQuality
+}
+
+/**
+ * Full ffmpeg argv for a trim.
+ *
+ * `-ss` goes **before** `-i` so ffmpeg seeks rather than decoding-and-throwing
+ * away everything up to the cut, and the length is given as `-t` (a duration)
+ * rather than `-to`: input seeking rebases timestamps to zero, which would
+ * make an absolute `-to` cut in the wrong place.
+ */
+export function buildMediaTrimArgs({
+  input,
+  output,
+  start,
+  end,
+  reencode,
+  format = 'mp4',
+  quality = 'balanced',
+}: MediaTrimOptions): string[] {
+  const duration = Math.max(0, end - start)
+  const args = ['-ss', formatTimecode(start), '-i', input, '-t', formatTimecode(duration)]
+
+  if (reencode) {
+    const kind = getMediaFormat(format)?.kind ?? 'video'
+    if (kind === 'audio') {
+      args.push('-vn', ...audioCodecArgs(format, quality))
+    } else {
+      args.push(...videoCodecArgs(quality), ...audioCodecArgs(format, quality))
+      if (format === 'mp4') args.push('-movflags', '+faststart')
+    }
+  } else {
+    // Copying streams keeps the cut instant, but it can only land on a
+    // keyframe. Rebase timestamps so players don't see a gap at the front.
+    args.push('-c', 'copy', '-avoid_negative_ts', 'make_zero')
   }
 
   args.push(output)
