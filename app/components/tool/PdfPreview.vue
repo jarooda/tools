@@ -34,8 +34,8 @@ const props = withDefaults(
   { initialPages: 4, rotationFor: undefined },
 )
 
-/** Render scale for thumbnails — enough detail without rendering full pages. */
-const THUMB_SCALE = 0.5
+/** Render scale for thumbnails — sized for a ~200px+ cell on a hi-dpi screen. */
+const THUMB_SCALE = 0.8
 /** Hard ceiling for "show all" — rendering a 500-page book would lock the tab. */
 const MAX_PAGES = 50
 
@@ -109,10 +109,21 @@ watch(
 watch(showAll, (all) => all && render())
 onBeforeUnmount(revoke)
 
+/** A quarter turn swaps the page's footprint, so it needs a square cell to fit. */
+function isQuarterTurn(page: number) {
+  return Math.abs(props.rotationFor?.(page) ?? 0) % 180 === 90
+}
+
 /**
- * Size each page box to its real aspect ratio and fit it inside the square
- * cell — a rectangle that fits unrotated also fits at 90°/270°.
+ * The cell only has to be square when the page is quarter-turned — otherwise it
+ * takes the page's own aspect ratio, so the thumbnail fills the full column
+ * width instead of being letterboxed inside a square.
  */
+function boxStyle(t: PageThumb) {
+  return { aspectRatio: isQuarterTurn(t.page) ? '1 / 1' : `${t.width} / ${t.height}` }
+}
+
+/** Size the page to its real aspect ratio and fit it inside the cell. */
 function pageStyle(t: PageThumb) {
   const rotation = props.rotationFor?.(t.page) ?? 0
   const portrait = t.height >= t.width
@@ -134,7 +145,7 @@ function pageStyle(t: PageThumb) {
     <template v-else>
       <ul class="pdf-preview__grid">
         <li v-for="t in thumbs" :key="t.page" class="pdf-preview__cell">
-          <div class="pdf-preview__box">
+          <div class="pdf-preview__box" :style="boxStyle(t)">
             <div class="pdf-preview__page" :style="pageStyle(t)">
               <img :src="t.url" :alt="`Page ${t.page}`" class="pdf-preview__img" />
               <div class="pdf-preview__overlay">
@@ -176,8 +187,8 @@ function pageStyle(t: PageThumb) {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
 }
 .pdf-preview__cell {
   display: flex;
@@ -186,7 +197,8 @@ function pageStyle(t: PageThumb) {
   gap: 0.3rem;
   min-width: 0;
 }
-/* Square box: any 90° rotation of a fitting rectangle still fits. */
+/* Aspect comes from `boxStyle` (page ratio, or square for a quarter turn).
+   The square default here covers the loading skeleton, which has no page yet. */
 .pdf-preview__box {
   display: grid;
   place-items: center;
