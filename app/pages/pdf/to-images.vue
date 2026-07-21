@@ -17,7 +17,7 @@ import { formatBytes } from '@/utils/fileSize'
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('pdf-to-images')!
-const { openForRender, renderPageToCanvas, canvasToBlob } = usePdf()
+const { openForRender, closeDoc, renderPageToCanvas, canvasToBlob } = usePdf()
 const { downloadBlob } = useDownload()
 
 const ready = ref(false)
@@ -88,7 +88,7 @@ async function render() {
       result.push({ page: p, blob, url: URL.createObjectURL(blob) })
       progress.value = p
     }
-    doc.destroy()
+    await closeDoc(doc)
     if (myRun !== runId) return
     outputs.value = result
   } catch {

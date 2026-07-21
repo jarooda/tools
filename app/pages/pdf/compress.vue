@@ -18,7 +18,8 @@ import { formatBytes } from '@/utils/fileSize'
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('pdf-compress')!
-const { loadPdfLib, openForRender, renderPageToCanvas, canvasToBlob, readBytes } = usePdf()
+const { loadPdfLib, openForRender, closeDoc, renderPageToCanvas, canvasToBlob, readBytes } =
+  usePdf()
 
 const ready = ref(false)
 onMounted(() => (ready.value = true))
@@ -92,7 +93,7 @@ async function run() {
         if (myRun !== runId) return
         progress.value = p
       }
-      doc.destroy()
+      await closeDoc(doc)
       bytes = await out.save()
     }
 

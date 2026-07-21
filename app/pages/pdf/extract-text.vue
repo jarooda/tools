@@ -14,7 +14,7 @@ import { getTool } from '@/lib/tools/registry'
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('pdf-extract-text')!
-const { openForRender } = usePdf()
+const { openForRender, closeDoc } = usePdf()
 const { downloadText } = useDownload()
 const { copy, copied } = useCopy()
 
@@ -72,7 +72,7 @@ async function extract() {
       if (myRun !== runId) return
       progress.value = p
     }
-    doc.destroy()
+    await closeDoc(doc)
     if (myRun !== runId) return
     text.value = parts.join('\n\n').trim()
   } catch {

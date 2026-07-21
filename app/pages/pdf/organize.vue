@@ -13,7 +13,8 @@ import { getTool } from '@/lib/tools/registry'
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('pdf-organize')!
-const { loadPdfLib, readBytes, openForRender, renderPageToCanvas, canvasToBlob } = usePdf()
+const { loadPdfLib, readBytes, openForRender, closeDoc, renderPageToCanvas, canvasToBlob } =
+  usePdf()
 
 const ready = ref(false)
 onMounted(() => (ready.value = true))
@@ -58,7 +59,7 @@ async function onSelect(file: File) {
       thumbs.push({ original: p - 1, url: URL.createObjectURL(blob) })
       progress.value = p
     }
-    doc.destroy()
+    await closeDoc(doc)
     pages.value = thumbs
   } catch {
     error.value = 'Could not open this PDF. It may be encrypted or invalid.'

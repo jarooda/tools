@@ -24,7 +24,7 @@ const props = withDefaults(
   { pageCount: 0, scale: 1 },
 )
 
-const { openForRender, renderPageToCanvas, canvasToBlob } = usePdf()
+const { openForRender, closeDoc, renderPageToCanvas, canvasToBlob } = usePdf()
 
 const src = ref('')
 const loading = ref(true)
@@ -48,7 +48,7 @@ async function render(file: File) {
   } catch {
     failed.value = true
   } finally {
-    doc?.destroy()
+    await closeDoc(doc)
     loading.value = false
   }
 }

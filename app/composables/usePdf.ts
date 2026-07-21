@@ -39,11 +39,26 @@ export function usePdf() {
     return new Uint8Array(await file.arrayBuffer())
   }
 
-  /** Open a document with pdf.js (for rendering/text). Remember to `.destroy()`. */
+  /** Open a document with pdf.js (for rendering/text). Release it with `closeDoc`. */
   async function openForRender(file: Blob): Promise<PDFDocumentProxy> {
     const pdfjs = await loadPdfjs()
     const data = await readBytes(file)
     return await pdfjs.getDocument({ data }).promise
+  }
+
+  /**
+   * Release a document opened with `openForRender`.
+   *
+   * ⚠️ pdf.js exposes `destroy()` on the **loading task**, not on the document
+   * proxy — `doc.destroy()` throws "is not a function" and leaks the worker.
+   * Always close through here.
+   */
+  async function closeDoc(doc: PDFDocumentProxy | null | undefined): Promise<void> {
+    try {
+      await doc?.loadingTask?.destroy()
+    } catch {
+      /* already torn down — nothing to release */
+    }
   }
 
   /**
@@ -81,6 +96,7 @@ export function usePdf() {
     loadPdfjs,
     readBytes,
     openForRender,
+    closeDoc,
     renderPageToCanvas,
     canvasToBlob,
   }
