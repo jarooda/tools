@@ -43,6 +43,13 @@ async function render() {
       margin: margin.value,
       color: { dark: fg.value, light: bg.value },
     })
+    // The library stamps an inline `width`/`height` style (from its `width`
+    // option) onto the canvas, which outranks our stylesheet and would let the
+    // preview overflow its square frame. Drop it so CSS owns the *display* size;
+    // the width/height attributes — the backing store used for export — remain
+    // at full resolution.
+    el.style.removeProperty('width')
+    el.style.removeProperty('height')
     error.value = null
   } catch (e) {
     error.value = (e as Error).message
@@ -212,7 +219,15 @@ async function downloadSvg() {
   border-radius: var(--radius-control, 0.625rem);
   background: var(--surface-muted, var(--surface-card));
 }
+/* A QR code is always square. The *container* owns the 1:1 geometry and the
+   canvas simply fills it, so the preview can never inherit the canvas's own
+   dimensions — including the 300×150 default it has before the first render. */
 .qr__canvas-wrap {
+  box-sizing: border-box;
+  width: min(240px, 100%);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
   padding: 8px;
   border-radius: 10px;
   background: #fff;
@@ -220,12 +235,7 @@ async function downloadSvg() {
 .qr__canvas {
   display: block;
   width: 100%;
-  max-width: 240px;
-  /* A QR code is always square. Pin the ratio so the box stays 1:1 even before
-     the first render, when a canvas falls back to its default 300×150. */
-  aspect-ratio: 1 / 1;
-  height: auto;
-  image-rendering: pixelated;
+  height: 100%;
 }
 .qr__actions {
   display: flex;
