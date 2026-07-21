@@ -690,6 +690,16 @@ export const tools: Tool[] = [
     keywords: ['extract audio', 'video to mp3', 'rip audio', 'soundtrack', 'mp3', 'ffmpeg'],
     status: 'live',
   },
+  {
+    id: 'media-gif',
+    title: 'Video to GIF',
+    category: 'media',
+    slug: 'gif',
+    tag: 'hybrid',
+    description: 'Turn a section of a video into an animated GIF, entirely in your browser.',
+    keywords: ['gif', 'animated gif', 'video to gif', 'gif maker', 'ffmpeg'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

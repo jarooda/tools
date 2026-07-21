@@ -4,6 +4,7 @@ import {
   MEDIA_FORMATS,
   MEDIA_VIDEO_FORMATS,
   buildAudioExtractArgs,
+  buildGifArgs,
   buildMediaConvertArgs,
   buildMediaTrimArgs,
   getMediaFormat,
@@ -226,5 +227,41 @@ describe('buildAudioExtractArgs', () => {
       const args = buildAudioExtractArgs({ ...base, format: f.value, output: `out.${f.ext}` })
       for (const codec of ['libopus', 'libvorbis']) expect(args).not.toContain(codec)
     }
+  })
+})
+
+describe('buildGifArgs', () => {
+  const base = { input: 'in.mp4', output: 'out.gif', start: 2, end: 5, fps: 12, width: 480 }
+
+  it('seeks before -i and gives the length as a duration', () => {
+    const args = buildGifArgs(base)
+    expect(args.indexOf('-ss')).toBeLessThan(args.indexOf('-i'))
+    expect(flag(args, '-ss')).toBe('00:00:02.000')
+    expect(flag(args, '-t')).toBe('00:00:03.000')
+    expect(args.at(-1)).toBe('out.gif')
+  })
+
+  it('builds a per-clip palette instead of the banded default one', () => {
+    const vf = flag(buildGifArgs(base), '-vf')!
+    expect(vf).toContain('split[s0][s1]')
+    expect(vf).toContain('[s0]palettegen[p]')
+    expect(vf).toContain('[s1][p]paletteuse')
+  })
+
+  it('applies the chosen frame rate and width, keeping the aspect ratio', () => {
+    const vf = flag(buildGifArgs({ ...base, fps: 8, width: 320 }), '-vf')!
+    expect(vf).toContain('fps=8')
+    // -1 lets ffmpeg derive the height from the source aspect ratio.
+    expect(vf).toContain('scale=320:-1:flags=lanczos')
+  })
+
+  it('drops audio and loops forever', () => {
+    const args = buildGifArgs(base)
+    expect(args).toContain('-an')
+    expect(flag(args, '-loop')).toBe('0')
+  })
+
+  it('never emits a negative duration for an inverted range', () => {
+    expect(flag(buildGifArgs({ ...base, start: 9, end: 3 }), '-t')).toBe('00:00:00.000')
   })
 })

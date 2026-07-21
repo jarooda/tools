@@ -241,6 +241,55 @@ export function trimReencodeFormat(sourceName: string, hasVideo: boolean): strin
   }
 }
 
+export interface GifOptions {
+  input: string
+  output: string
+  /** Section of the source to turn into a GIF, in seconds. */
+  start: number
+  end: number
+  /** Frames per second of the result — the biggest lever on file size. */
+  fps: number
+  /** Output width in pixels; height follows the source aspect ratio. */
+  width: number
+}
+
+/**
+ * Full ffmpeg argv for a video → GIF conversion.
+ *
+ * GIF is limited to 256 colours, and ffmpeg's default palette is a fixed web
+ * palette that bands badly. The `split`/`palettegen`/`paletteuse` filter graph
+ * builds a palette from the clip's own colours instead — normally a two-pass
+ * job, but `split` lets it run as a single command, which keeps us to one
+ * round trip through the wasm core.
+ */
+export function buildGifArgs({ input, output, start, end, fps, width }: GifOptions): string[] {
+  const duration = Math.max(0, end - start)
+  const filters = [
+    `fps=${fps}`,
+    // lanczos resampling keeps text and edges legible at small widths.
+    `scale=${width}:-1:flags=lanczos`,
+    'split[s0][s1]',
+    '[s0]palettegen[p]',
+    '[s1][p]paletteuse',
+  ].join(',')
+
+  return [
+    '-ss',
+    formatTimecode(start),
+    '-i',
+    input,
+    '-t',
+    formatTimecode(duration),
+    '-an',
+    '-vf',
+    filters,
+    // 0 means loop forever, which is what people expect from a GIF.
+    '-loop',
+    '0',
+    output,
+  ]
+}
+
 export interface MediaTrimOptions {
   input: string
   output: string
