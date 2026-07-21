@@ -22,6 +22,19 @@ export default defineNuxtConfig({
   // because the bundled worker chunk under /_nuxt/ carries no COEP header.
   // Only reintroduce these headers alongside `@ffmpeg/core-mt`, and then they
   // must also cover /_nuxt/**.
+  vite: {
+    optimizeDeps: {
+      // ffmpeg.wasm spawns its worker with
+      // `new Worker(new URL('./worker.js', import.meta.url), { type: 'module' })`.
+      // Vite's dep optimizer rewrites that URL to a path inside
+      // node_modules/.cache/vite that it never emits, so in **dev** the worker
+      // 404s ("The file does not exist at .../worker.js?worker_file&type=module"),
+      // `load()` never settles, and the media tools hang forever on
+      // "Loading the converter". Excluding them from pre-bundling keeps the
+      // worker URL intact. Production builds are unaffected — this is dev-only.
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+    },
+  },
   app: {
     head: {
       // Screen readers and translation tools need an explicit document language.
