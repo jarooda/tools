@@ -70,12 +70,18 @@ export const UI_ICON = {
   contrast: 'mdi:contrast-circle',
   gradient: 'mdi:gradient-horizontal',
   eyeCheck: 'mdi:eye-check-outline',
+  video: 'mdi:video-outline',
+  music: 'mdi:music-note-outline',
+  scissors: 'mdi:content-cut',
+  gif: 'mdi:file-gif-box',
   /** Empty-state glyph for tools awaiting user input. */
   emptyInput: 'mdi:keyboard-outline',
   /** Empty-state glyph for tools awaiting an uploaded image/file. */
   emptyImage: 'mdi:image-plus-outline',
   /** Empty-state glyph for tools awaiting an uploaded PDF/document. */
   emptyFile: 'mdi:file-upload-outline',
+  /** Empty-state glyph for tools awaiting an uploaded audio/video file. */
+  emptyMedia: 'mdi:video-plus-outline',
 } as const
 
 /**
@@ -113,6 +119,16 @@ export const PDF_TOOL_ICON: Record<string, string> = {
   'pdf-extract-text': 'mdi:text-box-outline',
   'pdf-compress': 'mdi:zip-box-outline',
   'pdf-office-to-pdf': 'mdi:file-word-outline',
+}
+
+/**
+ * Per-tool glyphs for the audio & video category. Keyed by the registry `id`.
+ */
+export const MEDIA_TOOL_ICON: Record<string, string> = {
+  'media-convert': 'mdi:file-video-outline',
+  'media-trim': 'mdi:content-cut',
+  'media-extract-audio': 'mdi:music-note-outline',
+  'media-gif': 'mdi:file-gif-box',
 }
 
 /** JLDS Tag/Badge colour tokens. */

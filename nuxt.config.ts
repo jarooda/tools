@@ -15,6 +15,13 @@ export default defineNuxtConfig({
     url: 'https://example.com',
     name: 'Toolkit',
   },
+  // NOTE: the /media/* tools deliberately do NOT set COOP/COEP. We ship the
+  // single-threaded `@ffmpeg/core`, which needs no SharedArrayBuffer, and
+  // cross-origin isolation actively breaks it: under COEP `require-corp` the
+  // browser blocks ffmpeg's own module worker (`ERR_BLOCKED_BY_RESPONSE`)
+  // because the bundled worker chunk under /_nuxt/ carries no COEP header.
+  // Only reintroduce these headers alongside `@ffmpeg/core-mt`, and then they
+  // must also cover /_nuxt/**.
   app: {
     head: {
       // Screen readers and translation tools need an explicit document language.

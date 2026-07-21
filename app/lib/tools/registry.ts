@@ -660,6 +660,16 @@ export const tools: Tool[] = [
     keywords: ['box shadow', 'gradient', 'css', 'generator', 'linear', 'radial'],
     status: 'live',
   },
+  {
+    id: 'media-convert',
+    title: 'Audio & Video Converter',
+    category: 'media',
+    slug: 'convert',
+    tag: 'hybrid',
+    description: 'Convert video and audio between MP4, WebM, MP3, WAV, and more in your browser.',
+    keywords: ['video', 'audio', 'convert', 'mp4', 'webm', 'mp3', 'wav', 'transcode', 'ffmpeg'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
