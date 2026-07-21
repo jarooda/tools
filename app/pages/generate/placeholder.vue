@@ -124,8 +124,10 @@ onMounted(() => {
   align-items: flex-end;
   gap: 1rem 1.5rem;
 }
+/* Wide enough for both steppers (38px each) plus the "px" suffix (~40px) and a
+   4-digit value — at 120px the number was squeezed into 20px and clipped. */
 .ph__field {
-  width: 120px;
+  width: 168px;
 }
 .ph__label-field {
   min-width: 180px;
