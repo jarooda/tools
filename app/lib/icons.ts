@@ -23,9 +23,9 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
 
 /** App-chrome / action icons used across the shell and tool pages. */
 export const UI_ICON = {
-  brand: 'mdi:toolbox-outline',
   search: 'mdi:magnify',
   private: 'mdi:shield-lock-outline',
+  offline: 'mdi:cloud-off-outline',
   themeLight: 'mdi:white-balance-sunny',
   themeDark: 'mdi:weather-night',
   home: 'mdi:home-outline',
