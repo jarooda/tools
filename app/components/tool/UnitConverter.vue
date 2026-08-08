@@ -91,6 +91,10 @@ const segmentedOptions = computed(() =>
   props.units.map((u) => ({ value: u.unit, label: u.symbol })),
 )
 
+const flatOptions = computed(() =>
+  props.units.map((u) => ({ value: u.unit, label: `${u.name} (${u.symbol})` })),
+)
+
 /** Format a converted value: more decimals for small numbers, fewer for big. */
 function defaultFormat(n: number): string {
   if (n === 0) return '0'
@@ -156,7 +160,7 @@ async function copyResult(unit: U, text: string) {
           :options="segmentedOptions"
           full-width
         />
-        <Select v-else v-model="from" :options="groupedOptions" />
+        <Select v-else v-model="from" :options="hasGroups ? groupedOptions : flatOptions" />
       </Field>
       <slot name="input-footer" :value="value" :from="from" />
     </div>

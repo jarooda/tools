@@ -3,6 +3,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Dialog } from '@/components/ui/dialog'
 import { UI_ICON } from '@/lib/icons'
 
 /**
@@ -133,6 +134,8 @@ function pageStyle(t: PageThumb) {
     transform: rotation ? `rotate(${rotation}deg)` : undefined,
   }
 }
+
+const enlarged = ref<PageThumb | null>(null)
 </script>
 
 <template>
@@ -147,7 +150,14 @@ function pageStyle(t: PageThumb) {
         <li v-for="t in thumbs" :key="t.page" class="pdf-preview__cell">
           <div class="pdf-preview__box" :style="boxStyle(t)">
             <div class="pdf-preview__page" :style="pageStyle(t)">
-              <img :src="t.url" :alt="`Page ${t.page}`" class="pdf-preview__img" />
+              <button
+                type="button"
+                class="pdf-preview__zoom"
+                :aria-label="`View page ${t.page} larger`"
+                @click="enlarged = t"
+              >
+                <img :src="t.url" :alt="`Page ${t.page}`" class="pdf-preview__img" />
+              </button>
               <div class="pdf-preview__overlay">
                 <slot name="overlay" :page="t.page" :width="t.width" :height="t.height" />
               </div>
@@ -172,6 +182,32 @@ function pageStyle(t: PageThumb) {
         </span>
       </div>
     </template>
+
+    <Dialog
+      :open="!!enlarged"
+      :title="enlarged ? `Page ${enlarged.page}` : ''"
+      size="lg"
+      @close="enlarged = null"
+      @update:open="(v) => !v && (enlarged = null)"
+    >
+      <div
+        v-if="enlarged"
+        class="pdf-preview__box pdf-preview__zoom-box"
+        :style="boxStyle(enlarged)"
+      >
+        <div class="pdf-preview__page" :style="pageStyle(enlarged)">
+          <img :src="enlarged.url" :alt="`Page ${enlarged.page}`" class="pdf-preview__img" />
+          <div class="pdf-preview__overlay">
+            <slot
+              name="overlay"
+              :page="enlarged.page"
+              :width="enlarged.width"
+              :height="enlarged.height"
+            />
+          </div>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -218,10 +254,23 @@ function pageStyle(t: PageThumb) {
   /* Overlays size themselves against the real page via cqw/cqh. */
   container-type: size;
 }
+.pdf-preview__zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
 .pdf-preview__img {
   display: block;
   width: 100%;
   height: 100%;
+}
+.pdf-preview__zoom-box {
+  max-width: 100%;
+  margin: 0 auto;
 }
 .pdf-preview__overlay {
   position: absolute;

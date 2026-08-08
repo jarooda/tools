@@ -7,6 +7,7 @@ import { Field } from '@/components/ui/field'
 import { Textarea } from '@/components/ui/textarea'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Alert } from '@/components/ui/alert'
@@ -31,7 +32,6 @@ const modeOptions = [
 /* ---- Encode ---- */
 const encoded = ref('')
 const encodedName = ref('image')
-const { copy, copied } = useCopy()
 
 function onSelect(file: File) {
   encodedName.value = file.name.replace(/\.[^.]+$/, '') || 'image'
@@ -107,7 +107,7 @@ function reset() {
         <FileDropzone v-if="!encoded" @select="onSelect" />
         <template v-else>
           <Field label="Base64 data URL">
-            <Textarea :model-value="encoded" readonly :rows="8" auto-resize />
+            <Snippet variant="block" :code="encoded" />
           </Field>
           <div class="b64__actions">
             <span class="b64__size">{{ encodedSize }}</span>
@@ -115,12 +115,6 @@ function reset() {
               <Button variant="ghost" size="sm" @click="reset">
                 <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
                 New image
-              </Button>
-              <Button variant="primary" size="sm" @click="copy(encoded)">
-                <template #icon
-                  ><Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15"
-                /></template>
-                {{ copied ? 'Copied' : 'Copy' }}
               </Button>
             </div>
           </div>

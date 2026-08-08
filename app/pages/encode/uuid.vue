@@ -6,6 +6,7 @@ import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { uuidV4Batch } from '@/utils/uuid'
@@ -40,7 +41,6 @@ const output = computed(() =>
     .join('\n'),
 )
 
-const { copy, copied } = useCopy()
 const { downloadText } = useDownload()
 </script>
 
@@ -72,15 +72,9 @@ const { downloadText } = useDownload()
             <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
             Download
           </Button>
-          <Button variant="ghost" size="sm" aria-label="Copy UUIDs" @click="copy(output)">
-            <template #icon>
-              <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
-            </template>
-            {{ copied ? 'Copied' : 'Copy' }}
-          </Button>
         </template>
 
-        <pre class="uuid__text">{{ output }}</pre>
+        <Snippet variant="block" :code="output" />
       </OutputPanel>
     </div>
   </ToolPage>
@@ -105,18 +99,5 @@ const { downloadText } = useDownload()
   display: flex;
   gap: 1rem;
   padding-bottom: 0.5rem;
-}
-.uuid__text {
-  margin: 0;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--surface-card);
-  color: var(--text-primary);
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.875rem;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  word-break: break-all;
 }
 </style>

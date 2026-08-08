@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { diffLines, diffStats, type DiffRow } from '@/utils/textDiff'
 
@@ -31,6 +33,10 @@ const stats = computed(() => diffStats(rows.value))
 const empty = computed(() => original.value === '' && changed.value === '')
 
 const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
+
+const diffText = computed(() => rows.value.map((r) => `${SIGN[r.type]}${r.value}`).join('\n'))
+
+const { copy, copied } = useCopy()
 </script>
 
 <template>
@@ -72,6 +78,12 @@ const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
             <span class="diff__stat diff__stat--add">+{{ stats.added }}</span>
             <span class="diff__stat diff__stat--remove">−{{ stats.removed }}</span>
           </div>
+          <Button variant="ghost" size="sm" aria-label="Copy diff" @click="copy(diffText)">
+            <template #icon>
+              <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
+            </template>
+            {{ copied ? 'Copied' : 'Copy' }}
+          </Button>
         </template>
 
         <div class="diff__lines">

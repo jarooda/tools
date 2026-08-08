@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ToolPage from '@/components/tool/ToolPage.vue'
 import UnitConverter from '@/components/tool/UnitConverter.vue'
+import { Alert } from '@/components/ui/alert'
 import { getTool } from '@/lib/tools/registry'
 import {
   TEMPERATURE_UNITS,
@@ -40,18 +41,10 @@ function format(n: number): string {
       :format-value="format"
     >
       <template #input-footer="{ value, from }">
-        <p v-if="value != null && isBelowAbsoluteZero(value, from)" class="temp__warn" role="alert">
+        <Alert v-if="value != null && isBelowAbsoluteZero(value, from)" tone="warning">
           Below absolute zero (−273.15 °C) — physically impossible, but here's the math.
-        </p>
+        </Alert>
       </template>
     </UnitConverter>
   </ToolPage>
 </template>
-
-<style scoped>
-.temp__warn {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--warning-text);
-}
-</style>
