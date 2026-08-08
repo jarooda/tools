@@ -4,6 +4,7 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Alert } from '@/components/ui/alert'
@@ -119,25 +120,27 @@ watch(items, merge, { deep: true })
           <span class="mg__name">{{ item.file.name }}</span>
           <span class="mg__size">{{ formatBytes(item.file.size) }}</span>
           <div class="mg__row-actions">
-            <button
-              class="mg__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
               aria-label="Move up"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="16" />
-            </button>
-            <button
-              class="mg__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === items.length - 1"
               aria-label="Move down"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="16" />
-            </button>
-            <button class="mg__iconbtn" aria-label="Remove" @click="removeAt(i)">
+            </IconButton>
+            <IconButton variant="ghost" size="sm" aria-label="Remove" @click="removeAt(i)">
               <Icon :name="UI_ICON.trash" size="16" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ol>
@@ -223,26 +226,6 @@ watch(items, merge, { deep: true })
   flex: 0 0 auto;
   display: flex;
   gap: 0.15rem;
-}
-.mg__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.mg__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
-.mg__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .mg__drop {
   width: 100%;

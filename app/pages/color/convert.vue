@@ -3,9 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { parseColor } from '@/utils/colorConvert'
 import { rgbToHex, rgbToHsl, rgbString, hslString } from '@/utils/colorFormat'
@@ -38,16 +37,6 @@ const rows = computed(() => [
   { label: 'HSL', value: hslText.value },
 ])
 
-const lastCopied = ref('')
-const { copy } = useCopy()
-let timer: ReturnType<typeof setTimeout> | undefined
-function copyValue(v: string) {
-  copy(v)
-  lastCopied.value = v
-  clearTimeout(timer)
-  timer = setTimeout(() => (lastCopied.value = ''), 1200)
-}
-
 onMounted(() => {
   ready.value = true
 })
@@ -71,19 +60,14 @@ onMounted(() => {
         <div class="cc__rows">
           <div v-for="row in rows" :key="row.label" class="cc__row">
             <span class="cc__row-label">{{ row.label }}</span>
-            <code class="cc__row-value">{{ row.value || '—' }}</code>
-            <Button
+            <Snippet
               v-if="row.value"
-              variant="ghost"
-              size="sm"
-              :aria-label="`Copy ${row.label}`"
-              @click="copyValue(row.value)"
-            >
-              <template #icon>
-                <Icon :name="lastCopied === row.value ? UI_ICON.check : UI_ICON.copy" size="15" />
-              </template>
-              {{ lastCopied === row.value ? 'Copied' : 'Copy' }}
-            </Button>
+              variant="inline"
+              :prompt="null"
+              :code="row.value"
+              class="cc__row-value"
+            />
+            <code v-else class="cc__row-value">—</code>
           </div>
         </div>
       </template>
@@ -129,10 +113,6 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.85rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--surface-card);
 }
 .cc__row-label {
   width: 44px;
@@ -144,9 +124,5 @@ onMounted(() => {
 .cc__row-value {
   flex: 1;
   min-width: 0;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.9375rem;
-  color: var(--text-primary);
-  word-break: break-all;
 }
 </style>

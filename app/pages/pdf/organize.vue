@@ -4,6 +4,7 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Alert } from '@/components/ui/alert'
@@ -164,29 +165,33 @@ async function apply() {
           <div class="og__thumb"><img :src="page.url" :alt="`Page ${page.original + 1}`" /></div>
           <span class="og__pos">{{ i + 1 }}</span>
           <div class="og__cell-actions">
-            <button
-              class="og__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
-              aria-label="Move left"
+              aria-label="Move earlier"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="15" />
-            </button>
-            <button
-              class="og__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === pages.length - 1"
-              aria-label="Move right"
+              aria-label="Move later"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="15" />
-            </button>
-            <button
-              class="og__iconbtn og__iconbtn--danger"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              class="og__iconbtn--danger"
               aria-label="Delete page"
               @click="removePage(i)"
             >
               <Icon :name="UI_ICON.trash" size="15" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ul>
@@ -288,28 +293,8 @@ async function apply() {
   justify-content: center;
   gap: 0.15rem;
 }
-.og__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.og__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
 .og__iconbtn--danger:hover:not(:disabled) {
   color: var(--danger, #d9534f);
-}
-.og__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .og__footer {
   display: flex;

@@ -6,6 +6,7 @@ import ResultActions from '@/components/tool/ResultActions.vue'
 import { Field } from '@/components/ui/field'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Alert } from '@/components/ui/alert'
@@ -174,25 +175,27 @@ watch([items, pageSize, orientation], build, { deep: true })
           <div class="ip__thumb"><img :src="item.url" :alt="item.file.name" /></div>
           <span class="ip__num">{{ i + 1 }}</span>
           <div class="ip__cell-actions">
-            <button
-              class="ip__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
               aria-label="Move up"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="15" />
-            </button>
-            <button
-              class="ip__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === items.length - 1"
               aria-label="Move down"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="15" />
-            </button>
-            <button class="ip__iconbtn" aria-label="Remove" @click="removeAt(i)">
+            </IconButton>
+            <IconButton variant="ghost" size="sm" aria-label="Remove" @click="removeAt(i)">
               <Icon :name="UI_ICON.trash" size="15" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ul>
@@ -288,26 +291,6 @@ watch([items, pageSize, orientation], build, { deep: true })
   display: flex;
   justify-content: center;
   gap: 0.15rem;
-}
-.ip__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.ip__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
-.ip__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .ip__opts {
   display: grid;
