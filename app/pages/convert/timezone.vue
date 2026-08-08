@@ -132,6 +132,7 @@ async function copyResult(id: string, r: ZonedResult) {
                   size="15"
                 />
               </template>
+              {{ copied && copiedZone === r.id ? 'Copied' : 'Copy' }}
             </Button>
           </li>
         </ul>

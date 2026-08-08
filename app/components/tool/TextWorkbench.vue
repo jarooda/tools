@@ -89,7 +89,7 @@ const { downloadText } = useDownload()
     <div class="tw__panes">
       <!-- Input -->
       <div class="tw__pane">
-        <span class="tw__label">{{ inputLabel }}</span>
+        <h2 class="tw__label">{{ inputLabel }}</h2>
         <Textarea
           v-model="input"
           class="tw__area"
@@ -185,6 +185,7 @@ const { downloadText } = useDownload()
   min-width: 0;
 }
 .tw__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;

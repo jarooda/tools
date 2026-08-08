@@ -190,40 +190,42 @@ onBeforeUnmount(stopCamera)
         </div>
 
         <!-- Result -->
-        <Alert v-if="error" tone="danger">{{ error }}</Alert>
+        <div aria-live="polite">
+          <Alert v-if="error" tone="danger">{{ error }}</Alert>
 
-        <div v-else-if="result" class="scan__result">
-          <span class="scan__label">Decoded</span>
-          <div class="scan__value-row">
-            <p class="scan__value">{{ result }}</p>
-            <div class="scan__actions">
-              <Button v-if="isUrl" variant="ghost" size="sm" @click="openResult">
-                <template #icon><Icon :name="UI_ICON.arrowRight" size="15" /></template>
-                Open
-              </Button>
-              <Button variant="ghost" size="sm" aria-label="Copy result" @click="copy(result)">
-                <template #icon>
-                  <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
-                </template>
-                {{ copied ? 'Copied' : 'Copy' }}
-              </Button>
+          <div v-else-if="result" class="scan__result">
+            <h2 class="scan__label">Decoded</h2>
+            <div class="scan__value-row">
+              <p class="scan__value">{{ result }}</p>
+              <div class="scan__actions">
+                <Button v-if="isUrl" variant="ghost" size="sm" @click="openResult">
+                  <template #icon><Icon :name="UI_ICON.arrowRight" size="15" /></template>
+                  Open
+                </Button>
+                <Button variant="ghost" size="sm" aria-label="Copy result" @click="copy(result)">
+                  <template #icon>
+                    <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
+                  </template>
+                  {{ copied ? 'Copied' : 'Copy' }}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <EmptyState
-          v-else
-          bordered
-          size="sm"
-          title="No code scanned yet"
-          :description="
-            mode === 'image'
-              ? 'Upload an image to read its QR code or barcode.'
-              : 'Start your camera and point it at a code.'
-          "
-        >
-          <template #icon><Icon :name="UI_ICON.qrScan" size="22" /></template>
-        </EmptyState>
+          <EmptyState
+            v-else
+            bordered
+            size="sm"
+            title="No code scanned yet"
+            :description="
+              mode === 'image'
+                ? 'Upload an image to read its QR code or barcode.'
+                : 'Start your camera and point it at a code.'
+            "
+          >
+            <template #icon><Icon :name="UI_ICON.qrScan" size="22" /></template>
+          </EmptyState>
+        </div>
       </template>
     </div>
   </ToolPage>
@@ -267,6 +269,7 @@ onBeforeUnmount(stopCamera)
   background: var(--surface-card);
 }
 .scan__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;

@@ -38,6 +38,28 @@ const opacity = ref(60)
 const fontScale = ref(5)
 const color = ref('#ffffff')
 
+const positionCellRefs = ref<HTMLButtonElement[]>([])
+function setPositionCellRef(el: unknown, i: number) {
+  if (el) positionCellRefs.value[i] = el as HTMLButtonElement
+}
+
+function onPositionKeydown(e: KeyboardEvent, idx: number) {
+  const cols = 3
+  let next = idx
+  if (e.key === 'ArrowRight') next = (idx + 1) % WATERMARK_POSITIONS.length
+  else if (e.key === 'ArrowLeft')
+    next = (idx - 1 + WATERMARK_POSITIONS.length) % WATERMARK_POSITIONS.length
+  else if (e.key === 'ArrowDown') next = (idx + cols) % WATERMARK_POSITIONS.length
+  else if (e.key === 'ArrowUp')
+    next = (idx - cols + WATERMARK_POSITIONS.length) % WATERMARK_POSITIONS.length
+  else if (e.key === 'Home') next = 0
+  else if (e.key === 'End') next = WATERMARK_POSITIONS.length - 1
+  else return
+  e.preventDefault()
+  position.value = WATERMARK_POSITIONS[next]!
+  positionCellRefs.value[next]?.focus()
+}
+
 async function onSelect(file: File) {
   error.value = ''
   try {
@@ -129,14 +151,18 @@ watch([loaded, text, position, opacity, fontScale, color], () => nextTick(redraw
         <Field label="Position">
           <div class="wm__grid" role="radiogroup" aria-label="Watermark position">
             <button
-              v-for="pos in WATERMARK_POSITIONS"
+              v-for="(pos, i) in WATERMARK_POSITIONS"
               :key="pos"
+              :ref="(el) => setPositionCellRef(el, i)"
               type="button"
               class="wm__cell"
               :class="{ 'wm__cell--active': position === pos }"
+              role="radio"
+              :aria-checked="position === pos"
               :aria-label="pos.replace('-', ' ')"
-              :aria-pressed="position === pos"
+              :tabindex="position === pos ? 0 : -1"
               @click="position = pos"
+              @keydown="onPositionKeydown($event, i)"
             >
               <span class="wm__dot" />
             </button>

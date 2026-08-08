@@ -40,7 +40,7 @@ withDefaults(
 <template>
   <div class="op">
     <div v-if="label || $slots.actions" class="op__head">
-      <span v-if="label" class="op__label">{{ label }}</span>
+      <h2 v-if="label" class="op__label">{{ label }}</h2>
       <div v-if="ready && !empty && !error && $slots.actions" class="op__actions">
         <slot name="actions" />
       </div>
@@ -54,7 +54,7 @@ withDefaults(
     </div>
 
     <!-- Error -->
-    <Alert v-else-if="error" tone="danger">{{ error }}</Alert>
+    <Alert v-else-if="error" tone="danger" aria-live="polite">{{ error }}</Alert>
 
     <!-- Empty -->
     <EmptyState
@@ -69,7 +69,9 @@ withDefaults(
     </EmptyState>
 
     <!-- Result -->
-    <slot v-else />
+    <div v-else aria-live="polite">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -87,6 +89,7 @@ withDefaults(
   min-height: 32px;
 }
 .op__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;

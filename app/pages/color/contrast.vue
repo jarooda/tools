@@ -76,31 +76,33 @@ onMounted(() => {
       <div v-if="!ready" aria-hidden="true">
         <Skeleton variant="rect" width="100%" height="220px" radius="10px" />
       </div>
-      <template v-else-if="ratio != null">
-        <div class="ct__preview" :style="{ background: bgHex, color: fgHex }">
-          <p class="ct__sample-lg">Large sample text</p>
-          <p class="ct__sample-sm">The quick brown fox jumps over the lazy dog.</p>
-        </div>
-
-        <div class="ct__ratio">
-          <span class="ct__ratio-value">{{ formatRatio(ratio) }}</span>
-          <span class="ct__ratio-label">contrast ratio</span>
-        </div>
-
-        <div class="ct__checks">
-          <div
-            v-for="c in checks"
-            :key="c.label"
-            class="ct__check"
-            :data-pass="c.pass || undefined"
-          >
-            <Icon :name="c.pass ? UI_ICON.check : UI_ICON.remove" size="16" />
-            <span>{{ c.label }}</span>
-            <strong>{{ c.pass ? 'Pass' : 'Fail' }}</strong>
+      <div v-else class="ct__results" aria-live="polite">
+        <template v-if="ratio != null">
+          <div class="ct__preview" :style="{ background: bgHex, color: fgHex }">
+            <p class="ct__sample-lg">Large sample text</p>
+            <p class="ct__sample-sm">The quick brown fox jumps over the lazy dog.</p>
           </div>
-        </div>
-      </template>
-      <Alert v-else tone="danger">Enter two valid colors to compare.</Alert>
+
+          <div class="ct__ratio">
+            <span class="ct__ratio-value">{{ formatRatio(ratio) }}</span>
+            <span class="ct__ratio-label">contrast ratio</span>
+          </div>
+
+          <div class="ct__checks">
+            <div
+              v-for="c in checks"
+              :key="c.label"
+              class="ct__check"
+              :data-pass="c.pass || undefined"
+            >
+              <Icon :name="c.pass ? UI_ICON.check : UI_ICON.remove" size="16" />
+              <span>{{ c.label }}</span>
+              <strong>{{ c.pass ? 'Pass' : 'Fail' }}</strong>
+            </div>
+          </div>
+        </template>
+        <Alert v-else tone="danger">Enter two valid colors to compare.</Alert>
+      </div>
     </div>
   </ToolPage>
 </template>
@@ -115,6 +117,11 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
+}
+.ct__results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 .ct__color {
   display: flex;

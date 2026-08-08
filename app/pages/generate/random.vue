@@ -146,7 +146,7 @@ const DICE = [
       <!-- Result -->
       <div class="rnd__out">
         <div class="rnd__out-head">
-          <span class="rnd__label">Result{{ summary ? ` · ${summary}` : '' }}</span>
+          <h2 class="rnd__label">Result{{ summary ? ` · ${summary}` : '' }}</h2>
           <Button
             v-if="ready && output"
             variant="ghost"
@@ -164,10 +164,12 @@ const DICE = [
         <div v-if="!ready" aria-hidden="true">
           <Skeleton variant="rect" width="100%" height="90px" radius="10px" />
         </div>
-        <div v-else-if="results.length" class="rnd__chips">
-          <span v-for="(r, i) in results" :key="i" class="rnd__chip">{{ r }}</span>
+        <div v-else aria-live="polite">
+          <div v-if="results.length" class="rnd__chips">
+            <span v-for="(r, i) in results" :key="i" class="rnd__chip">{{ r }}</span>
+          </div>
+          <p v-else class="rnd__empty">Nothing to pick — add some items above.</p>
         </div>
-        <p v-else class="rnd__empty">Nothing to pick — add some items above.</p>
       </div>
     </div>
   </ToolPage>
@@ -211,6 +213,7 @@ const DICE = [
   min-height: 32px;
 }
 .rnd__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -233,7 +236,7 @@ const DICE = [
   padding: 0.4rem 0.8rem;
   border-radius: 999px;
   background: var(--accent-subtle, var(--surface-muted));
-  color: var(--accent-text, var(--text-primary));
+  color: var(--text-primary);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.9375rem;
   font-weight: 600;

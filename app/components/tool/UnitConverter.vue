@@ -166,8 +166,8 @@ async function copyResult(unit: U, text: string) {
     </div>
 
     <!-- Right: converted values, each copyable -->
-    <div class="conv__results">
-      <span class="conv__results-label">Converts to</span>
+    <div class="conv__results" aria-live="polite">
+      <h2 class="conv__results-label">Converts to</h2>
 
       <!-- Loading: skeleton rows while the client hydrates (or an async fetch is pending) -->
       <ul v-if="!ready || loading" class="conv__list" aria-hidden="true">
@@ -260,6 +260,7 @@ async function copyResult(unit: U, text: string) {
   gap: 0.5rem;
 }
 .conv__results-label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
