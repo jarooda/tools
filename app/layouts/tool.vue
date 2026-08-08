@@ -20,9 +20,11 @@ import { UI_ICON } from '@/lib/icons'
 
 /**
  * Tool detail layout — App Shell with a sidebar scoped to the current tool's
- * category (live tools only). The top header is the tool's own PageHeader
- * (breadcrumb + title + processing badge + theme toggle), derived from the
- * route so pages don't repeat it. Home/category use the sidebar-less `default`.
+ * category (live tools only). The top header is derived from the route:
+ * a tool's own PageHeader (breadcrumb + title + processing badge + theme
+ * toggle) on tool pages, or the category's on bare category index pages —
+ * either way pages don't repeat it. Only the sidebar-less `default` layout
+ * (home) skips this shell.
  */
 const route = useRoute()
 const { tools, getCategory, toolRoute } = useToolRegistry()
@@ -35,7 +37,16 @@ const segments = computed(() => route.path.split('/').filter(Boolean))
 const tool = computed(() =>
   tools.find((t) => t.category === segments.value[0] && t.slug === segments.value[1]),
 )
-const category = computed(() => (tool.value ? getCategory(tool.value.category) : undefined))
+const routeCategorySlug = computed(() =>
+  !tool.value && segments.value.length === 1 ? segments.value[0] : undefined,
+)
+const category = computed(() =>
+  tool.value
+    ? getCategory(tool.value.category)
+    : routeCategorySlug.value
+      ? getCategory(routeCategorySlug.value)
+      : undefined,
+)
 
 // Sidebar: the current category's LIVE tools only (coming-soon hidden).
 const categoryTools = computed(() =>
@@ -43,12 +54,17 @@ const categoryTools = computed(() =>
 )
 
 const crumbs = computed(() => {
-  if (!tool.value || !category.value) return []
-  return [
-    { label: 'All tools', href: '/' },
-    { label: category.value.title, href: `/${category.value.slug}` },
-    { label: tool.value.title },
-  ]
+  if (tool.value && category.value) {
+    return [
+      { label: 'All tools', href: '/' },
+      { label: category.value.title, href: `/${category.value.slug}` },
+      { label: tool.value.title },
+    ]
+  }
+  if (category.value) {
+    return [{ label: 'All tools', href: '/' }, { label: category.value.title }]
+  }
+  return []
 })
 
 function isActive(path: string) {
@@ -116,7 +132,12 @@ watch(
     </template>
 
     <template #header>
-      <PageHeader v-if="tool" variant="plain" :title="tool.title" :description="tool.description">
+      <PageHeader
+        v-if="tool || category"
+        variant="plain"
+        :title="tool?.title ?? category?.title"
+        :description="tool?.description ?? category?.description"
+      >
         <template #breadcrumb>
           <div class="tool-head__crumb">
             <AppShellMenuButton />
@@ -128,7 +149,7 @@ watch(
             <Icon :name="category?.icon || UI_ICON.grid" size="20" />
           </span>
         </template>
-        <ProcessingBadge :tag="tool.tag" />
+        <ProcessingBadge v-if="tool" :tag="tool.tag" />
         <template #actions>
           <IconButton variant="ghost" aria-label="Toggle theme" @click="toggleTheme">
             <!-- Client-only glyph: the theme is read from localStorage / the OS
