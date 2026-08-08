@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="U extends string">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { Select } from '@/components/ui/select'
@@ -137,6 +137,37 @@ watch(
   { immediate: true },
 )
 
+// The results list itself stays visually live on every keystroke, but a
+// screen reader announcement would fire on every character typed into the
+// value field. Instead, a debounced, visually-hidden live region announces
+// the result once the user pauses.
+const announcement = ref('')
+let announceTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  [results, () => props.loading, () => props.error, value],
+  () => {
+    if (announceTimer) clearTimeout(announceTimer)
+    announceTimer = setTimeout(() => {
+      if (props.loading) return
+      if (props.error) {
+        announcement.value = props.error
+        return
+      }
+      if (value.value == null) {
+        announcement.value = 'Nothing to convert yet.'
+        return
+      }
+      announcement.value = results.value.map((r) => `${r.display} ${r.symbol}`).join(', ')
+    }, 600)
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  if (announceTimer) clearTimeout(announceTimer)
+})
+
 const { copy, copied } = useCopy()
 const copiedUnit = ref<U | null>(null)
 
@@ -166,8 +197,9 @@ async function copyResult(unit: U, text: string) {
     </div>
 
     <!-- Right: converted values, each copyable -->
-    <div class="conv__results" aria-live="polite">
+    <div class="conv__results">
       <h2 class="conv__results-label">Converts to</h2>
+      <span class="conv__sr-live" aria-live="polite">{{ announcement }}</span>
 
       <!-- Loading: skeleton rows while the client hydrates (or an async fetch is pending) -->
       <ul v-if="!ready || loading" class="conv__list" aria-hidden="true">
@@ -258,6 +290,17 @@ async function copyResult(unit: U, text: string) {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+.conv__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .conv__results-label {
   margin: 0;

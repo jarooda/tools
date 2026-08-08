@@ -67,6 +67,7 @@ const timeClaims = computed(() => {
         :ready="ready"
         :empty="input.trim() === ''"
         :error="decoded.error"
+        :live="false"
         empty-title="No token yet"
         empty-description="Paste a JWT above to inspect its header and payload."
       >

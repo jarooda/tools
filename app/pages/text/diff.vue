@@ -70,6 +70,7 @@ const { copy, copied } = useCopy()
         :ready="ready"
         :empty="empty"
         :error="error"
+        :live="false"
         empty-title="Nothing to compare yet"
         empty-description="Paste text into both boxes to see what changed."
       >

@@ -45,7 +45,7 @@ const cards = computed(() => [
         />
       </div>
 
-      <OutputPanel :ready="ready">
+      <OutputPanel :ready="ready" :live="false">
         <template #skeleton>
           <div class="counter__stats">
             <div v-for="n in 7" :key="n" class="counter__card" aria-hidden="true">

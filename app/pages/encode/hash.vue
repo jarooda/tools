@@ -63,6 +63,7 @@ watch(input, compute)
       <OutputPanel
         :ready="ready"
         :empty="input === ''"
+        :live="false"
         empty-title="No hashes yet"
         empty-description="Enter some text above to compute its MD5 and SHA digests."
       >

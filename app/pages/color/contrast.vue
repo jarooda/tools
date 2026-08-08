@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -53,6 +53,35 @@ const checks = computed(() => {
 onMounted(() => {
   ready.value = true
 })
+
+// The results panel stays visually live as colors are typed, but a screen
+// reader announcement would fire on every keystroke. Instead, a debounced,
+// visually-hidden live region announces the result once typing pauses.
+const announcement = ref('')
+let announceTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  [ratio, checks],
+  ([r, c]) => {
+    if (announceTimer) clearTimeout(announceTimer)
+    announceTimer = setTimeout(() => {
+      if (r == null) {
+        announcement.value = 'Enter two valid colors to compare.'
+        return
+      }
+      const passes = c
+        .filter((check) => check.pass)
+        .map((check) => check.label)
+        .join(', ')
+      announcement.value = `Contrast ratio ${formatRatio(r)}. Passes: ${passes || 'none'}.`
+    }, 600)
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  if (announceTimer) clearTimeout(announceTimer)
+})
 </script>
 
 <template>
@@ -76,7 +105,8 @@ onMounted(() => {
       <div v-if="!ready" aria-hidden="true">
         <Skeleton variant="rect" width="100%" height="220px" radius="10px" />
       </div>
-      <div v-else class="ct__results" aria-live="polite">
+      <div v-else class="ct__results">
+        <span class="ct__sr-live" aria-live="polite">{{ announcement }}</span>
         <template v-if="ratio != null">
           <div class="ct__preview" :style="{ background: bgHex, color: fgHex }">
             <p class="ct__sample-lg">Large sample text</p>
@@ -122,6 +152,17 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+.ct__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .ct__color {
   display: flex;

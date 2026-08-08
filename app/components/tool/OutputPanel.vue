@@ -24,12 +24,22 @@ withDefaults(
     emptyDescription?: string
     /** Icon name for the empty state; defaults to `UI_ICON.emptyInput`. */
     emptyIcon?: string
+    /**
+     * Whether the result region announces itself to screen readers via
+     * `aria-live="polite"`. Set to `false` for tools that recompute on every
+     * keystroke (a raw textarea/input with a `watch`) so assistive tech
+     * doesn't re-announce the whole result on each character typed. Leave
+     * `true` (the default) for results that only update on a discrete action
+     * (a button click, a "generate" call).
+     */
+    live?: boolean
   }>(),
   {
     label: '',
     ready: true,
     empty: false,
     error: null,
+    live: true,
     emptyTitle: 'Nothing to show yet',
     emptyDescription: 'Enter some input to see the result.',
     emptyIcon: '',
@@ -69,7 +79,7 @@ withDefaults(
     </EmptyState>
 
     <!-- Result -->
-    <div v-else aria-live="polite">
+    <div v-else :aria-live="live ? 'polite' : 'off'">
       <slot />
     </div>
   </div>
