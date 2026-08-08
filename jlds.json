@@ -9,5 +9,5 @@
     "components": "app/components/ui",
     "utils": "app/lib/utils"
   },
-  "registry": "https://cdn.jsdelivr.net/gh/jarooda/jlds@v1.3.0/registry"
+  "registry": "https://cdn.jsdelivr.net/gh/jarooda/jlds@v1.4.2/registry"
 }

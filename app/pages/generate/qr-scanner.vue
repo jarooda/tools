@@ -6,6 +6,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 
@@ -189,7 +190,7 @@ onBeforeUnmount(stopCamera)
         </div>
 
         <!-- Result -->
-        <p v-if="error" class="scan__error" role="alert">{{ error }}</p>
+        <Alert v-if="error" tone="danger">{{ error }}</Alert>
 
         <div v-else-if="result" class="scan__result">
           <span class="scan__label">Decoded</span>
@@ -289,14 +290,5 @@ onBeforeUnmount(stopCamera)
   display: flex;
   gap: 0.25rem;
   flex-shrink: 0;
-}
-.scan__error {
-  margin: 0;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--danger-border, var(--warning));
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--danger-subtle, var(--warning-subtle));
-  color: var(--danger-text, var(--warning-text));
-  font-size: 0.875rem;
 }
 </style>

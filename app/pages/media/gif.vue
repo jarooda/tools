@@ -11,6 +11,7 @@ import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -251,7 +252,7 @@ const hasVideo = computed(() => info.value?.hasVideo ?? false)
       </Button>
     </div>
 
-    <p v-if="error" class="mg__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -314,10 +315,5 @@ const hasVideo = computed(() => info.value?.hasVideo ?? false)
 }
 .mg__drop {
   width: 100%;
-}
-.mg__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

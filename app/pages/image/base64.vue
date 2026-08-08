@@ -9,6 +9,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { toDataUrl, parseDataUrl, extensionForMime } from '@/utils/imageBase64'
@@ -142,7 +143,7 @@ function reset() {
           <template #icon><Icon :name="UI_ICON.emptyInput" size="22" /></template>
         </EmptyState>
 
-        <p v-else-if="decodeError" class="b64__error" role="alert">{{ decodeError }}</p>
+        <Alert v-else-if="decodeError" tone="danger">{{ decodeError }}</Alert>
 
         <template v-else-if="decodedUrl">
           <div class="b64__preview">
@@ -192,10 +193,5 @@ function reset() {
   max-height: 360px;
   height: auto;
   border-radius: 4px;
-}
-.b64__error {
-  margin: 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

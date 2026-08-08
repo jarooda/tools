@@ -6,6 +6,7 @@ import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -159,13 +160,13 @@ watch(items, merge, { deep: true })
         <template #extra>
           <Button variant="ghost" size="sm" @click="reset">
             <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
-            Start over
+            New file
           </Button>
         </template>
       </ResultActions>
     </div>
 
-    <p v-if="error" class="mg__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -202,7 +203,7 @@ watch(items, merge, { deep: true })
 }
 .mg__ic {
   flex: 0 0 auto;
-  color: var(--danger, #d9534f);
+  color: var(--text-tertiary);
 }
 .mg__name {
   flex: 1 1 auto;
@@ -250,11 +251,6 @@ watch(items, merge, { deep: true })
   margin: 0;
   font-size: 0.8125rem;
   color: var(--text-tertiary);
-}
-.mg__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 560px) {
   .mg__size {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Field } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { uuidV4Batch } from '@/utils/uuid'
@@ -61,33 +61,27 @@ const { downloadText } = useDownload()
         </Button>
       </div>
 
-      <div class="uuid__out">
-        <div class="uuid__out-head">
-          <span class="uuid__label">{{ raw.length }} UUID{{ raw.length === 1 ? '' : 's' }}</span>
-          <div v-if="ready && output" class="uuid__actions">
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="Download UUIDs"
-              @click="downloadText(output, 'uuids.txt')"
-            >
-              <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
-              Download
-            </Button>
-            <Button variant="ghost" size="sm" aria-label="Copy UUIDs" @click="copy(output)">
-              <template #icon>
-                <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
-              </template>
-              {{ copied ? 'Copied' : 'Copy' }}
-            </Button>
-          </div>
-        </div>
+      <OutputPanel :label="`${raw.length} UUID${raw.length === 1 ? '' : 's'}`" :ready="ready">
+        <template v-if="output" #actions>
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="Download UUIDs"
+            @click="downloadText(output, 'uuids.txt')"
+          >
+            <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
+            Download
+          </Button>
+          <Button variant="ghost" size="sm" aria-label="Copy UUIDs" @click="copy(output)">
+            <template #icon>
+              <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
+            </template>
+            {{ copied ? 'Copied' : 'Copy' }}
+          </Button>
+        </template>
 
-        <div v-if="!ready" aria-hidden="true">
-          <Skeleton variant="rect" width="100%" height="180px" radius="10px" />
-        </div>
-        <pre v-else class="uuid__text">{{ output }}</pre>
-      </div>
+        <pre class="uuid__text">{{ output }}</pre>
+      </OutputPanel>
     </div>
   </ToolPage>
 </template>
@@ -112,33 +106,9 @@ const { downloadText } = useDownload()
   gap: 1rem;
   padding-bottom: 0.5rem;
 }
-.uuid__out {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.uuid__out-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  min-height: 32px;
-}
-.uuid__label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.uuid__actions {
-  display: flex;
-  gap: 0.25rem;
-}
 .uuid__text {
   margin: 0;
   padding: 0.85rem 1rem;
-  min-height: 180px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-control, 0.625rem);
   background: var(--surface-card);

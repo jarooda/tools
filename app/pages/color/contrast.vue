@@ -4,6 +4,7 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { parseColor } from '@/utils/colorConvert'
@@ -99,7 +100,7 @@ onMounted(() => {
           </div>
         </div>
       </template>
-      <p v-else class="ct__error" role="alert">Enter two valid colors to compare.</p>
+      <Alert v-else tone="danger">Enter two valid colors to compare.</Alert>
     </div>
   </ToolPage>
 </template>
@@ -186,10 +187,5 @@ onMounted(() => {
 }
 .ct__check strong {
   font-weight: 700;
-}
-.ct__error {
-  margin: 0;
-  color: var(--text-tertiary);
-  font-size: 0.875rem;
 }
 </style>

@@ -10,6 +10,11 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { UI_ICON } from '@/lib/icons'
 import { convertLinearAll, type LinearUnit } from '@/utils/linear'
 
+// eslint-disable-next-line no-unused-vars
+type ConvertFn<U> = (value: number, from: U, to: U) => number
+// eslint-disable-next-line no-unused-vars
+type FormatFn<U> = (n: number, unit: U) => string
+
 const props = withDefaults(
   defineProps<{
     /** Units to convert between (must share a base unit via `factor`). */
@@ -22,11 +27,34 @@ const props = withDefaults(
     valueLabel?: string
     /** Line shown in the empty state. */
     emptyDescription?: string
+    /**
+     * Force the loading (skeleton) state on, in addition to the built-in
+     * pre-hydration skeleton — for tools whose results depend on an async
+     * fetch (e.g. currency's exchange rates).
+     */
+    loading?: boolean
+    /**
+     * When set, results are replaced with an error `EmptyState`. Pair with
+     * the `#actions` slot for a retry button.
+     */
+    error?: string | null
+    /**
+     * Override the conversion math. Defaults to the linear `factor`-based
+     * conversion; pass this for non-linear quantities (e.g. temperature,
+     * which has an offset, not just a ratio).
+     */
+    convert?: ConvertFn<U>
+    /** Override the display formatting of a converted value. */
+    formatValue?: FormatFn<U>
   }>(),
   {
     initialValue: 1,
     valueLabel: 'Value',
     emptyDescription: 'Enter a value on the left to see it in every unit.',
+    loading: false,
+    error: null,
+    convert: undefined,
+    formatValue: undefined,
   },
 )
 
@@ -64,12 +92,13 @@ const segmentedOptions = computed(() =>
 )
 
 /** Format a converted value: more decimals for small numbers, fewer for big. */
-function format(n: number): string {
+function defaultFormat(n: number): string {
   if (n === 0) return '0'
   const abs = Math.abs(n)
   const decimals = abs < 1 ? 6 : abs < 1000 ? 4 : 2
   return Number(n.toFixed(decimals)).toString().replace(/^-0$/, '0')
 }
+const format = (n: number, unit: U) => (props.formatValue ?? defaultFormat)(n, unit)
 
 interface ResultRow {
   unit: U
@@ -82,17 +111,22 @@ interface ResultRow {
 const results = ref<ResultRow[]>([])
 
 watch(
-  [value, from],
+  // Re-run on `loading` transitions too, so async-data tools (currency) refresh
+  // their results once the fetch resolves, even if `value`/`from` didn't change.
+  [value, from, () => props.loading],
   ([val, unit]) => {
     if (val == null) {
       results.value = []
       return
     }
-    results.value = convertLinearAll(val, unit, props.units).map((r) => ({
+    const converted = props.convert
+      ? props.units.map((u) => ({ ...u, value: props.convert!(val, unit, u.unit) }))
+      : convertLinearAll(val, unit, props.units)
+    results.value = converted.map((r) => ({
       unit: r.unit,
       name: r.name,
       symbol: r.symbol,
-      display: format(r.value),
+      display: format(r.value, r.unit),
       isSource: r.unit === unit,
     }))
   },
@@ -124,19 +158,37 @@ async function copyResult(unit: U, text: string) {
         />
         <Select v-else v-model="from" :options="groupedOptions" />
       </Field>
+      <slot name="input-footer" :value="value" :from="from" />
     </div>
 
     <!-- Right: converted values, each copyable -->
     <div class="conv__results">
       <span class="conv__results-label">Converts to</span>
 
-      <!-- Loading: skeleton rows while the client hydrates -->
-      <ul v-if="!ready" class="conv__list" aria-hidden="true">
+      <!-- Loading: skeleton rows while the client hydrates (or an async fetch is pending) -->
+      <ul v-if="!ready || loading" class="conv__list" aria-hidden="true">
         <li v-for="u in units" :key="u.unit" class="conv__row conv__row--skel">
           <Skeleton variant="text" width="88px" />
           <Skeleton variant="rect" width="72px" height="30px" radius="8px" />
         </li>
       </ul>
+
+      <!-- Error -->
+      <EmptyState
+        v-else-if="error"
+        class="conv__empty"
+        bordered
+        size="sm"
+        title="Something went wrong"
+        :description="error"
+      >
+        <template #icon>
+          <Icon :name="UI_ICON.private" size="22" />
+        </template>
+        <template v-if="$slots.actions" #actions>
+          <slot name="actions" />
+        </template>
+      </EmptyState>
 
       <!-- Empty: user cleared the input -->
       <EmptyState
@@ -160,10 +212,12 @@ async function copyResult(unit: U, text: string) {
           class="conv__row"
           :class="{ 'conv__row--source': r.isSource }"
         >
-          <div class="conv__row-main">
-            <span class="conv__row-value">{{ r.display }}</span>
-            <span class="conv__row-symbol">{{ r.symbol }}</span>
-          </div>
+          <slot name="result-main" :row="r">
+            <div class="conv__row-main">
+              <span class="conv__row-value">{{ r.display }}</span>
+              <span class="conv__row-symbol">{{ r.symbol }}</span>
+            </div>
+          </slot>
           <Button
             variant="ghost"
             size="sm"

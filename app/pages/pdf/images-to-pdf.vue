@@ -8,6 +8,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -219,13 +220,13 @@ watch([items, pageSize, orientation], build, { deep: true })
         <template #extra>
           <Button variant="ghost" size="sm" @click="reset">
             <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
-            Start over
+            New file
           </Button>
         </template>
       </ResultActions>
     </div>
 
-    <p v-if="error" class="ip__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -315,11 +316,6 @@ watch([items, pageSize, orientation], build, { deep: true })
 }
 .ip__drop {
   width: 100%;
-}
-.ip__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 560px) {
   .ip__opts {

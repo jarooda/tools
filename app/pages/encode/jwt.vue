@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Textarea } from '@/components/ui/textarea'
 import { Snippet } from '@/components/ui/snippet'
-import { Skeleton } from '@/components/ui/skeleton'
-import { EmptyState } from '@/components/ui/empty-state'
-import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { decodeJwt, formatJwtTimestamp } from '@/utils/jwtDecode'
 
@@ -65,45 +63,37 @@ const timeClaims = computed(() => {
         />
       </div>
 
-      <div v-if="!ready" aria-hidden="true">
-        <Skeleton variant="rect" width="100%" height="180px" radius="10px" />
-      </div>
-
-      <EmptyState
-        v-else-if="input.trim() === ''"
-        bordered
-        size="sm"
-        title="No token yet"
-        description="Paste a JWT above to inspect its header and payload."
+      <OutputPanel
+        :ready="ready"
+        :empty="input.trim() === ''"
+        :error="decoded.error"
+        empty-title="No token yet"
+        empty-description="Paste a JWT above to inspect its header and payload."
       >
-        <template #icon><Icon :name="UI_ICON.emptyInput" size="22" /></template>
-      </EmptyState>
+        <div class="jwt__result">
+          <Snippet
+            class="jwt__panel"
+            variant="block"
+            title="Header"
+            language="json"
+            :code="headerJson"
+          />
+          <Snippet
+            class="jwt__panel"
+            variant="block"
+            title="Payload"
+            language="json"
+            :code="payloadJson"
+          />
 
-      <p v-else-if="decoded.error" class="jwt__error" role="alert">{{ decoded.error }}</p>
-
-      <div v-else class="jwt__result">
-        <Snippet
-          class="jwt__panel"
-          variant="block"
-          title="Header"
-          language="json"
-          :code="headerJson"
-        />
-        <Snippet
-          class="jwt__panel"
-          variant="block"
-          title="Payload"
-          language="json"
-          :code="payloadJson"
-        />
-
-        <div v-if="timeClaims.length" class="jwt__claims">
-          <div v-for="c in timeClaims" :key="c.key" class="jwt__claim">
-            <span class="jwt__claim-label">{{ c.label }}</span>
-            <span class="jwt__claim-value">{{ c.value }}</span>
+          <div v-if="timeClaims.length" class="jwt__claims">
+            <div v-for="c in timeClaims" :key="c.key" class="jwt__claim">
+              <span class="jwt__claim-label">{{ c.label }}</span>
+              <span class="jwt__claim-value">{{ c.value }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </OutputPanel>
     </div>
   </ToolPage>
 </template>
@@ -165,16 +155,6 @@ const timeClaims = computed(() => {
   font-size: 0.8125rem;
   color: var(--text-primary);
 }
-.jwt__error {
-  margin: 0;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--danger-border, var(--warning));
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--danger-subtle, var(--warning-subtle));
-  color: var(--danger-text, var(--warning-text));
-  font-size: 0.875rem;
-}
-
 @media (max-width: 640px) {
   .jwt__result {
     grid-template-columns: 1fr;

@@ -6,6 +6,7 @@ import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -209,7 +210,7 @@ async function apply() {
       </div>
     </div>
 
-    <p v-if="error" class="og__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -318,10 +319,5 @@ async function apply() {
 }
 .og__drop {
   width: 100%;
-}
-.og__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

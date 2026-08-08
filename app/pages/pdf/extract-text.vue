@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -130,7 +131,7 @@ async function extract() {
       </EmptyState>
 
       <template v-else>
-        <textarea class="ex__out" :value="text" readonly spellcheck="false"></textarea>
+        <pre class="ex__out">{{ text }}</pre>
         <div class="ex__actions">
           <span class="ex__count">{{ charCount.toLocaleString() }} characters</span>
           <div class="ex__actions-btns">
@@ -153,7 +154,7 @@ async function extract() {
       </template>
     </div>
 
-    <p v-if="error" class="ex__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -181,6 +182,7 @@ async function extract() {
   word-break: break-all;
 }
 .ex__out {
+  margin: 0;
   width: 100%;
   min-height: 320px;
   padding: 0.85rem;
@@ -191,7 +193,9 @@ async function extract() {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.8125rem;
   line-height: 1.55;
-  resize: vertical;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
 }
 .ex__actions {
   display: flex;
@@ -212,10 +216,5 @@ async function extract() {
 }
 .ex__drop {
   width: 100%;
-}
-.ex__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

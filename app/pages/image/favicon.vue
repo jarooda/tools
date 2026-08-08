@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { FAVICON_SIZES, ICO_SIZES, buildIco, faviconHtmlSnippet } from '@/utils/favicon'
@@ -162,7 +163,7 @@ watch([loaded, cover], generate, { immediate: true })
       </div>
     </div>
 
-    <p v-if="error" class="fv__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -248,10 +249,5 @@ watch([loaded, cover], generate, { immediate: true })
 }
 .fv__drop {
   width: 100%;
-}
-.fv__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

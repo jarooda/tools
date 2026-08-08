@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -70,7 +71,7 @@ async function copyResult(id: string, r: ZonedResult) {
       <!-- Left: the date/time + its zone -->
       <div class="tz__input">
         <Field label="Date & time">
-          <input v-model="datetime" type="datetime-local" class="tz__datetime" />
+          <Input v-model="datetime" type="datetime-local" />
         </Field>
         <Field label="In time zone">
           <Select v-model="fromZone" :options="zoneOptions" />
@@ -150,19 +151,6 @@ async function copyResult(id: string, r: ZonedResult) {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-.tz__datetime {
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  font: inherit;
-  color: var(--text-primary);
-  background: var(--surface-input, var(--surface-card));
-  border: 1px solid var(--border-strong, var(--border-subtle));
-  border-radius: var(--radius-control, 0.625rem);
-}
-.tz__datetime:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
 }
 .tz__results {
   display: flex;

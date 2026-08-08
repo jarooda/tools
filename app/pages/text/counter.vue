@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getTool } from '@/lib/tools/registry'
@@ -44,20 +45,22 @@ const cards = computed(() => [
         />
       </div>
 
-      <div class="counter__stats">
-        <template v-if="!ready">
-          <div v-for="n in 7" :key="n" class="counter__card" aria-hidden="true">
-            <Skeleton variant="text" width="70%" />
-            <Skeleton variant="text" width="45%" height="26px" />
+      <OutputPanel :ready="ready">
+        <template #skeleton>
+          <div class="counter__stats">
+            <div v-for="n in 7" :key="n" class="counter__card" aria-hidden="true">
+              <Skeleton variant="text" width="70%" />
+              <Skeleton variant="text" width="45%" height="26px" />
+            </div>
           </div>
         </template>
-        <template v-else>
+        <div class="counter__stats">
           <div v-for="c in cards" :key="c.label" class="counter__card">
             <span class="counter__card-label">{{ c.label }}</span>
             <span class="counter__card-value">{{ c.value }}</span>
           </div>
-        </template>
-      </div>
+        </div>
+      </OutputPanel>
     </div>
   </ToolPage>
 </template>

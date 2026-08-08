@@ -8,6 +8,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { toRoman, fromRoman, ROMAN_MIN, ROMAN_MAX } from '@/utils/roman-numeral'
@@ -97,7 +98,7 @@ const { copy, copied } = useCopy()
           />
         </Field>
 
-        <p v-if="error" class="conv__warn" role="alert">{{ error }}</p>
+        <Alert v-if="error" tone="danger">{{ error }}</Alert>
       </div>
 
       <!-- Right: the single result -->
@@ -150,11 +151,6 @@ const { copy, copied } = useCopy()
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-.conv__warn {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--danger-text, var(--warning-text));
 }
 .conv__results {
   display: flex;
