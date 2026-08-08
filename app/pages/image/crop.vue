@@ -306,8 +306,11 @@ async function applyRectInputs() {
 }
 .cr__rect {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.75rem;
+}
+.cr__rect :deep(.jl-field) {
+  min-width: 0;
 }
 .cr__drop {
   width: 100%;

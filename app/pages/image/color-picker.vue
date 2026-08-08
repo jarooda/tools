@@ -171,6 +171,8 @@ async function copyValue(v: string) {
           <Field label="Y">
             <NumberInput v-model="sampleY" :min="0" :max="loaded.height - 1" align="left" />
           </Field>
+        </div>
+        <div class="pk__sample">
           <Button variant="secondary" size="sm" @click="sampleAtInputs">
             <template #icon><Icon :name="UI_ICON.eyedropper" size="15" /></template>
             Sample
@@ -276,12 +278,15 @@ async function copyValue(v: string) {
   color: var(--text-tertiary);
 }
 .pk__coords {
-  display: flex;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.5rem;
 }
 .pk__coords :deep(.jl-field) {
-  flex: 1;
+  min-width: 0;
+}
+.pk__sample {
+  margin-top: 0.5rem;
 }
 .pk__values {
   list-style: none;
