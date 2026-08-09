@@ -814,6 +814,17 @@ export const tools: Tool[] = [
     keywords: ['htaccess', 'nginx', 'apache', 'config', 'redirect', 'gzip', 'cors', 'spa'],
     status: 'live',
   },
+  {
+    id: 'dev-escape',
+    title: 'Escape / Unescape',
+    category: 'dev',
+    slug: 'escape',
+    tag: 'client',
+    description:
+      'Escape or unescape text for JSON string literals, HTML entities, and SQL string literals.',
+    keywords: ['escape', 'unescape', 'json', 'html', 'sql', 'string literal', 'quote'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
