@@ -803,6 +803,17 @@ export const tools: Tool[] = [
     keywords: ['http', 'status code', 'response code', '404', '500', 'rest api', 'reference'],
     status: 'live',
   },
+  {
+    id: 'dev-config-generator',
+    title: 'Server Config Generator',
+    category: 'dev',
+    slug: 'config-generator',
+    tag: 'client',
+    description:
+      'Generate an .htaccess or nginx config snippet from common web-server behaviors — HTTPS redirects, caching, CORS, SPA routing, and more.',
+    keywords: ['htaccess', 'nginx', 'apache', 'config', 'redirect', 'gzip', 'cors', 'spa'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
