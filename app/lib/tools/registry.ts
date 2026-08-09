@@ -753,6 +753,17 @@ export const tools: Tool[] = [
     keywords: ['regex', 'regexp', 'regular expression', 'pattern', 'match', 'test', 'explain'],
     status: 'live',
   },
+  {
+    id: 'dev-cron',
+    title: 'Cron Expression Tool',
+    category: 'dev',
+    slug: 'cron',
+    tag: 'client',
+    description:
+      'Build or paste a cron expression, see a plain-English explanation, and preview upcoming run times.',
+    keywords: ['cron', 'crontab', 'schedule', 'cronstrue', 'expression', 'explain'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
