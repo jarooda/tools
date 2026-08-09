@@ -19,6 +19,7 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
   generate: 'mdi:auto-fix',
   color: 'mdi:palette-outline',
   media: 'mdi:play-circle-outline',
+  dev: 'mdi:code-tags',
 }
 
 /** App-chrome / action icons used across the shell and tool pages. */

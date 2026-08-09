@@ -722,6 +722,16 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'ffmpeg-core',
   },
+  {
+    id: 'dev-formatter',
+    title: 'Code Formatter',
+    category: 'dev',
+    slug: 'formatter',
+    tag: 'client',
+    description: 'Beautify JavaScript, HTML, CSS, JSON, and SQL with adjustable indentation.',
+    keywords: ['format', 'beautify', 'prettier', 'code', 'indent', 'pretty print'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

@@ -1,11 +1,11 @@
 import { CATEGORY_ICON } from '@/lib/icons'
 
 /**
- * The 8 top-level tool categories. The `slug` is the first URL segment
+ * The 9 top-level tool categories. The `slug` is the first URL segment
  * (e.g. `/convert/temperature`) and the folder name under `app/pages/`.
  */
 export type CategorySlug =
-  'convert' | 'image' | 'pdf' | 'text' | 'encode' | 'generate' | 'color' | 'media'
+  'convert' | 'image' | 'pdf' | 'text' | 'encode' | 'generate' | 'color' | 'media' | 'dev'
 
 export interface Category {
   slug: CategorySlug
@@ -63,6 +63,12 @@ export const categories: Category[] = [
     title: 'Audio & Video',
     description: 'Convert, trim, and extract media entirely in-browser.',
     icon: CATEGORY_ICON.media,
+  },
+  {
+    slug: 'dev',
+    title: 'Developer Tools',
+    description: 'Format, test, and inspect code snippets, cron jobs, and configs.',
+    icon: CATEGORY_ICON.dev,
   },
 ]
 
