@@ -764,6 +764,16 @@ export const tools: Tool[] = [
     keywords: ['cron', 'crontab', 'schedule', 'cronstrue', 'expression', 'explain'],
     status: 'live',
   },
+  {
+    id: 'dev-json-to-ts',
+    title: 'JSON to TypeScript',
+    category: 'dev',
+    slug: 'json-to-ts',
+    tag: 'client',
+    description: 'Generate TypeScript interfaces from a sample JSON object or array.',
+    keywords: ['json', 'typescript', 'interface', 'type', 'codegen', 'dto'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

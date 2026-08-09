@@ -83,6 +83,7 @@ export const UI_ICON = {
   emptyFile: 'mdi:file-upload-outline',
   /** Empty-state glyph for tools awaiting an uploaded audio/video file. */
   emptyMedia: 'mdi:video-plus-outline',
+  typescript: 'mdi:language-typescript',
 } as const
 
 /**
