@@ -742,6 +742,17 @@ export const tools: Tool[] = [
     keywords: ['minify', 'compress', 'terser', 'csso', 'code', 'shrink', 'uglify'],
     status: 'live',
   },
+  {
+    id: 'dev-regex',
+    title: 'Regex Tester',
+    category: 'dev',
+    slug: 'regex',
+    tag: 'client',
+    description:
+      'Test a regular expression against sample text with live match highlighting, a match/group breakdown, and a plain-English explanation.',
+    keywords: ['regex', 'regexp', 'regular expression', 'pattern', 'match', 'test', 'explain'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

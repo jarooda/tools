@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+@import '../../components/ui/table/table.css';
+@import '../../components/ui/tabs/tabs.css';
+@import '../../components/ui/checkbox/checkbox.css';
 
 /* ============================================================
    JLDS Design System — design tokens & base styles
