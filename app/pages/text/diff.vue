@@ -129,6 +129,12 @@ const { copy, copied } = useCopy()
 }
 .diff__area {
   min-height: 180px;
+  max-height: 320px;
+}
+.diff__area.jl-textarea--auto {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 .diff__stats {
   display: flex;
