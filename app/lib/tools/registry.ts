@@ -793,6 +793,16 @@ export const tools: Tool[] = [
     keywords: ['json', 'typescript', 'interface', 'type', 'codegen', 'dto'],
     status: 'live',
   },
+  {
+    id: 'dev-http-status',
+    title: 'HTTP Status Code Reference',
+    category: 'dev',
+    slug: 'http-status',
+    tag: 'client',
+    description: 'Look up HTTP status codes by number, name, or keyword, grouped by class.',
+    keywords: ['http', 'status code', 'response code', '404', '500', 'rest api', 'reference'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
