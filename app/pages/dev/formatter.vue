@@ -73,6 +73,7 @@ watch([input, language, indent], run)
       :error="errorText"
       :ready="ready"
       :input-invalid="!!errorText"
+      :live="false"
       input-label="Code"
       output-label="Formatted"
       input-placeholder="Paste code to format…"

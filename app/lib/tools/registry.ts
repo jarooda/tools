@@ -732,6 +732,16 @@ export const tools: Tool[] = [
     keywords: ['format', 'beautify', 'prettier', 'code', 'indent', 'pretty print'],
     status: 'live',
   },
+  {
+    id: 'dev-minifier',
+    title: 'Code Minifier',
+    category: 'dev',
+    slug: 'minifier',
+    tag: 'client',
+    description: 'Minify JavaScript, CSS, and HTML to reduce file size.',
+    keywords: ['minify', 'compress', 'terser', 'csso', 'code', 'shrink', 'uglify'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

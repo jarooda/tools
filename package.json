@@ -34,7 +34,9 @@
     "@nuxt/icon": "^2.3.1",
     "@types/js-yaml": "^4.0.9",
     "@types/turndown": "^5.0.6",
+    "csso": "^5.0.5",
     "heic2any": "^0.0.4",
+    "html-minifier-terser": "^7.2.0",
     "html2canvas": "^1.4.1",
     "jalutils": "^1.0.1",
     "js-yaml": "^5.2.1",
@@ -47,6 +49,7 @@
     "prettier": "^3.8.4",
     "qrcode": "^1.5.4",
     "sql-formatter": "^15.8.2",
+    "terser": "^5.49.2",
     "turndown": "^7.2.4",
     "vue": "^3.5.39",
     "vue-router": "^5.1.0"
