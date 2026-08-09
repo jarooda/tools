@@ -836,6 +836,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-ping',
+    title: 'Ping / Latency Check',
+    category: 'network',
+    slug: 'ping',
+    tag: 'hybrid',
+    description: 'Check round-trip latency to a hostname or URL.',
+    keywords: ['ping', 'latency', 'rtt', 'round trip', 'network check'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
