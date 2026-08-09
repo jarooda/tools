@@ -20,7 +20,7 @@ describe('tool registry', () => {
     expect(toolRoute(temp)).toBe('/convert/temperature')
   })
 
-  it('exposes 9 categories', () => {
-    expect(categories).toHaveLength(9)
+  it('exposes 10 categories', () => {
+    expect(categories).toHaveLength(10)
   })
 })

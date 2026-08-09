@@ -825,6 +825,17 @@ export const tools: Tool[] = [
     keywords: ['escape', 'unescape', 'json', 'html', 'sql', 'string literal', 'quote'],
     status: 'live',
   },
+  {
+    id: 'network-speed-test',
+    title: 'Internet Speed Test',
+    category: 'network',
+    slug: 'speed-test',
+    tag: 'hybrid',
+    description: 'Measure your connection’s ping, download, and upload speed.',
+    keywords: ['speed test', 'ping', 'download', 'upload', 'bandwidth', 'mbps', 'latency'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

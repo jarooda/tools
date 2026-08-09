@@ -20,6 +20,7 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
   color: 'mdi:palette-outline',
   media: 'mdi:play-circle-outline',
   dev: 'mdi:code-tags',
+  network: 'mdi:speedometer',
 }
 
 /** App-chrome / action icons used across the shell and tool pages. */

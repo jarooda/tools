@@ -5,7 +5,16 @@ import { CATEGORY_ICON } from '@/lib/icons'
  * (e.g. `/convert/temperature`) and the folder name under `app/pages/`.
  */
 export type CategorySlug =
-  'convert' | 'image' | 'pdf' | 'text' | 'encode' | 'generate' | 'color' | 'media' | 'dev'
+  | 'convert'
+  | 'image'
+  | 'pdf'
+  | 'text'
+  | 'encode'
+  | 'generate'
+  | 'color'
+  | 'media'
+  | 'dev'
+  | 'network'
 
 export interface Category {
   slug: CategorySlug
@@ -69,6 +78,12 @@ export const categories: Category[] = [
     title: 'Developer Tools',
     description: 'Format, test, and inspect code snippets, cron jobs, and configs.',
     icon: CATEGORY_ICON.dev,
+  },
+  {
+    slug: 'network',
+    title: 'Network & Performance',
+    description: 'Check your connection, look up network info, and inspect endpoints.',
+    icon: CATEGORY_ICON.network,
   },
 ]
 
