@@ -13,6 +13,7 @@ import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -59,13 +60,15 @@ function addFiles(files: File[]) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(items, {
+  onReorder: (item, from, to, total) => {
+    announcement.value = `${item.file.name} moved to position ${to + 1} of ${total}`
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= items.value.length) return
-  const next = items.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  items.value = next
+  reorderTo(index, index + delta)
 }
 
 function removeAt(index: number) {
@@ -170,10 +173,32 @@ watch([items, pageSize, orientation], build, { deep: true })
     </EmptyState>
 
     <div v-else class="ip">
+      <span class="ip__sr-live" aria-live="polite">{{ announcement }}</span>
+
       <ul class="ip__grid">
-        <li v-for="(item, i) in items" :key="item.id" class="ip__cell">
+        <li
+          v-for="(item, i) in items"
+          :key="item.id"
+          :data-drag-index="i"
+          class="ip__cell"
+          :class="{
+            'ip__cell--dragging': dragIndex === i,
+            'ip__cell--over': overIndex === i && dragIndex !== null && dragIndex !== i,
+          }"
+          :style="styleFor(i)"
+        >
           <div class="ip__thumb"><img :src="item.url" :alt="item.file.name" /></div>
           <span class="ip__num">{{ i + 1 }}</span>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="ip__handle"
+            :aria-label="`Drag to reorder ${item.file.name}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="15" />
+          </IconButton>
           <div class="ip__cell-actions">
             <IconButton
               variant="ghost"
@@ -287,6 +312,26 @@ watch([items, pageSize, orientation], build, { deep: true })
   font-size: 0.7rem;
   font-weight: 700;
 }
+.ip__handle {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 999px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+}
+.ip__cell--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  z-index: 2;
+  cursor: grabbing;
+}
+.ip__cell--over {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
 .ip__cell-actions {
   display: flex;
   justify-content: center;
@@ -304,5 +349,16 @@ watch([items, pageSize, orientation], build, { deep: true })
   .ip__opts {
     grid-template-columns: 1fr;
   }
+}
+.ip__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

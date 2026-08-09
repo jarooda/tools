@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { formatBytes } from '@/utils/fileSize'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -40,13 +41,15 @@ function addFiles(files: File[]) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(items, {
+  onReorder: (item, from, to, total) => {
+    announcement.value = `${item.file.name} moved to position ${to + 1} of ${total}`
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= items.value.length) return
-  const next = items.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  items.value = next
+  reorderTo(index, index + delta)
 }
 
 function removeAt(index: number) {
@@ -113,8 +116,30 @@ watch(items, merge, { deep: true })
     </EmptyState>
 
     <div v-else class="mg">
+      <span class="mg__sr-live" aria-live="polite">{{ announcement }}</span>
       <ol class="mg__list">
-        <li v-for="(item, i) in items" :key="item.id" class="mg__row">
+        <li
+          v-for="(item, i) in items"
+          :key="item.id"
+          :data-drag-index="i"
+          class="mg__row"
+          :class="{
+            'mg__row--dragging': dragIndex === i,
+            'mg__row--over-before': overIndex === i && dragIndex !== null && i < dragIndex,
+            'mg__row--over-after': overIndex === i && dragIndex !== null && i > dragIndex,
+          }"
+          :style="styleFor(i)"
+        >
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="mg__handle"
+            :aria-label="`Drag to reorder ${item.file.name}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="16" />
+          </IconButton>
           <span class="mg__index">{{ i + 1 }}</span>
           <Icon :name="UI_ICON.filePdf" size="20" class="mg__ic" />
           <span class="mg__name">{{ item.file.name }}</span>
@@ -188,6 +213,7 @@ watch(items, merge, { deep: true })
   gap: 0.5rem;
 }
 .mg__row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -195,6 +221,31 @@ watch(items, merge, { deep: true })
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-control, 0.625rem);
   background: var(--surface-card);
+}
+.mg__row--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  cursor: grabbing;
+}
+.mg__row--over-before::before,
+.mg__row--over-after::after {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 2px;
+  background: var(--accent);
+}
+.mg__row--over-before::before {
+  top: -0.3rem;
+}
+.mg__row--over-after::after {
+  bottom: -0.3rem;
+}
+.mg__handle {
+  flex: 0 0 auto;
+  cursor: grab;
+  touch-action: none;
 }
 .mg__index {
   flex: 0 0 auto;
@@ -239,5 +290,16 @@ watch(items, merge, { deep: true })
   .mg__size {
     display: none;
   }
+}
+.mg__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

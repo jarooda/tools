@@ -11,6 +11,7 @@ import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -71,15 +72,17 @@ async function onSelect(file: File) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(pages, {
+  onReorder: (page, from, to, total) => {
+    announcement.value = `Page ${page.original + 1} moved to position ${to + 1} of ${total}`
+    dirty.value = true
+    outputBlob.value = null
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= pages.value.length) return
-  const next = pages.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  pages.value = next
-  dirty.value = true
-  outputBlob.value = null
+  reorderTo(index, index + delta)
 }
 
 function removePage(index: number) {
@@ -160,10 +163,32 @@ async function apply() {
         </div>
       </div>
 
+      <span class="og__sr-live" aria-live="polite">{{ announcement }}</span>
+
       <ul v-if="pages.length" class="og__grid">
-        <li v-for="(page, i) in pages" :key="page.original" class="og__cell">
+        <li
+          v-for="(page, i) in pages"
+          :key="page.original"
+          :data-drag-index="i"
+          class="og__cell"
+          :class="{
+            'og__cell--dragging': dragIndex === i,
+            'og__cell--over': overIndex === i && dragIndex !== null && dragIndex !== i,
+          }"
+          :style="styleFor(i)"
+        >
           <div class="og__thumb"><img :src="page.url" :alt="`Page ${page.original + 1}`" /></div>
           <span class="og__pos">{{ i + 1 }}</span>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="og__handle"
+            :aria-label="`Drag to reorder page ${page.original + 1}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="15" />
+          </IconButton>
           <div class="og__cell-actions">
             <IconButton
               variant="ghost"
@@ -288,6 +313,26 @@ async function apply() {
   font-size: 0.7rem;
   font-weight: 700;
 }
+.og__handle {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 999px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+}
+.og__cell--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  z-index: 2;
+  cursor: grabbing;
+}
+.og__cell--over {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
 .og__cell-actions {
   display: flex;
   justify-content: center;
@@ -304,5 +349,16 @@ async function apply() {
 }
 .og__drop {
   width: 100%;
+}
+.og__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
