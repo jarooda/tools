@@ -765,6 +765,25 @@ export const tools: Tool[] = [
     status: 'live',
   },
   {
+    id: 'dev-diff',
+    title: 'Side-by-Side Diff',
+    category: 'dev',
+    slug: 'diff',
+    tag: 'client',
+    description:
+      'Compare two blocks of code side by side with word-level highlights on changed lines.',
+    keywords: [
+      'diff',
+      'compare',
+      'side by side',
+      'merge view',
+      'code diff',
+      'two column',
+      'word diff',
+    ],
+    status: 'live',
+  },
+  {
     id: 'dev-json-to-ts',
     title: 'JSON to TypeScript',
     category: 'dev',
