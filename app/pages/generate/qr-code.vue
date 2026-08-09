@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 
@@ -150,7 +151,7 @@ async function downloadSvg() {
         >
           <template #icon><Icon :name="UI_ICON.qrcode" size="22" /></template>
         </EmptyState>
-        <p v-else-if="error" class="qr__error" role="alert">{{ error }}</p>
+        <Alert v-else-if="error" tone="danger">{{ error }}</Alert>
         <template v-else>
           <div class="qr__canvas-wrap">
             <canvas ref="canvasRef" class="qr__canvas" />
@@ -240,12 +241,6 @@ async function downloadSvg() {
 .qr__actions {
   display: flex;
   gap: 0.5rem;
-}
-.qr__error {
-  margin: 0;
-  color: var(--danger-text, var(--warning-text));
-  font-size: 0.875rem;
-  text-align: center;
 }
 @media (max-width: 720px) {
   .qr {

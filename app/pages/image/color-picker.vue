@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import { Button } from '@/components/ui/button'
+import { Field } from '@/components/ui/field'
+import { NumberInput } from '@/components/ui/number-input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { rgbToHex, rgbToHsl, hslString, rgbString } from '@/utils/colorFormat'
@@ -29,6 +32,8 @@ const error = ref('')
 
 const color = ref<{ r: number; g: number; b: number } | null>(null)
 const recent = ref<string[]>([])
+const sampleX = ref<number | null>(0)
+const sampleY = ref<number | null>(0)
 
 const hex = computed(() =>
   color.value ? rgbToHex(color.value.r, color.value.g, color.value.b) : '',
@@ -52,6 +57,8 @@ async function onSelect(file: File) {
     canvas.height = img.height
     ctx = canvas.getContext('2d', { willReadFrequently: true })
     ctx?.drawImage(img.el, 0, 0)
+    sampleX.value = Math.floor(img.width / 2)
+    sampleY.value = Math.floor(img.height / 2)
   } catch (e) {
     error.value = (e as Error).message
     loaded.value = null
@@ -72,15 +79,34 @@ function setColor(r: number, g: number, b: number) {
   recent.value = [h, ...recent.value.filter((c) => c !== h)].slice(0, 8)
 }
 
+function sampleAt(x: number, y: number) {
+  if (!ctx) return
+  const d = ctx.getImageData(x, y, 1, 1).data
+  setColor(d[0]!, d[1]!, d[2]!)
+}
+
 function onCanvasClick(e: MouseEvent) {
   const canvas = canvasEl.value
   if (!canvas || !ctx) return
   const rect = canvas.getBoundingClientRect()
   const x = Math.floor(((e.clientX - rect.left) / rect.width) * canvas.width)
   const y = Math.floor(((e.clientY - rect.top) / rect.height) * canvas.height)
-  const d = ctx.getImageData(x, y, 1, 1).data
-  setColor(d[0]!, d[1]!, d[2]!)
+  sampleX.value = x
+  sampleY.value = y
+  sampleAt(x, y)
 }
+
+function sampleAtInputs() {
+  const canvas = canvasEl.value
+  if (!canvas) return
+  const x = Math.min(Math.max(sampleX.value ?? 0, 0), canvas.width - 1)
+  const y = Math.min(Math.max(sampleY.value ?? 0, 0), canvas.height - 1)
+  sampleAt(x, y)
+}
+
+watch([sampleX, sampleY], () => {
+  if (loaded.value) sampleAtInputs()
+})
 
 async function pickWithEyeDropper() {
   try {
@@ -123,13 +149,34 @@ async function copyValue(v: string) {
 
     <div v-else class="pk">
       <div class="pk__left">
-        <canvas ref="canvasEl" class="pk__canvas" @click="onCanvasClick" />
+        <canvas
+          ref="canvasEl"
+          class="pk__canvas"
+          role="img"
+          aria-label="Loaded image — click to sample a color, or use the X/Y fields below"
+          @click="onCanvasClick"
+        />
         <p class="pk__hint">Click the image to sample a color.</p>
       </div>
 
       <div class="pk__controls">
         <div class="pk__swatch" :style="{ background: hex || 'transparent' }">
           <span v-if="!color" class="pk__swatch-empty">No color picked</span>
+        </div>
+
+        <div class="pk__coords">
+          <Field label="X">
+            <NumberInput v-model="sampleX" :min="0" :max="loaded.width - 1" align="left" />
+          </Field>
+          <Field label="Y">
+            <NumberInput v-model="sampleY" :min="0" :max="loaded.height - 1" align="left" />
+          </Field>
+        </div>
+        <div class="pk__sample">
+          <Button variant="secondary" size="sm" @click="sampleAtInputs">
+            <template #icon><Icon :name="UI_ICON.eyedropper" size="15" /></template>
+            Sample
+          </Button>
         </div>
 
         <ul v-if="color" class="pk__values">
@@ -188,7 +235,7 @@ async function copyValue(v: string) {
       </div>
     </div>
 
-    <p v-if="error" class="pk__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -229,6 +276,17 @@ async function copyValue(v: string) {
 .pk__swatch-empty {
   font-size: 0.8125rem;
   color: var(--text-tertiary);
+}
+.pk__coords {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem;
+}
+.pk__coords :deep(.jl-field) {
+  min-width: 0;
+}
+.pk__sample {
+  margin-top: 0.5rem;
 }
 .pk__values {
   list-style: none;
@@ -288,11 +346,6 @@ async function copyValue(v: string) {
 }
 .pk__drop {
   width: 100%;
-}
-.pk__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .pk {

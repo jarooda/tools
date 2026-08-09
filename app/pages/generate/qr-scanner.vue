@@ -6,6 +6,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 
@@ -189,40 +190,42 @@ onBeforeUnmount(stopCamera)
         </div>
 
         <!-- Result -->
-        <p v-if="error" class="scan__error" role="alert">{{ error }}</p>
+        <div aria-live="polite">
+          <Alert v-if="error" tone="danger">{{ error }}</Alert>
 
-        <div v-else-if="result" class="scan__result">
-          <span class="scan__label">Decoded</span>
-          <div class="scan__value-row">
-            <p class="scan__value">{{ result }}</p>
-            <div class="scan__actions">
-              <Button v-if="isUrl" variant="ghost" size="sm" @click="openResult">
-                <template #icon><Icon :name="UI_ICON.arrowRight" size="15" /></template>
-                Open
-              </Button>
-              <Button variant="ghost" size="sm" aria-label="Copy result" @click="copy(result)">
-                <template #icon>
-                  <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
-                </template>
-                {{ copied ? 'Copied' : 'Copy' }}
-              </Button>
+          <div v-else-if="result" class="scan__result">
+            <h2 class="scan__label">Decoded</h2>
+            <div class="scan__value-row">
+              <p class="scan__value">{{ result }}</p>
+              <div class="scan__actions">
+                <Button v-if="isUrl" variant="ghost" size="sm" @click="openResult">
+                  <template #icon><Icon :name="UI_ICON.arrowRight" size="15" /></template>
+                  Open
+                </Button>
+                <Button variant="ghost" size="sm" aria-label="Copy result" @click="copy(result)">
+                  <template #icon>
+                    <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
+                  </template>
+                  {{ copied ? 'Copied' : 'Copy' }}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <EmptyState
-          v-else
-          bordered
-          size="sm"
-          title="No code scanned yet"
-          :description="
-            mode === 'image'
-              ? 'Upload an image to read its QR code or barcode.'
-              : 'Start your camera and point it at a code.'
-          "
-        >
-          <template #icon><Icon :name="UI_ICON.qrScan" size="22" /></template>
-        </EmptyState>
+          <EmptyState
+            v-else
+            bordered
+            size="sm"
+            title="No code scanned yet"
+            :description="
+              mode === 'image'
+                ? 'Upload an image to read its QR code or barcode.'
+                : 'Start your camera and point it at a code.'
+            "
+          >
+            <template #icon><Icon :name="UI_ICON.qrScan" size="22" /></template>
+          </EmptyState>
+        </div>
       </template>
     </div>
   </ToolPage>
@@ -266,6 +269,7 @@ onBeforeUnmount(stopCamera)
   background: var(--surface-card);
 }
 .scan__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -289,14 +293,5 @@ onBeforeUnmount(stopCamera)
   display: flex;
   gap: 0.25rem;
   flex-shrink: 0;
-}
-.scan__error {
-  margin: 0;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--danger-border, var(--warning));
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--danger-subtle, var(--warning-subtle));
-  color: var(--danger-text, var(--warning-text));
-  font-size: 0.875rem;
 }
 </style>

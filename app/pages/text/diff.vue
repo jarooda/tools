@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Textarea } from '@/components/ui/textarea'
-import { Skeleton } from '@/components/ui/skeleton'
-import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
-import { diffLines, diffStats } from '@/utils/textDiff'
+import { diffLines, diffStats, type DiffRow } from '@/utils/textDiff'
 
 definePageMeta({ layout: 'tool' })
 
@@ -20,11 +20,23 @@ onMounted(() => {
   ready.value = true
 })
 
-const rows = computed(() => diffLines(original.value, changed.value))
+const diffResult = computed<{ rows: DiffRow[]; error: string | null }>(() => {
+  try {
+    return { rows: diffLines(original.value, changed.value), error: null }
+  } catch (e) {
+    return { rows: [], error: e instanceof Error ? e.message : 'Could not diff this text.' }
+  }
+})
+const rows = computed(() => diffResult.value.rows)
+const error = computed(() => diffResult.value.error)
 const stats = computed(() => diffStats(rows.value))
 const empty = computed(() => original.value === '' && changed.value === '')
 
 const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
+
+const diffText = computed(() => rows.value.map((r) => `${SIGN[r.type]}${r.value}`).join('\n'))
+
+const { copy, copied } = useCopy()
 </script>
 
 <template>
@@ -53,28 +65,29 @@ const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
         </div>
       </div>
 
-      <div class="diff__result">
-        <div class="diff__result-head">
-          <span class="diff__label">Differences</span>
-          <div v-if="ready && !empty" class="diff__stats">
+      <OutputPanel
+        label="Differences"
+        :ready="ready"
+        :empty="empty"
+        :error="error"
+        :live="false"
+        empty-title="Nothing to compare yet"
+        empty-description="Paste text into both boxes to see what changed."
+      >
+        <template v-if="!empty" #actions>
+          <div class="diff__stats">
             <span class="diff__stat diff__stat--add">+{{ stats.added }}</span>
             <span class="diff__stat diff__stat--remove">−{{ stats.removed }}</span>
           </div>
-        </div>
+          <Button variant="ghost" size="sm" aria-label="Copy diff" @click="copy(diffText)">
+            <template #icon>
+              <Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15" />
+            </template>
+            {{ copied ? 'Copied' : 'Copy' }}
+          </Button>
+        </template>
 
-        <div v-if="!ready" aria-hidden="true">
-          <Skeleton variant="rect" width="100%" height="160px" radius="10px" />
-        </div>
-        <EmptyState
-          v-else-if="empty"
-          bordered
-          size="sm"
-          title="Nothing to compare yet"
-          description="Paste text into both boxes to see what changed."
-        >
-          <template #icon><Icon :name="UI_ICON.emptyInput" size="22" /></template>
-        </EmptyState>
-        <div v-else class="diff__lines">
+        <div class="diff__lines">
           <div
             v-for="(r, idx) in rows"
             :key="idx"
@@ -85,7 +98,7 @@ const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
             <code class="diff__text">{{ r.value || ' ' }}</code>
           </div>
         </div>
-      </div>
+      </OutputPanel>
     </div>
   </ToolPage>
 </template>
@@ -116,16 +129,6 @@ const SIGN: Record<string, string> = { add: '+', remove: '−', equal: ' ' }
 }
 .diff__area {
   min-height: 180px;
-}
-.diff__result {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.diff__result-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .diff__stats {
   display: flex;

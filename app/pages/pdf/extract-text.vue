@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -121,39 +122,41 @@ async function extract() {
         :label="`Reading page ${progress} of ${total}…`"
       />
 
-      <EmptyState
-        v-else-if="empty"
-        title="No selectable text"
-        description="This PDF has no embedded text — it may be a scan or image-only. OCR isn’t supported here."
-      >
-        <template #icon><Icon :name="UI_ICON.emptyInput" size="24" /></template>
-      </EmptyState>
+      <div v-else class="ex__result" aria-live="polite">
+        <EmptyState
+          v-if="empty"
+          title="No selectable text"
+          description="This PDF has no embedded text — it may be a scan or image-only. OCR isn’t supported here."
+        >
+          <template #icon><Icon :name="UI_ICON.emptyInput" size="24" /></template>
+        </EmptyState>
 
-      <template v-else>
-        <textarea class="ex__out" :value="text" readonly spellcheck="false"></textarea>
-        <div class="ex__actions">
-          <span class="ex__count">{{ charCount.toLocaleString() }} characters</span>
-          <div class="ex__actions-btns">
-            <Button variant="ghost" size="sm" @click="reset">
-              <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
-              New file
-            </Button>
-            <Button variant="ghost" size="sm" @click="copy(text)">
-              <template #icon
-                ><Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15"
-              /></template>
-              {{ copied ? 'Copied' : 'Copy' }}
-            </Button>
-            <Button variant="primary" size="sm" @click="downloadText(text, `${baseName}.txt`)">
-              <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
-              Download .txt
-            </Button>
+        <template v-else>
+          <pre class="ex__out">{{ text }}</pre>
+          <div class="ex__actions">
+            <span class="ex__count">{{ charCount.toLocaleString() }} characters</span>
+            <div class="ex__actions-btns">
+              <Button variant="ghost" size="sm" @click="reset">
+                <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
+                New file
+              </Button>
+              <Button variant="ghost" size="sm" @click="copy(text)">
+                <template #icon
+                  ><Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15"
+                /></template>
+                {{ copied ? 'Copied' : 'Copy' }}
+              </Button>
+              <Button variant="primary" size="sm" @click="downloadText(text, `${baseName}.txt`)">
+                <template #icon><Icon :name="UI_ICON.download" size="15" /></template>
+                Download .txt
+              </Button>
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
 
-    <p v-if="error" class="ex__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger" aria-live="polite">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -175,12 +178,18 @@ async function extract() {
   flex-direction: column;
   gap: 0.5rem;
 }
+.ex__result {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .ex__source {
   font-size: 0.8125rem;
   color: var(--text-tertiary);
   word-break: break-all;
 }
 .ex__out {
+  margin: 0;
   width: 100%;
   min-height: 320px;
   padding: 0.85rem;
@@ -191,7 +200,9 @@ async function extract() {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.8125rem;
   line-height: 1.55;
-  resize: vertical;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
 }
 .ex__actions {
   display: flex;
@@ -212,10 +223,5 @@ async function extract() {
 }
 .ex__drop {
   width: 100%;
-}
-.ex__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

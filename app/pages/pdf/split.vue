@@ -10,6 +10,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -191,7 +192,7 @@ watch([mode, rangeSpec, chunkSize], () => {
       </ul>
     </div>
 
-    <p v-if="error" class="sp__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -236,7 +237,7 @@ watch([mode, rangeSpec, chunkSize], () => {
 }
 .sp__ic {
   flex: 0 0 auto;
-  color: var(--danger, #d9534f);
+  color: var(--text-tertiary);
 }
 .sp__name {
   flex: 1 1 auto;
@@ -254,10 +255,5 @@ watch([mode, rangeSpec, chunkSize], () => {
 }
 .sp__drop {
   width: 100%;
-}
-.sp__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

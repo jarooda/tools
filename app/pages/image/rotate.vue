@@ -7,6 +7,7 @@ import { Field } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { rotateBy, rotatedDimensions, type Rotation } from '@/utils/imageTransform'
@@ -145,7 +146,7 @@ watch([loaded, rotation, flipH, flipV], () => nextTick(render), { immediate: tru
       </div>
     </div>
 
-    <p v-if="error" class="rt__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -183,11 +184,6 @@ watch([loaded, rotation, flipH, flipV], () => nextTick(render), { immediate: tru
 }
 .rt__drop {
   width: 100%;
-}
-.rt__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .rt {

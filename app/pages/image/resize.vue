@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { resizeToWidth, resizeToHeight, resizeByPercent } from '@/utils/imageResize'
@@ -156,7 +157,7 @@ watch([loaded, width, height], render, { immediate: true })
       </div>
     </div>
 
-    <p v-if="error" class="rs__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -205,11 +206,6 @@ watch([loaded, width, height], render, { immediate: true })
 }
 .rs__drop {
   width: 100%;
-}
-.rs__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .rs {

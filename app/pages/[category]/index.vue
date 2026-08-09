@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { PageHeader } from '@/components/ui/page-header'
-import { Breadcrumb } from '@/components/ui/breadcrumb'
 import ToolCard from '@/components/tool/ToolCard.vue'
+import { EmptyState } from '@/components/ui/empty-state'
 import { APP_NAME, SITE_URL } from '@/lib/config'
+import { UI_ICON } from '@/lib/icons'
+
+definePageMeta({ layout: 'tool' })
 
 const route = useRoute()
 const { getCategory, toolsInCategory } = useToolRegistry()
@@ -10,11 +12,6 @@ const { getCategory, toolsInCategory } = useToolRegistry()
 const slug = computed(() => String(route.params.category))
 const category = computed(() => getCategory(slug.value))
 const tools = computed(() => (category.value ? toolsInCategory(category.value.slug) : []))
-
-const crumbs = computed(() => {
-  if (!category.value) return []
-  return [{ label: 'All tools', href: '/' }, { label: category.value.title }]
-})
 
 // Unknown category → 404.
 if (!category.value) {
@@ -33,39 +30,19 @@ useHead({
 </script>
 
 <template>
-  <div v-if="category" class="category">
-    <PageHeader variant="plain" :title="category.title" :description="category.description">
-      <template #breadcrumb>
-        <Breadcrumb :items="crumbs" />
-      </template>
-      <template #leading>
-        <span class="category__icon" aria-hidden="true">
-          <Icon :name="category.icon" size="20" />
-        </span>
-      </template>
-    </PageHeader>
-    <div class="category__grid">
-      <ToolCard v-for="tool in tools" :key="tool.id" :tool="tool" />
-    </div>
+  <div v-if="tools.length" class="category__grid">
+    <ToolCard v-for="tool in tools" :key="tool.id" :tool="tool" />
   </div>
+  <EmptyState
+    v-else
+    title="No tools yet"
+    description="This category doesn't have any tools live yet — check back soon."
+  >
+    <template #icon><Icon :name="UI_ICON.grid" size="24" /></template>
+  </EmptyState>
 </template>
 
 <style scoped>
-.category {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.category__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  background: var(--accent-subtle);
-  color: var(--text-brand);
-}
 .category__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));

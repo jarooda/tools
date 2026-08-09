@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { EmptyState } from '@/components/ui/empty-state'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { UI_ICON } from '@/lib/icons'
 
 /**
@@ -89,7 +89,7 @@ const { downloadText } = useDownload()
     <div class="tw__panes">
       <!-- Input -->
       <div class="tw__pane">
-        <span class="tw__label">{{ inputLabel }}</span>
+        <h2 class="tw__label">{{ inputLabel }}</h2>
         <Textarea
           v-model="input"
           class="tw__area"
@@ -103,9 +103,15 @@ const { downloadText } = useDownload()
 
       <!-- Output -->
       <div class="tw__pane">
-        <div class="tw__out-head">
-          <span class="tw__label">{{ outputLabel }}</span>
-          <div v-if="ready && !empty && !error && output" class="tw__actions">
+        <OutputPanel
+          :label="outputLabel"
+          :ready="ready"
+          :empty="empty"
+          :error="error"
+          :empty-title="emptyTitle"
+          :empty-description="emptyDescription"
+        >
+          <template v-if="!empty && !error && output" #actions>
             <slot name="actions" />
             <Button
               v-if="!noDownload"
@@ -130,39 +136,23 @@ const { downloadText } = useDownload()
               </template>
               {{ copied ? 'Copied' : 'Copy' }}
             </Button>
-          </div>
-        </div>
+          </template>
 
-        <!-- Loading -->
-        <div v-if="!ready" class="tw__skel" aria-hidden="true">
-          <Skeleton variant="rect" width="100%" height="140px" radius="10px" />
-        </div>
+          <template #skeleton>
+            <Skeleton variant="rect" width="100%" height="220px" radius="10px" />
+          </template>
 
-        <!-- Empty -->
-        <EmptyState
-          v-else-if="empty"
-          class="tw__empty"
-          bordered
-          size="sm"
-          :title="emptyTitle"
-          :description="emptyDescription"
-        >
-          <template #icon><Icon :name="UI_ICON.emptyInput" size="22" /></template>
-        </EmptyState>
-
-        <!-- Error -->
-        <p v-else-if="error" class="tw__error" role="alert">{{ error }}</p>
-
-        <!-- Results -->
-        <Snippet
-          v-else-if="codeOutput"
-          class="tw__code"
-          variant="block"
-          :code="output"
-          :language="language"
-          :line-numbers="lineNumbers"
-        />
-        <pre v-else class="tw__output" :class="{ 'tw__output--mono': mono }">{{ output }}</pre>
+          <!-- Results -->
+          <Snippet
+            v-if="codeOutput"
+            class="tw__code"
+            variant="block"
+            :code="output"
+            :language="language"
+            :line-numbers="lineNumbers"
+          />
+          <pre v-else class="tw__output" :class="{ 'tw__output--mono': mono }">{{ output }}</pre>
+        </OutputPanel>
 
         <slot name="output-footer" />
       </div>
@@ -195,6 +185,7 @@ const { downloadText } = useDownload()
   min-width: 0;
 }
 .tw__label {
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -203,18 +194,6 @@ const { downloadText } = useDownload()
 }
 .tw__area {
   min-height: 220px;
-}
-.tw__out-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  min-height: 32px;
-}
-.tw__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 .tw__output {
   margin: 0;
@@ -237,21 +216,6 @@ const { downloadText } = useDownload()
 .tw__output--mono {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.875rem;
-}
-.tw__error {
-  margin: 0;
-  padding: 0.7rem 0.85rem;
-  min-height: 220px;
-  border: 1px solid var(--danger-border, var(--warning));
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--danger-subtle, var(--warning-subtle));
-  color: var(--danger-text, var(--warning-text));
-  font-size: 0.875rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.tw__empty {
-  width: 100%;
 }
 
 @media (max-width: 640px) {

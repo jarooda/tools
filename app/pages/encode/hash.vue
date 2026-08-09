@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
+import OutputPanel from '@/components/tool/OutputPanel.vue'
 import { Textarea } from '@/components/ui/textarea'
 import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { EmptyState } from '@/components/ui/empty-state'
-import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { md5 } from '@/utils/md5'
 
@@ -61,30 +60,28 @@ watch(input, compute)
         />
       </div>
 
-      <div class="hash__results">
-        <ul v-if="!ready" class="hash__list" aria-hidden="true">
-          <li v-for="a in ALGOS" :key="a" class="hash__row">
-            <Skeleton variant="text" width="64px" />
-            <Skeleton variant="text" width="70%" />
-          </li>
-        </ul>
+      <OutputPanel
+        :ready="ready"
+        :empty="input === ''"
+        :live="false"
+        empty-title="No hashes yet"
+        empty-description="Enter some text above to compute its MD5 and SHA digests."
+      >
+        <template #skeleton>
+          <ul class="hash__list">
+            <li v-for="a in ALGOS" :key="a" class="hash__row">
+              <Skeleton variant="text" width="64px" />
+              <Skeleton variant="text" width="70%" />
+            </li>
+          </ul>
+        </template>
 
-        <EmptyState
-          v-else-if="input === ''"
-          bordered
-          size="sm"
-          title="No hashes yet"
-          description="Enter some text above to compute its MD5 and SHA digests."
-        >
-          <template #icon><Icon :name="UI_ICON.emptyInput" size="22" /></template>
-        </EmptyState>
-
-        <ul v-else class="hash__list">
+        <ul class="hash__list">
           <li v-for="a in ALGOS" :key="a">
             <Snippet variant="block" :title="a" :code="hashes[a]" />
           </li>
         </ul>
-      </div>
+      </OutputPanel>
     </div>
   </ToolPage>
 </template>

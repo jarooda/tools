@@ -5,9 +5,8 @@ import { Field } from '@/components/ui/field'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { SegmentedControl } from '@/components/ui/segmented-control'
-import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { boxShadowCss, gradientCss, rgbaCss } from '@/utils/cssGenerator'
 
@@ -61,14 +60,6 @@ const cssProp = computed(() =>
     ? `box-shadow: ${shadowValue.value};`
     : `background: ${gradientValue.value};`,
 )
-
-const copied = ref(false)
-const { copy } = useCopy()
-function copyCss() {
-  copy(cssProp.value)
-  copied.value = true
-  setTimeout(() => (copied.value = false), 1200)
-}
 
 onMounted(() => {
   ready.value = true
@@ -158,15 +149,7 @@ onMounted(() => {
         </div>
 
         <!-- CSS output -->
-        <div class="cg__css">
-          <code class="cg__css-text">{{ cssProp }}</code>
-          <Button variant="ghost" size="sm" aria-label="Copy CSS" @click="copyCss">
-            <template #icon
-              ><Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="15"
-            /></template>
-            {{ copied ? 'Copied' : 'Copy' }}
-          </Button>
-        </div>
+        <Snippet variant="block" title="CSS" :code="cssProp" />
       </template>
     </div>
   </ToolPage>
@@ -228,24 +211,6 @@ onMounted(() => {
   height: 150px;
   border-radius: 16px;
   background: var(--surface-card);
-}
-.cg__css {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.85rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--surface-card);
-}
-.cg__css-text {
-  min-width: 0;
-  overflow-x: auto;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.8125rem;
-  color: var(--text-primary);
-  white-space: nowrap;
 }
 @media (max-width: 720px) {
   .cg__grid {

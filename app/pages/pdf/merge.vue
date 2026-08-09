@@ -4,12 +4,15 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { formatBytes } from '@/utils/fileSize'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -38,13 +41,15 @@ function addFiles(files: File[]) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(items, {
+  onReorder: (item, from, to, total) => {
+    announcement.value = `${item.file.name} moved to position ${to + 1} of ${total}`
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= items.value.length) return
-  const next = items.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  items.value = next
+  reorderTo(index, index + delta)
 }
 
 function removeAt(index: number) {
@@ -111,32 +116,56 @@ watch(items, merge, { deep: true })
     </EmptyState>
 
     <div v-else class="mg">
+      <span class="mg__sr-live" aria-live="polite">{{ announcement }}</span>
       <ol class="mg__list">
-        <li v-for="(item, i) in items" :key="item.id" class="mg__row">
+        <li
+          v-for="(item, i) in items"
+          :key="item.id"
+          :data-drag-index="i"
+          class="mg__row"
+          :class="{
+            'mg__row--dragging': dragIndex === i,
+            'mg__row--over-before': overIndex === i && dragIndex !== null && i < dragIndex,
+            'mg__row--over-after': overIndex === i && dragIndex !== null && i > dragIndex,
+          }"
+          :style="styleFor(i)"
+        >
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="mg__handle"
+            :aria-label="`Drag to reorder ${item.file.name}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="16" />
+          </IconButton>
           <span class="mg__index">{{ i + 1 }}</span>
           <Icon :name="UI_ICON.filePdf" size="20" class="mg__ic" />
           <span class="mg__name">{{ item.file.name }}</span>
           <span class="mg__size">{{ formatBytes(item.file.size) }}</span>
           <div class="mg__row-actions">
-            <button
-              class="mg__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
               aria-label="Move up"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="16" />
-            </button>
-            <button
-              class="mg__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === items.length - 1"
               aria-label="Move down"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="16" />
-            </button>
-            <button class="mg__iconbtn" aria-label="Remove" @click="removeAt(i)">
+            </IconButton>
+            <IconButton variant="ghost" size="sm" aria-label="Remove" @click="removeAt(i)">
               <Icon :name="UI_ICON.trash" size="16" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ol>
@@ -159,13 +188,13 @@ watch(items, merge, { deep: true })
         <template #extra>
           <Button variant="ghost" size="sm" @click="reset">
             <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
-            Start over
+            New file
           </Button>
         </template>
       </ResultActions>
     </div>
 
-    <p v-if="error" class="mg__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -184,6 +213,7 @@ watch(items, merge, { deep: true })
   gap: 0.5rem;
 }
 .mg__row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -191,6 +221,31 @@ watch(items, merge, { deep: true })
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-control, 0.625rem);
   background: var(--surface-card);
+}
+.mg__row--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  cursor: grabbing;
+}
+.mg__row--over-before::before,
+.mg__row--over-after::after {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 2px;
+  background: var(--accent);
+}
+.mg__row--over-before::before {
+  top: -0.3rem;
+}
+.mg__row--over-after::after {
+  bottom: -0.3rem;
+}
+.mg__handle {
+  flex: 0 0 auto;
+  cursor: grab;
+  touch-action: none;
 }
 .mg__index {
   flex: 0 0 auto;
@@ -202,7 +257,7 @@ watch(items, merge, { deep: true })
 }
 .mg__ic {
   flex: 0 0 auto;
-  color: var(--danger, #d9534f);
+  color: var(--text-tertiary);
 }
 .mg__name {
   flex: 1 1 auto;
@@ -223,26 +278,6 @@ watch(items, merge, { deep: true })
   display: flex;
   gap: 0.15rem;
 }
-.mg__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.mg__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
-.mg__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
 .mg__drop {
   width: 100%;
 }
@@ -251,14 +286,20 @@ watch(items, merge, { deep: true })
   font-size: 0.8125rem;
   color: var(--text-tertiary);
 }
-.mg__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
-}
 @media (max-width: 560px) {
   .mg__size {
     display: none;
   }
+}
+.mg__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

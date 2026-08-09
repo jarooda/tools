@@ -4,11 +4,14 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -69,15 +72,17 @@ async function onSelect(file: File) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(pages, {
+  onReorder: (page, from, to, total) => {
+    announcement.value = `Page ${page.original + 1} moved to position ${to + 1} of ${total}`
+    dirty.value = true
+    outputBlob.value = null
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= pages.value.length) return
-  const next = pages.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  pages.value = next
-  dirty.value = true
-  outputBlob.value = null
+  reorderTo(index, index + delta)
 }
 
 function removePage(index: number) {
@@ -158,34 +163,60 @@ async function apply() {
         </div>
       </div>
 
+      <span class="og__sr-live" aria-live="polite">{{ announcement }}</span>
+
       <ul v-if="pages.length" class="og__grid">
-        <li v-for="(page, i) in pages" :key="page.original" class="og__cell">
+        <li
+          v-for="(page, i) in pages"
+          :key="page.original"
+          :data-drag-index="i"
+          class="og__cell"
+          :class="{
+            'og__cell--dragging': dragIndex === i,
+            'og__cell--over': overIndex === i && dragIndex !== null && dragIndex !== i,
+          }"
+          :style="styleFor(i)"
+        >
           <div class="og__thumb"><img :src="page.url" :alt="`Page ${page.original + 1}`" /></div>
           <span class="og__pos">{{ i + 1 }}</span>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="og__handle"
+            :aria-label="`Drag to reorder page ${page.original + 1}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="15" />
+          </IconButton>
           <div class="og__cell-actions">
-            <button
-              class="og__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
-              aria-label="Move left"
+              aria-label="Move earlier"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="15" />
-            </button>
-            <button
-              class="og__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === pages.length - 1"
-              aria-label="Move right"
+              aria-label="Move later"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="15" />
-            </button>
-            <button
-              class="og__iconbtn og__iconbtn--danger"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              class="og__iconbtn--danger"
               aria-label="Delete page"
               @click="removePage(i)"
             >
               <Icon :name="UI_ICON.trash" size="15" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ul>
@@ -209,7 +240,7 @@ async function apply() {
       </div>
     </div>
 
-    <p v-if="error" class="og__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -282,33 +313,33 @@ async function apply() {
   font-size: 0.7rem;
   font-weight: 700;
 }
+.og__handle {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 999px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+}
+.og__cell--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  z-index: 2;
+  cursor: grabbing;
+}
+.og__cell--over {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
 .og__cell-actions {
   display: flex;
   justify-content: center;
   gap: 0.15rem;
 }
-.og__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.og__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
 .og__iconbtn--danger:hover:not(:disabled) {
   color: var(--danger, #d9534f);
-}
-.og__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .og__footer {
   display: flex;
@@ -319,9 +350,15 @@ async function apply() {
 .og__drop {
   width: 100%;
 }
-.og__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
+.og__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

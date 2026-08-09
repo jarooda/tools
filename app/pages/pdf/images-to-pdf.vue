@@ -6,11 +6,14 @@ import ResultActions from '@/components/tool/ResultActions.vue'
 import { Field } from '@/components/ui/field'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
+import { useDragReorder } from '@/composables/useDragReorder'
 
 definePageMeta({ layout: 'tool' })
 
@@ -57,13 +60,15 @@ function addFiles(files: File[]) {
   }
 }
 
+const announcement = ref('')
+const { dragIndex, overIndex, onHandlePointerDown, reorderTo, styleFor } = useDragReorder(items, {
+  onReorder: (item, from, to, total) => {
+    announcement.value = `${item.file.name} moved to position ${to + 1} of ${total}`
+  },
+})
+
 function move(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= items.value.length) return
-  const next = items.value.slice()
-  const [row] = next.splice(index, 1)
-  next.splice(target, 0, row!)
-  items.value = next
+  reorderTo(index, index + delta)
 }
 
 function removeAt(index: number) {
@@ -168,30 +173,54 @@ watch([items, pageSize, orientation], build, { deep: true })
     </EmptyState>
 
     <div v-else class="ip">
+      <span class="ip__sr-live" aria-live="polite">{{ announcement }}</span>
+
       <ul class="ip__grid">
-        <li v-for="(item, i) in items" :key="item.id" class="ip__cell">
+        <li
+          v-for="(item, i) in items"
+          :key="item.id"
+          :data-drag-index="i"
+          class="ip__cell"
+          :class="{
+            'ip__cell--dragging': dragIndex === i,
+            'ip__cell--over': overIndex === i && dragIndex !== null && dragIndex !== i,
+          }"
+          :style="styleFor(i)"
+        >
           <div class="ip__thumb"><img :src="item.url" :alt="item.file.name" /></div>
           <span class="ip__num">{{ i + 1 }}</span>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            tabindex="-1"
+            class="ip__handle"
+            :aria-label="`Drag to reorder ${item.file.name}`"
+            @pointerdown="onHandlePointerDown($event, i)"
+          >
+            <Icon :name="UI_ICON.dragHandle" size="15" />
+          </IconButton>
           <div class="ip__cell-actions">
-            <button
-              class="ip__iconbtn"
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === 0"
               aria-label="Move up"
               @click="move(i, -1)"
             >
               <Icon :name="UI_ICON.arrowUp" size="15" />
-            </button>
-            <button
-              class="ip__iconbtn"
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="sm"
               :disabled="i === items.length - 1"
               aria-label="Move down"
               @click="move(i, 1)"
             >
               <Icon :name="UI_ICON.arrowDown" size="15" />
-            </button>
-            <button class="ip__iconbtn" aria-label="Remove" @click="removeAt(i)">
+            </IconButton>
+            <IconButton variant="ghost" size="sm" aria-label="Remove" @click="removeAt(i)">
               <Icon :name="UI_ICON.trash" size="15" />
-            </button>
+            </IconButton>
           </div>
         </li>
       </ul>
@@ -219,13 +248,13 @@ watch([items, pageSize, orientation], build, { deep: true })
         <template #extra>
           <Button variant="ghost" size="sm" @click="reset">
             <template #icon><Icon :name="UI_ICON.reset" size="15" /></template>
-            Start over
+            New file
           </Button>
         </template>
       </ResultActions>
     </div>
 
-    <p v-if="error" class="ip__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -283,30 +312,30 @@ watch([items, pageSize, orientation], build, { deep: true })
   font-size: 0.7rem;
   font-weight: 700;
 }
+.ip__handle {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 999px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+}
+.ip__cell--dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+  z-index: 2;
+  cursor: grabbing;
+}
+.ip__cell--over {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
 .ip__cell-actions {
   display: flex;
   justify-content: center;
   gap: 0.15rem;
-}
-.ip__iconbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.ip__iconbtn:hover:not(:disabled) {
-  background: var(--surface-sunken, #f4f4f8);
-  color: var(--text-primary);
-}
-.ip__iconbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .ip__opts {
   display: grid;
@@ -316,14 +345,20 @@ watch([items, pageSize, orientation], build, { deep: true })
 .ip__drop {
   width: 100%;
 }
-.ip__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
-}
 @media (max-width: 560px) {
   .ip__opts {
     grid-template-columns: 1fr;
   }
+}
+.ip__sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

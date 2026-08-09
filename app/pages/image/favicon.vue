@@ -6,6 +6,8 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
+import { Snippet } from '@/components/ui/snippet'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { FAVICON_SIZES, ICO_SIZES, buildIco, faviconHtmlSnippet } from '@/utils/favicon'
@@ -16,7 +18,6 @@ definePageMeta({ layout: 'tool' })
 const tool = getTool('image-favicon')!
 const { loadImage, createCanvas, canvasToBlob } = useCanvasImage()
 const { downloadBlob } = useDownload()
-const { copy, copied } = useCopy()
 
 const ready = ref(false)
 onMounted(() => (ready.value = true))
@@ -149,20 +150,12 @@ watch([loaded, cover], generate, { immediate: true })
       </ul>
 
       <div class="fv__snippet">
-        <div class="fv__snippet-head">
-          <span class="fv__snippet-label">HTML tags</span>
-          <Button variant="ghost" size="sm" @click="copy(faviconHtmlSnippet())">
-            <template #icon
-              ><Icon :name="copied ? UI_ICON.check : UI_ICON.copy" size="14"
-            /></template>
-            {{ copied ? 'Copied' : 'Copy' }}
-          </Button>
-        </div>
-        <pre class="fv__code">{{ faviconHtmlSnippet() }}</pre>
+        <span class="fv__snippet-label">HTML tags</span>
+        <Snippet variant="block" language="html" :code="faviconHtmlSnippet()" />
       </div>
     </div>
 
-    <p v-if="error" class="fv__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -220,16 +213,9 @@ watch([loaded, cover], generate, { immediate: true })
   color: var(--text-secondary);
 }
 .fv__snippet {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  overflow: hidden;
-}
-.fv__snippet-head {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.4rem 0.4rem 0.4rem 0.85rem;
-  background: var(--surface-sunken, #f4f4f8);
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .fv__snippet-label {
   font-size: 0.6875rem;
@@ -238,20 +224,7 @@ watch([loaded, cover], generate, { immediate: true })
   text-transform: uppercase;
   color: var(--text-tertiary);
 }
-.fv__code {
-  margin: 0;
-  padding: 0.85rem;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  overflow-x: auto;
-  color: var(--text-primary);
-}
 .fv__drop {
   width: 100%;
-}
-.fv__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

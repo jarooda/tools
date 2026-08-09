@@ -4,9 +4,12 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import FileDropzone from '@/components/tool/FileDropzone.vue'
 import ResultActions from '@/components/tool/ResultActions.vue'
 import { Button } from '@/components/ui/button'
+import { Field } from '@/components/ui/field'
+import { NumberInput } from '@/components/ui/number-input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { UI_ICON } from '@/lib/icons'
+import { Alert } from '@/components/ui/alert'
+import { UI_ICON, IMAGE_TOOL_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { normalizeRect, clampRect, scaleRect, type Rect } from '@/utils/imageCrop'
 import type { LoadedImage } from '@/composables/useCanvasImage'
@@ -31,6 +34,11 @@ let startX = 0
 let startY = 0
 let dragging = false
 
+const rectX = ref<number | null>(0)
+const rectY = ref<number | null>(0)
+const rectW = ref<number | null>(0)
+const rectH = ref<number | null>(0)
+
 const outMime = () => {
   const t = loaded.value?.file.type
   return t === 'image/jpeg' || t === 'image/webp' ? t : 'image/png'
@@ -47,6 +55,10 @@ async function onSelect(file: File) {
   sel.value = null
   natSel.value = null
   outputBlob.value = null
+  rectX.value = 0
+  rectY.value = 0
+  rectW.value = 0
+  rectH.value = 0
   try {
     loaded.value?.revoke()
     loaded.value = await loadImage(file)
@@ -62,6 +74,10 @@ function reset() {
   outputBlob.value = null
   sel.value = null
   natSel.value = null
+  rectX.value = 0
+  rectY.value = 0
+  rectW.value = 0
+  rectH.value = 0
 }
 
 function pointerPos(e: PointerEvent) {
@@ -94,6 +110,21 @@ async function onUp() {
   await crop()
 }
 
+async function performCrop(nat: Rect) {
+  const img = loaded.value
+  if (!img) return
+  natSel.value = nat
+  rectX.value = nat.x
+  rectY.value = nat.y
+  rectW.value = nat.width
+  rectH.value = nat.height
+  const canvas = createCanvas(nat.width, nat.height)
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+  ctx.drawImage(img.el, nat.x, nat.y, nat.width, nat.height, 0, 0, nat.width, nat.height)
+  outputBlob.value = await canvasToBlob(canvas, outMime(), 0.92)
+}
+
 async function crop() {
   const img = loaded.value
   const el = imgEl.value
@@ -105,12 +136,30 @@ async function crop() {
   }
   const factor = img.width / el.clientWidth
   const nat = clampRect(scaleRect(s, factor), img.width, img.height)
-  natSel.value = nat
-  const canvas = createCanvas(nat.width, nat.height)
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-  ctx.drawImage(img.el, nat.x, nat.y, nat.width, nat.height, 0, 0, nat.width, nat.height)
-  outputBlob.value = await canvasToBlob(canvas, outMime(), 0.92)
+  await performCrop(nat)
+}
+
+/** Keyboard path for the drag-only stage: apply the X/Y/W/H fields directly. */
+async function applyRectInputs() {
+  const img = loaded.value
+  const el = imgEl.value
+  if (!img) return
+  const nat = clampRect(
+    {
+      x: rectX.value ?? 0,
+      y: rectY.value ?? 0,
+      width: rectW.value ?? 0,
+      height: rectH.value ?? 0,
+    },
+    img.width,
+    img.height,
+  )
+  if (nat.width < 2 || nat.height < 2) return
+  if (el) {
+    const factor = img.width / el.clientWidth
+    sel.value = scaleRect(nat, 1 / factor)
+  }
+  await performCrop(nat)
 }
 </script>
 
@@ -136,6 +185,9 @@ async function crop() {
         <div
           ref="stageEl"
           class="cr__stage"
+          tabindex="0"
+          role="group"
+          aria-label="Crop area — drag to select, or use the X/Y/Width/Height fields below"
           @pointerdown="onDown"
           @pointermove="onMove"
           @pointerup="onUp"
@@ -165,6 +217,25 @@ async function crop() {
         <p v-if="natSel" class="cr__dims">Selection: {{ natSel.width }} × {{ natSel.height }} px</p>
         <p v-else class="cr__dims cr__dims--muted">No selection yet</p>
 
+        <div class="cr__rect">
+          <Field label="X">
+            <NumberInput v-model="rectX" :min="0" :max="loaded.width" align="left" />
+          </Field>
+          <Field label="Y">
+            <NumberInput v-model="rectY" :min="0" :max="loaded.height" align="left" />
+          </Field>
+          <Field label="Width">
+            <NumberInput v-model="rectW" :min="0" :max="loaded.width" align="left" />
+          </Field>
+          <Field label="Height">
+            <NumberInput v-model="rectH" :min="0" :max="loaded.height" align="left" />
+          </Field>
+        </div>
+        <Button variant="secondary" size="sm" @click="applyRectInputs">
+          <template #icon><Icon :name="IMAGE_TOOL_ICON['image-crop']" size="15" /></template>
+          Crop selection
+        </Button>
+
         <ResultActions :blob="outputBlob" :filename="downloadName()">
           <template #extra>
             <Button variant="ghost" size="sm" @click="reset">
@@ -176,7 +247,7 @@ async function crop() {
       </div>
     </div>
 
-    <p v-if="error" class="cr__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -233,13 +304,16 @@ async function crop() {
   font-weight: 500;
   color: var(--text-tertiary);
 }
+.cr__rect {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+.cr__rect :deep(.jl-field) {
+  min-width: 0;
+}
 .cr__drop {
   width: 100%;
-}
-.cr__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .cr {

@@ -11,6 +11,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
@@ -266,7 +267,7 @@ const isVideo = computed(() => info.value?.hasVideo ?? false)
       </div>
     </div>
 
-    <p v-if="error" class="mt__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -322,10 +323,5 @@ const isVideo = computed(() => info.value?.hasVideo ?? false)
 }
 .mt__drop {
   width: 100%;
-}
-.mt__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 </style>

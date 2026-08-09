@@ -4,10 +4,9 @@ import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { Select } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { Button } from '@/components/ui/button'
+import { Snippet } from '@/components/ui/snippet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip } from '@/components/ui/tooltip'
-import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import {
   buildPalette,
@@ -42,12 +41,7 @@ function copySwatch(hex: string) {
   copyTimer = setTimeout(() => (lastCopied.value = ''), 1200)
 }
 
-const copiedCss = ref(false)
-function copyCss() {
-  copy(`background: ${gradientCss.value};`)
-  copiedCss.value = true
-  setTimeout(() => (copiedCss.value = false), 1200)
-}
+const gradientCssDecl = computed(() => `background: ${gradientCss.value};`)
 
 onMounted(() => {
   ready.value = true
@@ -60,7 +54,12 @@ onMounted(() => {
       <div class="pal__controls">
         <Field label="Base color">
           <div class="pal__base">
-            <input v-model="base" type="color" class="pal__swatch-input" />
+            <input
+              v-model="base"
+              type="color"
+              class="pal__swatch-input"
+              aria-label="Base color swatch"
+            />
             <input v-model="base" type="text" class="pal__hex-input" spellcheck="false" />
           </div>
         </Field>
@@ -99,15 +98,7 @@ onMounted(() => {
             <Field :label="`Angle — ${angle}°`" class="pal__angle">
               <Slider v-model="angle" :min="0" :max="360" :step="1" />
             </Field>
-            <div class="pal__css">
-              <code class="pal__css-text">background: {{ gradientCss }};</code>
-              <Button variant="ghost" size="sm" aria-label="Copy gradient CSS" @click="copyCss">
-                <template #icon>
-                  <Icon :name="copiedCss ? UI_ICON.check : UI_ICON.copy" size="15" />
-                </template>
-                {{ copiedCss ? 'Copied' : 'Copy' }}
-              </Button>
-            </div>
+            <Snippet variant="block" title="Gradient CSS" :code="gradientCssDecl" />
           </div>
         </div>
       </template>
@@ -205,23 +196,5 @@ onMounted(() => {
 }
 .pal__angle {
   max-width: 320px;
-}
-.pal__css {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.85rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-control, 0.625rem);
-  background: var(--surface-card);
-}
-.pal__css-text {
-  min-width: 0;
-  overflow-x: auto;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.8125rem;
-  color: var(--text-primary);
-  white-space: nowrap;
 }
 </style>

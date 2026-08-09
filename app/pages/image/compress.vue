@@ -10,6 +10,7 @@ import { NumberInput } from '@/components/ui/number-input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { IMAGE_FORMATS, outputFilename, type ImageFormat } from '@/utils/imageFormat'
@@ -190,7 +191,7 @@ watch([loaded, mode, format, quality, targetKb], render, { immediate: true })
       </div>
     </div>
 
-    <p v-if="error" class="cp__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -244,11 +245,6 @@ watch([loaded, mode, format, quality, targetKb], render, { immediate: true })
 }
 .cp__drop {
   width: 100%;
-}
-.cp__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .cp {

@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Alert } from '@/components/ui/alert'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import {
@@ -152,7 +153,7 @@ watch([loaded, format, quality], render, { immediate: true })
       </div>
     </div>
 
-    <p v-if="error" class="cv__error" role="alert">{{ error }}</p>
+    <Alert v-if="error" tone="danger">{{ error }}</Alert>
   </ToolPage>
 </template>
 
@@ -203,11 +204,6 @@ watch([loaded, format, quality], render, { immediate: true })
 }
 .cv__drop {
   width: 100%;
-}
-.cv__error {
-  margin: 1rem 0 0;
-  color: var(--danger-text, var(--danger));
-  font-size: 0.875rem;
 }
 @media (max-width: 720px) {
   .cv {
