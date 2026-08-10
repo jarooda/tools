@@ -1003,6 +1003,17 @@ export const tools: Tool[] = [
     keywords: ['countdown timer', 'stopwatch', 'timer', 'lap timer', 'kitchen timer', 'pomodoro'],
     status: 'live',
   },
+  {
+    id: 'datetime-business-days',
+    title: 'Business Days Calculator',
+    category: 'datetime',
+    slug: 'business-days',
+    tag: 'client',
+    description:
+      'Count business days between two dates, or add/subtract business days from a date — with configurable weekends and custom holidays.',
+    keywords: ['workdays', 'weekdays', 'holidays', 'working days calculator', 'add business days'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
