@@ -1053,6 +1053,26 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-percentage-calculator',
+    title: 'Percentage Calculator',
+    category: 'math',
+    slug: 'percentage-calculator',
+    tag: 'client',
+    description:
+      'Calculate X% of Y, what percent X is of Y, percentage change, and increase/decrease by percent.',
+    keywords: [
+      'percent',
+      'percentage',
+      'percent of',
+      'percent change',
+      'increase',
+      'decrease',
+      'discount',
+      'markup',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
