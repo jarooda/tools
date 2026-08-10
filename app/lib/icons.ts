@@ -98,6 +98,7 @@ export const UI_ICON = {
   os: 'mdi:laptop',
   device: 'mdi:cellphone-link',
   engine: 'mdi:cog-outline',
+  swapVertical: 'mdi:swap-vertical',
 } as const
 
 /**

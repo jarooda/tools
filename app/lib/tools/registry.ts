@@ -957,6 +957,23 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'datetime-duration',
+    title: 'Date Difference Calculator',
+    category: 'datetime',
+    slug: 'duration',
+    tag: 'client',
+    description:
+      'Calculate the duration between two dates or moments in time, broken down by years, months, days, and more.',
+    keywords: [
+      'date difference',
+      'duration calculator',
+      'days between dates',
+      'date calculator',
+      'time between two dates',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
