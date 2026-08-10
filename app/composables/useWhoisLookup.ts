@@ -1,7 +1,21 @@
 import { ref } from 'vue'
+import { getDomain } from 'tldts'
 
 export type WhoisLookupStatus = 'idle' | 'loading' | 'done' | 'error'
 export type WhoisLookupErrorKind = 'invalid' | 'rate-limited' | 'network' | null
+
+const IPV4_LITERAL = /^(\d{1,3}\.){3}\d{1,3}$/
+const IPV6_LITERAL = /^\[?[0-9a-fA-F:]*:[0-9a-fA-F:]*\]?$/
+
+function isIpLiteral(hostname: string): boolean {
+  return IPV4_LITERAL.test(hostname) || IPV6_LITERAL.test(hostname)
+}
+
+function toRegistrableDomain(hostname: string): string | null {
+  if (!hostname || isIpLiteral(hostname)) return null
+  const registrable = getDomain(hostname)
+  return registrable && registrable !== hostname ? registrable : null
+}
 
 export function useWhoisLookup() {
   const domain = ref('')
@@ -14,6 +28,7 @@ export function useWhoisLookup() {
   const raw = ref<unknown>(null)
   const error = ref<string | null>(null)
   const errorKind = ref<WhoisLookupErrorKind>(null)
+  const normalizedDomain = ref<string | null>(null)
 
   async function lookup() {
     status.value = 'loading'
@@ -25,10 +40,13 @@ export function useWhoisLookup() {
     raw.value = null
     error.value = null
     errorKind.value = null
+    normalizedDomain.value = toRegistrableDomain(domain.value)
+
+    const lookupDomain = normalizedDomain.value ?? domain.value
 
     let res: Response
     try {
-      res = await fetch(`/api/network/whois?domain=${encodeURIComponent(domain.value)}`, {
+      res = await fetch(`/api/network/whois?domain=${encodeURIComponent(lookupDomain)}`, {
         cache: 'no-store',
       })
     } catch {
@@ -79,6 +97,7 @@ export function useWhoisLookup() {
     raw,
     error,
     errorKind,
+    normalizedDomain,
     lookup,
   }
 }

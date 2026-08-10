@@ -9,12 +9,21 @@ import { Stat, StatGroup } from '@/components/ui/stat'
 import { Alert } from '@/components/ui/alert'
 import { getTool } from '@/lib/tools/registry'
 import { usePingCheck } from '@/composables/usePingCheck'
+import { stripToHostname } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('network-ping')!
 
 const { target, status, samples, stats, error, errorKind, check } = usePingCheck()
+
+function normalizeTarget() {
+  target.value = stripToHostname(target.value)
+}
+
+function handleTargetPaste() {
+  setTimeout(normalizeTarget, 0)
+}
 
 const formatInvalid = computed(() => errorKind.value === 'invalid')
 
@@ -57,6 +66,8 @@ watch(status, (s) => {
             :invalid="formatInvalid"
             spellcheck="false"
             @keydown.enter="check"
+            @paste="handleTargetPaste"
+            @blur="normalizeTarget"
           />
         </Field>
 

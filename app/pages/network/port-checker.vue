@@ -11,12 +11,21 @@ import { Tag } from '@/components/ui/tag'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { usePortCheck } from '@/composables/usePortCheck'
+import { stripToHostname } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('network-port-checker')!
 
 const { host, port, status, result, error, errorKind, check } = usePortCheck()
+
+function normalizeHost() {
+  host.value = stripToHostname(host.value)
+}
+
+function handleHostPaste() {
+  setTimeout(normalizeHost, 0)
+}
 
 const PORT_OPTIONS = [
   { value: '21', label: '21 (FTP)' },
@@ -109,6 +118,8 @@ watch(status, (s) => {
             :invalid="formatInvalid"
             spellcheck="false"
             @keydown.enter="check"
+            @paste="handleHostPaste"
+            @blur="normalizeHost"
           />
         </Field>
 

@@ -16,6 +16,7 @@ import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { useHeaderInspector } from '@/composables/useHeaderInspector'
 import { useCopy } from '@/composables/useCopy'
+import { ensureScheme } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
@@ -33,6 +34,14 @@ const {
   errorKind,
   inspect,
 } = useHeaderInspector()
+
+function normalizeUrl() {
+  url.value = ensureScheme(url.value)
+}
+
+function handleUrlPaste() {
+  setTimeout(normalizeUrl, 0)
+}
 
 const formatInvalid = computed(() => errorKind.value === 'invalid')
 
@@ -130,6 +139,8 @@ watch(status, (s) => {
             :invalid="formatInvalid"
             spellcheck="false"
             @keydown.enter="inspect"
+            @paste="handleUrlPaste"
+            @blur="normalizeUrl"
           />
         </Field>
 

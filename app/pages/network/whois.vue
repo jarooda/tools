@@ -16,6 +16,7 @@ import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
 import { useWhoisLookup } from '@/composables/useWhoisLookup'
 import { useCopy } from '@/composables/useCopy'
+import { stripToHostname } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
@@ -32,8 +33,23 @@ const {
   raw,
   error,
   errorKind,
+  normalizedDomain,
   lookup,
 } = useWhoisLookup()
+
+function normalizeDomainInput() {
+  domain.value = stripToHostname(domain.value)
+}
+
+function handleDomainPaste() {
+  setTimeout(normalizeDomainInput, 0)
+}
+
+const domainHint = computed(() =>
+  normalizedDomain.value && normalizedDomain.value !== domain.value
+    ? `Looked up as ${normalizedDomain.value} — WHOIS covers registered domains, not subdomains.`
+    : undefined,
+)
 
 const alertTone = computed(() => (errorKind.value === 'rate-limited' ? 'warning' : 'danger'))
 
@@ -139,12 +155,14 @@ watch(status, (s) => {
 
     <div class="wl">
       <div class="wl__controls">
-        <Field label="Domain" class="wl__domain-field">
+        <Field label="Domain" class="wl__domain-field" :hint="domainHint">
           <Input
             v-model="domain"
             placeholder="example.com"
             spellcheck="false"
             @keydown.enter="lookup"
+            @paste="handleDomainPaste"
+            @blur="normalizeDomainInput"
           />
         </Field>
 

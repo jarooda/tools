@@ -17,6 +17,7 @@ import { getTool } from '@/lib/tools/registry'
 import { useDnsLookup } from '@/composables/useDnsLookup'
 import { useCopy } from '@/composables/useCopy'
 import type { DnsAnswer, DnsRecordType } from '@/utils/dnsLookup'
+import { stripToHostname } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
@@ -37,6 +38,14 @@ const RECORD_TYPE_TAG_COLOR: Record<DnsRecordType, TagColor> = {
 }
 
 const { hostname, recordType, status, answers, error, lookup } = useDnsLookup()
+
+function normalizeHostname() {
+  hostname.value = stripToHostname(hostname.value)
+}
+
+function handleHostnamePaste() {
+  setTimeout(normalizeHostname, 0)
+}
 
 function recordLine(a: DnsAnswer): string {
   return `${a.name} ${a.ttl} IN ${a.type} ${a.data}`
@@ -108,6 +117,8 @@ const recordCountLabel = computed(
             placeholder="example.com"
             spellcheck="false"
             @keydown.enter="lookup"
+            @paste="handleHostnamePaste"
+            @blur="normalizeHostname"
           />
         </Field>
 
