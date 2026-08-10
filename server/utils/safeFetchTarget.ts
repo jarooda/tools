@@ -59,6 +59,39 @@ export function isPrivateOrReservedIp(ip: string): boolean {
   return false
 }
 
+export interface HostnameValidation {
+  ok: boolean
+  reason?: 'invalid' | 'blocked'
+}
+
+/**
+ * Hostname-level SSRF guard, factored out of `resolveAndValidateTarget` so it
+ * can be reused for bare `host:port` checks (e.g. the port checker) that
+ * don't have a full URL/protocol to parse.
+ */
+export async function resolveAndValidateHostname(hostname: string): Promise<HostnameValidation> {
+  const trimmed = hostname.trim()
+  if (!trimmed) return { ok: false, reason: 'invalid' }
+
+  if (trimmed.toLowerCase() === 'localhost') {
+    return { ok: false, reason: 'blocked' }
+  }
+
+  let addresses: { address: string }[]
+  try {
+    addresses = await dns.lookup(trimmed, { all: true })
+  } catch {
+    return { ok: false, reason: 'invalid' }
+  }
+
+  if (addresses.length === 0) return { ok: false, reason: 'invalid' }
+  if (addresses.some((a) => isPrivateOrReservedIp(a.address))) {
+    return { ok: false, reason: 'blocked' }
+  }
+
+  return { ok: true }
+}
+
 export async function resolveAndValidateTarget(input: string): Promise<TargetValidation> {
   const trimmed = input.trim()
   if (!trimmed) return { ok: false, reason: 'invalid' }
@@ -76,20 +109,9 @@ export async function resolveAndValidateTarget(input: string): Promise<TargetVal
     return { ok: false, reason: 'invalid' }
   }
 
-  if (url.hostname.toLowerCase() === 'localhost') {
-    return { ok: false, reason: 'blocked' }
-  }
-
-  let addresses: { address: string }[]
-  try {
-    addresses = await dns.lookup(url.hostname, { all: true })
-  } catch {
-    return { ok: false, reason: 'invalid' }
-  }
-
-  if (addresses.length === 0) return { ok: false, reason: 'invalid' }
-  if (addresses.some((a) => isPrivateOrReservedIp(a.address))) {
-    return { ok: false, reason: 'blocked' }
+  const hostnameValidation = await resolveAndValidateHostname(url.hostname)
+  if (!hostnameValidation.ok) {
+    return { ok: false, reason: hostnameValidation.reason }
   }
 
   return { ok: true, url }

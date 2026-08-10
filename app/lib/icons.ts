@@ -87,6 +87,9 @@ export const UI_ICON = {
   typescript: 'mdi:language-typescript',
   dns: 'mdi:dns-outline',
   domain: 'mdi:web',
+  portOpen: 'mdi:lan-connect',
+  portClosed: 'mdi:lan-disconnect',
+  portTimeout: 'mdi:lan-pending',
 } as const
 
 /**

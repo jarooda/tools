@@ -880,6 +880,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-port-checker',
+    title: 'Port Checker',
+    category: 'network',
+    slug: 'port-checker',
+    tag: 'server',
+    description: 'Check whether a common port is open on a host.',
+    keywords: ['port', 'port checker', 'port scanner', 'tcp', 'open port', 'connectivity'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

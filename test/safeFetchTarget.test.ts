@@ -6,7 +6,7 @@ vi.mock('node:dns', () => ({
   promises: { lookup: (...args: unknown[]) => lookupMock(...args) },
 }))
 
-const { isPrivateOrReservedIp, resolveAndValidateTarget } =
+const { isPrivateOrReservedIp, resolveAndValidateTarget, resolveAndValidateHostname } =
   await import('../server/utils/safeFetchTarget')
 
 describe('isPrivateOrReservedIp', () => {
@@ -105,5 +105,35 @@ describe('resolveAndValidateTarget — DNS-dependent path', () => {
     lookupMock.mockRejectedValue(new Error('ENOTFOUND'))
     const result = await resolveAndValidateTarget('does-not-exist.invalid')
     expect(result).toEqual({ ok: false, reason: 'invalid' })
+  })
+})
+
+describe('resolveAndValidateHostname', () => {
+  beforeEach(() => {
+    lookupMock.mockReset()
+  })
+
+  it('allows a valid public hostname', async () => {
+    lookupMock.mockResolvedValue([{ address: '8.8.8.8' }])
+    const result = await resolveAndValidateHostname('example.com')
+    expect(result).toEqual({ ok: true })
+  })
+
+  it('blocks localhost without a DNS lookup', async () => {
+    const result = await resolveAndValidateHostname('localhost')
+    expect(result).toEqual({ ok: false, reason: 'blocked' })
+    expect(lookupMock).not.toHaveBeenCalled()
+  })
+
+  it('blocks a hostname that resolves to a private IP', async () => {
+    lookupMock.mockResolvedValue([{ address: '192.168.1.1' }])
+    const result = await resolveAndValidateHostname('internal.example.com')
+    expect(result).toEqual({ ok: false, reason: 'blocked' })
+  })
+
+  it('rejects empty or whitespace input', async () => {
+    expect(await resolveAndValidateHostname('')).toEqual({ ok: false, reason: 'invalid' })
+    expect(await resolveAndValidateHostname('   ')).toEqual({ ok: false, reason: 'invalid' })
+    expect(lookupMock).not.toHaveBeenCalled()
   })
 })
