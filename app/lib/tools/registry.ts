@@ -992,6 +992,17 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'datetime-countdown',
+    title: 'Countdown Timer & Stopwatch',
+    category: 'datetime',
+    slug: 'countdown',
+    tag: 'client',
+    description:
+      'Run a countdown timer to a set duration with an alert at zero, or a stopwatch with lap splits.',
+    keywords: ['countdown timer', 'stopwatch', 'timer', 'lap timer', 'kitchen timer', 'pomodoro'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

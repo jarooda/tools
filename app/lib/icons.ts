@@ -62,6 +62,7 @@ export const UI_ICON = {
   pause: 'mdi:pause',
   stop: 'mdi:stop',
   volumeOff: 'mdi:volume-off',
+  lap: 'mdi:flag-outline',
   qrcode: 'mdi:qrcode',
   qrScan: 'mdi:qrcode-scan',
   camera: 'mdi:camera-outline',
