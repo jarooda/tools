@@ -26,4 +26,14 @@ export default withNuxt(
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
+  {
+    // Plain vendored `.ts` files (e.g. anchored-popup's composable) aren't
+    // covered by the framework's own TS-aware config the way `.vue` files
+    // are above, and fall back to the plain JS parser, which can't parse
+    // real TypeScript syntax (interfaces, `import type`, …) at all.
+    files: ['app/components/ui/**/*.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+    },
+  },
 )

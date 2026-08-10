@@ -1014,6 +1014,25 @@ export const tools: Tool[] = [
     keywords: ['workdays', 'weekdays', 'holidays', 'working days calculator', 'add business days'],
     status: 'live',
   },
+  {
+    id: 'datetime-week-number',
+    title: 'Week Number & Calendar Helper',
+    category: 'datetime',
+    slug: 'week-number',
+    tag: 'client',
+    description:
+      'Find the ISO 8601 and US week number for any date, plus its quarter, day of year, and a highlighted calendar view.',
+    keywords: [
+      'week number',
+      'iso week',
+      'calendar week',
+      'week of year',
+      'iso 8601 week',
+      'day of year',
+      'quarter calculator',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
