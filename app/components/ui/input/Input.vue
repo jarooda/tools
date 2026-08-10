@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
 
 type InputSize = 'sm' | 'md' | 'lg'
+
+const PICKER_TYPES = new Set(['date', 'datetime-local', 'time', 'month', 'week'])
 
 const props = withDefaults(
   defineProps<{
@@ -32,6 +34,7 @@ const emit = defineEmits<{
 }>()
 
 const slots = useSlots()
+const attrs = useAttrs()
 
 const showClear = computed(
   () => props.clearable && !props.disabled && props.modelValue != null && props.modelValue !== '',
@@ -43,6 +46,20 @@ function onInput(event: Event) {
 function onClear() {
   emit('update:modelValue', '')
   emit('clear')
+}
+
+// Native date/time inputs only open their picker when the small calendar/clock
+// icon is clicked — clicking the rest of the field just places a text cursor.
+// showPicker() makes the whole field behave like a picker trigger instead.
+function onClick(event: MouseEvent) {
+  const type = attrs.type
+  if (typeof type !== 'string' || !PICKER_TYPES.has(type)) return
+  const target = event.target as HTMLInputElement
+  try {
+    target.showPicker?.()
+  } catch {
+    // Unsupported/disallowed in this browser/context — fall back to native click behavior.
+  }
 }
 </script>
 
@@ -64,6 +81,7 @@ function onClear() {
       :aria-invalid="props.invalid || undefined"
       v-bind="$attrs"
       @input="onInput"
+      @click="onClick"
     />
     <button
       v-if="showClear"
