@@ -1093,6 +1093,26 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-compound-interest-calculator',
+    title: 'Compound Interest Calculator',
+    category: 'math',
+    slug: 'compound-interest-calculator',
+    tag: 'client',
+    description:
+      'Project how a deposit grows with compound interest and optional monthly contributions — final balance, total interest, and a year-by-year breakdown.',
+    keywords: [
+      'compound interest',
+      'compound interest calculator',
+      'savings calculator',
+      'investment growth',
+      'apy',
+      'apr',
+      'interest calculator',
+      'monthly contribution',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
