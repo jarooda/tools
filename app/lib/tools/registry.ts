@@ -940,6 +940,23 @@ export const tools: Tool[] = [
     keywords: ['bandwidth', 'download time', 'file size', 'mbps', 'transfer speed'],
     status: 'live',
   },
+  {
+    id: 'datetime-unix',
+    title: 'Unix Timestamp Converter',
+    category: 'datetime',
+    slug: 'unix-timestamp',
+    tag: 'client',
+    description: 'Convert Unix timestamps to human-readable dates and back, in local time or UTC.',
+    keywords: [
+      'unix timestamp',
+      'epoch',
+      'epoch time',
+      'timestamp converter',
+      'date to timestamp',
+      'utc',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

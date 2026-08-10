@@ -15,6 +15,7 @@ export type CategorySlug =
   | 'media'
   | 'dev'
   | 'network'
+  | 'datetime'
 
 export interface Category {
   slug: CategorySlug
@@ -84,6 +85,12 @@ export const categories: Category[] = [
     title: 'Network & Performance',
     description: 'Check your connection, look up network info, and inspect endpoints.',
     icon: CATEGORY_ICON.network,
+  },
+  {
+    slug: 'datetime',
+    title: 'Date & Time',
+    description: 'Convert timestamps, calculate durations, and work across time zones.',
+    icon: CATEGORY_ICON.datetime,
   },
 ]
 

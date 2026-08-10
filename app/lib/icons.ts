@@ -21,6 +21,7 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
   media: 'mdi:play-circle-outline',
   dev: 'mdi:code-tags',
   network: 'mdi:speedometer',
+  datetime: 'mdi:calendar-clock',
 }
 
 /** App-chrome / action icons used across the shell and tool pages. */
