@@ -891,6 +891,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-header-inspector',
+    title: 'HTTP Header Inspector',
+    category: 'network',
+    slug: 'headers',
+    tag: 'server',
+    description: 'Inspect response headers, status code, and redirects for any URL.',
+    keywords: ['http headers', 'header inspector', 'response headers', 'status code', 'redirects'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

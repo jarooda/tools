@@ -90,6 +90,7 @@ export const UI_ICON = {
   portOpen: 'mdi:lan-connect',
   portClosed: 'mdi:lan-disconnect',
   portTimeout: 'mdi:lan-pending',
+  httpHeaders: 'mdi:format-list-bulleted-type',
 } as const
 
 /**
