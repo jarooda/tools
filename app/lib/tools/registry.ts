@@ -914,6 +914,22 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-user-agent',
+    title: 'User-Agent Parser',
+    category: 'network',
+    slug: 'user-agent',
+    tag: 'client',
+    description: 'Parse a User-Agent string into browser, OS, device, and engine details.',
+    keywords: [
+      'user agent',
+      'ua parser',
+      'browser detection',
+      'device detection',
+      'navigator.userAgent',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

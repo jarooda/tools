@@ -93,6 +93,10 @@ export const UI_ICON = {
   httpHeaders: 'mdi:format-list-bulleted-type',
   siteUp: 'mdi:web-check',
   siteDown: 'mdi:web-off',
+  browser: 'mdi:web',
+  os: 'mdi:laptop',
+  device: 'mdi:cellphone-link',
+  engine: 'mdi:cog-outline',
 } as const
 
 /**
