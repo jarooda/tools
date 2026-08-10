@@ -33,6 +33,8 @@ const emit = defineEmits<{
   clear: []
 }>()
 
+defineOptions({ inheritAttrs: false })
+
 const slots = useSlots()
 const attrs = useAttrs()
 
