@@ -974,6 +974,24 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'datetime-age',
+    title: 'Age Calculator',
+    category: 'datetime',
+    slug: 'age',
+    tag: 'client',
+    description:
+      'Calculate exact age in years, months, and days from a birth date, plus days lived and a countdown to the next birthday.',
+    keywords: [
+      'age calculator',
+      'how old am i',
+      'birthday calculator',
+      'date of birth',
+      'years months days',
+      'next birthday',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
