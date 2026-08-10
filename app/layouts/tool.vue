@@ -50,7 +50,9 @@ const category = computed(() =>
 
 // Sidebar: the current category's LIVE tools only (coming-soon hidden).
 const categoryTools = computed(() =>
-  tool.value ? tools.filter((t) => t.category === tool.value!.category && t.status === 'live') : [],
+  tool.value
+    ? tools.filter((t) => t.category === tool.value!.category && t.status === 'live')
+    : tools.filter((t) => t.category === category.value?.slug && t.status === 'live'),
 )
 
 const crumbs = computed(() => {
