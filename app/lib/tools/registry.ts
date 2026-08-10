@@ -930,6 +930,16 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'network-bandwidth',
+    title: 'Download Time Calculator',
+    category: 'network',
+    slug: 'bandwidth',
+    tag: 'client',
+    description: 'Estimate download time from a file size and connection speed.',
+    keywords: ['bandwidth', 'download time', 'file size', 'mbps', 'transfer speed'],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
