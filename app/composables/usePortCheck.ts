@@ -10,16 +10,21 @@ export type PortCheckStatus = 'idle' | 'checking' | 'done' | 'error'
 export type PortCheckResult = 'open' | 'closed' | 'timeout'
 export type PortCheckErrorKind = 'invalid' | 'blocked' | 'rate-limited' | 'network' | null
 
+export interface PortCheckAddressResult {
+  ip: string
+  result: PortCheckResult
+}
+
 export function usePortCheck() {
   const host = ref('')
   const port = ref<number>(443)
   const status = ref<PortCheckStatus>('idle')
-  const result = ref<PortCheckResult | null>(null)
+  const results = ref<PortCheckAddressResult[]>([])
   const error = ref<string | null>(null)
   const errorKind = ref<PortCheckErrorKind>(null)
 
   async function check() {
-    result.value = null
+    results.value = []
     error.value = null
     errorKind.value = null
     status.value = 'checking'
@@ -49,10 +54,10 @@ export function usePortCheck() {
       return
     }
 
-    const data = (await res.json()) as { result: PortCheckResult }
-    result.value = data.result
+    const data = (await res.json()) as { results: PortCheckAddressResult[] }
+    results.value = data.results
     status.value = 'done'
   }
 
-  return { host, port, status, result, error, errorKind, check }
+  return { host, port, status, results, error, errorKind, check }
 }

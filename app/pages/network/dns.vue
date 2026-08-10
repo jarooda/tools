@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import ToolPage from '@/components/tool/ToolPage.vue'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { IconButton } from '@/components/ui/icon-button'
 import { Progress } from '@/components/ui/progress'
@@ -23,8 +22,6 @@ definePageMeta({ layout: 'tool' })
 
 const tool = getTool('network-dns')!
 
-const RECORD_TYPES: DnsRecordType[] = ['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'CAA']
-
 type TagColor = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' | 'info'
 const RECORD_TYPE_TAG_COLOR: Record<DnsRecordType, TagColor> = {
   A: 'info',
@@ -37,7 +34,7 @@ const RECORD_TYPE_TAG_COLOR: Record<DnsRecordType, TagColor> = {
   CAA: 'neutral',
 }
 
-const { hostname, recordType, status, answers, error, lookup } = useDnsLookup()
+const { hostname, status, answers, error, lookup } = useDnsLookup()
 
 function normalizeHostname() {
   hostname.value = stripToHostname(hostname.value)
@@ -90,11 +87,11 @@ const announcement = ref('')
 
 watch(status, (s) => {
   if (s === 'loading') {
-    announcement.value = `Looking up ${recordType.value} records for ${hostname.value}…`
+    announcement.value = `Looking up DNS records for ${hostname.value}…`
   } else if (s === 'done') {
     announcement.value = answers.value.length
-      ? `${answers.value.length} ${recordType.value} record${answers.value.length === 1 ? '' : 's'} found for ${hostname.value}.`
-      : `No ${recordType.value} records found for ${hostname.value}.`
+      ? `${answers.value.length} record${answers.value.length === 1 ? '' : 's'} found for ${hostname.value}.`
+      : `No DNS records found for ${hostname.value}.`
   } else if (s === 'error') {
     announcement.value = `Lookup failed: ${error.value}.`
   }
@@ -103,6 +100,13 @@ watch(status, (s) => {
 const recordCountLabel = computed(
   () => `${answers.value.length} record${answers.value.length === 1 ? '' : 's'}`,
 )
+
+const cnameNote = computed(() => {
+  const cname = answers.value.find((a) => a.type === 'CNAME')
+  if (!cname) return null
+  const target = cname.data.endsWith('.') ? cname.data.slice(0, -1) : cname.data
+  return `${cname.name} is an alias (CNAME) for ${target}`
+})
 </script>
 
 <template>
@@ -120,10 +124,6 @@ const recordCountLabel = computed(
             @paste="handleHostnamePaste"
             @blur="normalizeHostname"
           />
-        </Field>
-
-        <Field label="Record type" class="dl__type-field">
-          <Select v-model="recordType" :options="RECORD_TYPES" />
         </Field>
 
         <Button
@@ -147,6 +147,8 @@ const recordCountLabel = computed(
             {{ copied && copiedAll ? 'Copied' : 'Copy all' }}
           </Button>
         </div>
+
+        <p v-if="cnameNote" class="dl__caveat">{{ cnameNote }}</p>
 
         <ResponsiveTable :columns="COLUMNS" :data="answers" :row-key="(_row, i) => i">
           <template #cell-type="{ row }">
@@ -186,8 +188,8 @@ const recordCountLabel = computed(
 
       <EmptyState
         v-else-if="status === 'done'"
-        :title="`No ${recordType} records found`"
-        :description="`${hostname} doesn't have any ${recordType} records.`"
+        title="No DNS records found"
+        :description="`${hostname} doesn't have any DNS records.`"
       >
         <template #icon><Icon :name="UI_ICON.dns" size="22" /></template>
       </EmptyState>
@@ -215,11 +217,7 @@ const recordCountLabel = computed(
 }
 .dl__hostname-field {
   flex: 1;
-  min-width: 220px;
-}
-.dl__type-field {
-  flex: 0 0 150px;
-  min-width: 130px;
+  min-width: 260px;
 }
 .dl__lookup-btn {
   flex: none;
@@ -244,6 +242,11 @@ const recordCountLabel = computed(
 .dl__ttl-human {
   font-size: var(--text-xs);
   color: var(--text-tertiary);
+}
+.dl__caveat {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
 }
 
 @media (max-width: 640px) {

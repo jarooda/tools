@@ -1,12 +1,21 @@
 import { createConnection } from 'node:net'
+import dns from 'node:dns/promises'
 
 const CONNECT_TIMEOUT_MS = 3000
+// Bounds worst-case parallel connections if a host resolves to an unusually
+// large number of addresses — typical CDN/multi-A setups are well under this.
+const MAX_ADDRESSES = 8
 
 type PortCheckResult = 'open' | 'closed' | 'timeout'
 
-function tryConnect(host: string, port: number): Promise<PortCheckResult> {
+export interface PortCheckAddressResult {
+  ip: string
+  result: PortCheckResult
+}
+
+function tryConnect(ip: string, port: number): Promise<PortCheckResult> {
   return new Promise((resolve, reject) => {
-    const socket = createConnection({ host, port, timeout: CONNECT_TIMEOUT_MS })
+    const socket = createConnection({ host: ip, port, timeout: CONNECT_TIMEOUT_MS })
     let settled = false
 
     const cleanup = () => {
@@ -77,9 +86,27 @@ export default defineEventHandler(async (event) => {
 
   setResponseHeader(event, 'Cache-Control', 'no-store')
 
+  // Resolve every address the host has (not just one) — a host behind a CDN
+  // commonly has several, and the port may be open on some and not others.
+  // Picking one arbitrarily and calling it "the" result would hide that.
+  let addresses: string[]
   try {
-    const result = await tryConnect(host, portNum)
-    return { result }
+    const resolved = await dns.lookup(host, { all: true })
+    if (resolved.length === 0) throw new Error('no addresses')
+    addresses = [...new Set(resolved.map((a) => a.address))].slice(0, MAX_ADDRESSES)
+  } catch {
+    setResponseStatus(event, 502)
+    return {
+      error: 'Could not resolve that host — it may be unreachable.',
+      kind: 'network',
+    }
+  }
+
+  try {
+    const results: PortCheckAddressResult[] = await Promise.all(
+      addresses.map(async (ip) => ({ ip, result: await tryConnect(ip, portNum) })),
+    )
+    return { results }
   } catch {
     setResponseStatus(event, 502)
     return {

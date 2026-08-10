@@ -8,16 +8,18 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Alert } from '@/components/ui/alert'
 import { Tag } from '@/components/ui/tag'
+import { ResponsiveTable } from '@/components/ui/responsive-table'
+import type { ResponsiveColumn } from '@/components/ui/responsive-table/ResponsiveTable.vue'
 import { UI_ICON } from '@/lib/icons'
 import { getTool } from '@/lib/tools/registry'
-import { usePortCheck } from '@/composables/usePortCheck'
+import { usePortCheck, type PortCheckAddressResult } from '@/composables/usePortCheck'
 import { stripToHostname } from '@/utils/normalizeHostInput'
 
 definePageMeta({ layout: 'tool' })
 
 const tool = getTool('network-port-checker')!
 
-const { host, port, status, result, error, errorKind, check } = usePortCheck()
+const { host, port, status, results, error, errorKind, check } = usePortCheck()
 
 function normalizeHost() {
   host.value = stripToHostname(host.value)
@@ -62,38 +64,46 @@ const RESULT_META = {
     color: 'success' as const,
     label: 'Open',
     icon: UI_ICON.portOpen,
-    text: (h: string, p: number) => `Port ${p} is open on ${h}.`,
   },
   closed: {
     color: 'neutral' as const,
     label: 'Closed',
     icon: UI_ICON.portClosed,
-    text: (h: string, p: number) =>
-      `Port ${p} appears closed on ${h} — the host actively refused the connection.`,
   },
   timeout: {
     color: 'warning' as const,
     label: 'Timeout',
     icon: UI_ICON.portTimeout,
-    text: (h: string, p: number) => {
-      void p
-      return `The check timed out — ${h} may be unreachable, dropping the connection silently, or blocking automated requests.`
-    },
   },
 }
 
-const resultMeta = computed(() => (result.value ? RESULT_META[result.value] : null))
-const resultText = computed(() =>
-  resultMeta.value ? resultMeta.value.text(host.value, port.value) : '',
-)
+const COLUMNS: ResponsiveColumn[] = [
+  { key: 'ip', header: 'Resolved IP', primary: true },
+  { key: 'result', header: 'Result' },
+]
+
+function asAddressResult(row: Record<string, unknown>): PortCheckAddressResult {
+  return row as unknown as PortCheckAddressResult
+}
 
 const announcement = ref('')
 
 watch(status, (s) => {
   if (s === 'checking') {
     announcement.value = `Checking port ${port.value} on ${host.value}…`
-  } else if (s === 'done' && result.value) {
-    announcement.value = `Port ${port.value} is ${result.value} on ${host.value}.`
+  } else if (s === 'done' && results.value.length) {
+    const counts = results.value.reduce(
+      (acc, r) => {
+        acc[r.result]++
+        return acc
+      },
+      { open: 0, closed: 0, timeout: 0 },
+    )
+    const summary = (['open', 'closed', 'timeout'] as const)
+      .filter((k) => counts[k] > 0)
+      .map((k) => `${counts[k]} ${k}`)
+      .join(', ')
+    announcement.value = `Checked ${results.value.length} address${results.value.length === 1 ? '' : 'es'} for ${host.value}: ${summary}.`
   } else if (s === 'error') {
     announcement.value = `Check failed: ${error.value}.`
   }
@@ -127,13 +137,16 @@ watch(status, (s) => {
           <Select v-model="portString" :options="PORT_OPTIONS" />
         </Field>
 
-        <Button
-          class="pc__check-btn"
-          :disabled="!host.trim() || status === 'checking'"
-          @click="check"
-        >
-          {{ status === 'checking' ? 'Checking…' : 'Check' }}
-        </Button>
+        <div class="pc__check-field">
+          <span class="pc__check-label-spacer" aria-hidden="true">Check</span>
+          <Button
+            class="pc__check-btn"
+            :disabled="!host.trim() || status === 'checking'"
+            @click="check"
+          >
+            {{ status === 'checking' ? 'Checking…' : 'Check' }}
+          </Button>
+        </div>
       </div>
 
       <p v-if="status !== 'error' || formatInvalid" class="pc__caveat">
@@ -146,14 +159,23 @@ watch(status, (s) => {
         <Progress indeterminate label="Checking port…" />
       </template>
 
-      <template v-else-if="status === 'done' && resultMeta">
-        <div class="pc__result">
-          <Tag :color="resultMeta.color">
-            <template #icon><Icon :name="resultMeta.icon" size="15" /></template>
-            {{ resultMeta.label }}
-          </Tag>
-          <p class="pc__result-text">{{ resultText }}</p>
-        </div>
+      <template v-else-if="status === 'done' && results.length > 0">
+        <p class="pc__lead-in">
+          {{ host }} resolves to {{ results.length }} address{{ results.length === 1 ? '' : 'es' }}
+        </p>
+        <ResponsiveTable :columns="COLUMNS" :data="results" :row-key="(_row, i) => i">
+          <template #cell-ip="{ row }">
+            <span class="pc__ip">{{ asAddressResult(row).ip }}</span>
+          </template>
+          <template #cell-result="{ row }">
+            <Tag :color="RESULT_META[asAddressResult(row).result].color">
+              <template #icon>
+                <Icon :name="RESULT_META[asAddressResult(row).result].icon" size="15" />
+              </template>
+              {{ RESULT_META[asAddressResult(row).result].label }}
+            </Tag>
+          </template>
+        </ResponsiveTable>
       </template>
 
       <Alert
@@ -188,25 +210,31 @@ watch(status, (s) => {
 .pc__port-field {
   flex: 0 0 220px;
 }
+.pc__check-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: none;
+  width: auto;
+}
+.pc__check-label-spacer {
+  visibility: hidden;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+}
 .pc__check-btn {
   flex: none;
-  align-self: flex-end;
 }
-.pc__caveat {
+.pc__caveat,
+.pc__lead-in {
   margin: 0;
   color: var(--text-tertiary);
   font-size: var(--text-sm);
 }
-.pc__result {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.pc__result-text {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: var(--text-base);
+.pc__ip {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 
 @media (max-width: 640px) {
@@ -216,8 +244,14 @@ watch(status, (s) => {
   .pc__port-field {
     flex-basis: auto;
   }
+  .pc__check-label-spacer {
+    display: none;
+  }
+  .pc__check-field {
+    width: 100%;
+  }
   .pc__check-btn {
-    align-self: stretch;
+    width: 100%;
   }
 }
 </style>
