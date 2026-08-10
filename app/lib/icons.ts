@@ -22,6 +22,7 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
   dev: 'mdi:code-tags',
   network: 'mdi:speedometer',
   datetime: 'mdi:calendar-clock',
+  math: 'mdi:calculator-variant',
 }
 
 /** App-chrome / action icons used across the shell and tool pages. */
@@ -100,6 +101,7 @@ export const UI_ICON = {
   device: 'mdi:cellphone-link',
   engine: 'mdi:cog-outline',
   swapVertical: 'mdi:swap-vertical',
+  backspace: 'mdi:backspace-outline',
 } as const
 
 /**

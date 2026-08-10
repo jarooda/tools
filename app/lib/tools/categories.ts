@@ -1,7 +1,7 @@
 import { CATEGORY_ICON } from '@/lib/icons'
 
 /**
- * The 9 top-level tool categories. The `slug` is the first URL segment
+ * The top-level tool categories. The `slug` is the first URL segment
  * (e.g. `/convert/temperature`) and the folder name under `app/pages/`.
  */
 export type CategorySlug =
@@ -16,6 +16,7 @@ export type CategorySlug =
   | 'dev'
   | 'network'
   | 'datetime'
+  | 'math'
 
 export interface Category {
   slug: CategorySlug
@@ -91,6 +92,12 @@ export const categories: Category[] = [
     title: 'Date & Time',
     description: 'Convert timestamps, calculate durations, and work across time zones.',
     icon: CATEGORY_ICON.datetime,
+  },
+  {
+    slug: 'math',
+    title: 'Math & Finance',
+    description: 'Calculate, convert, and plan — from scientific math to loans and interest.',
+    icon: CATEGORY_ICON.math,
   },
 ]
 

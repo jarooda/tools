@@ -1033,6 +1033,26 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-scientific-calculator',
+    title: 'Scientific Calculator',
+    category: 'math',
+    slug: 'scientific-calculator',
+    tag: 'client',
+    description: 'A full scientific calculator with trig, logs, memory, and expression history.',
+    keywords: [
+      'calculator',
+      'sin',
+      'cos',
+      'tan',
+      'log',
+      'sqrt',
+      'factorial',
+      'trigonometry',
+      'math',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
