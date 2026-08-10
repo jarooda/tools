@@ -1073,6 +1073,26 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-loan-calculator',
+    title: 'Loan / Mortgage Calculator',
+    category: 'math',
+    slug: 'loan-calculator',
+    tag: 'client',
+    description:
+      'Calculate monthly payment, total interest, and a full amortization schedule for a fixed-rate loan or mortgage.',
+    keywords: [
+      'loan calculator',
+      'mortgage calculator',
+      'emi calculator',
+      'amortization',
+      'amortization schedule',
+      'interest',
+      'monthly payment',
+      'payoff date',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */

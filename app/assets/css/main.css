@@ -10,6 +10,8 @@
 @import '../../components/ui/stepper/stepper.css';
 @import '../../components/ui/collapsible/collapsible.css';
 @import '../../components/ui/divider/divider.css';
+@import '../../components/ui/chart/chart.css';
+@import '../../components/ui/pagination/pagination.css';
 
 /* ============================================================
    JLDS Design System — design tokens & base styles

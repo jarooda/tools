@@ -1,0 +1,111 @@
+.jl-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.jl-pagination__summary {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+.jl-pagination__summary b {
+  color: var(--text-secondary);
+  font-weight: var(--weight-semibold);
+}
+.jl-pagination__size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+.jl-pagination__size select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 30px;
+  padding: 0 var(--space-6) 0 var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: var(--surface-card) no-repeat right var(--space-2) center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%238a948f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  outline: none;
+}
+.jl-pagination__size select:hover {
+  border-color: var(--border-strong);
+}
+.jl-pagination__size select:focus-visible {
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+}
+.jl-pagination__spacer {
+  flex: 1;
+}
+
+.jl-pagination__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.jl-page {
+  --_sz: 34px;
+  min-width: var(--_sz);
+  height: var(--_sz);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+.jl-page:hover:not(:disabled):not([aria-current='page']) {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+.jl-page:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 1px;
+}
+.jl-page[aria-current='page'] {
+  background: var(--accent);
+  color: var(--text-on-brand);
+  font-weight: var(--weight-semibold);
+}
+.jl-page:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.jl-page--arrow {
+  color: var(--text-secondary);
+}
+.jl-page--arrow svg {
+  width: 17px;
+  height: 17px;
+}
+.jl-page--ellipsis {
+  cursor: default;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+/* Responsive — Tier 1. Below mobile (--bp-mobile 600px) collapse to prev / next
+   arrows + the summary count; hide the numbered pages and ellipsis. */
+@media (max-width: 600px) {
+  .jl-pagination__list .jl-page:not(.jl-page--arrow) {
+    display: none;
+  }
+}
