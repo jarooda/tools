@@ -1113,6 +1113,24 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-tip-calculator',
+    title: 'Tip / Bill Split Calculator',
+    category: 'math',
+    slug: 'tip-calculator',
+    tag: 'client',
+    description:
+      'Split a bill with tip across any number of people — tip amount, total, and per-person share.',
+    keywords: [
+      'tip calculator',
+      'bill split',
+      'split the bill',
+      'gratuity',
+      'tip percentage',
+      'restaurant bill',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
