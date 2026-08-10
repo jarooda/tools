@@ -86,6 +86,7 @@ export const UI_ICON = {
   emptyMedia: 'mdi:video-plus-outline',
   typescript: 'mdi:language-typescript',
   dns: 'mdi:dns-outline',
+  domain: 'mdi:web',
 } as const
 
 /**

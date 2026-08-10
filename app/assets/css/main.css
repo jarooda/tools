@@ -8,6 +8,8 @@
 @import '../../components/ui/responsive-table/responsive-table.css';
 @import '../../components/ui/stat/stat.css';
 @import '../../components/ui/stepper/stepper.css';
+@import '../../components/ui/collapsible/collapsible.css';
+@import '../../components/ui/divider/divider.css';
 
 /* ============================================================
    JLDS Design System — design tokens & base styles

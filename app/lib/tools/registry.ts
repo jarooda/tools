@@ -869,6 +869,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-whois',
+    title: 'Whois Lookup',
+    category: 'network',
+    slug: 'whois',
+    tag: 'server',
+    description: 'Look up domain registration details: registrar, status, nameservers, and dates.',
+    keywords: ['whois', 'rdap', 'domain lookup', 'registrar', 'nameservers', 'registration'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
