@@ -847,6 +847,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-ip',
+    title: 'My IP Address / Geolocation',
+    category: 'network',
+    slug: 'ip',
+    tag: 'server',
+    description: 'See your public IP address and approximate geolocation.',
+    keywords: ['ip address', 'geolocation', 'my ip', 'public ip', 'location'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
