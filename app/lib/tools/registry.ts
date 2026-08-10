@@ -858,6 +858,17 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-dns',
+    title: 'DNS Lookup',
+    category: 'network',
+    slug: 'dns',
+    tag: 'client',
+    description: 'Look up A, AAAA, CNAME, MX, TXT, NS, SOA, and CAA records for a hostname.',
+    keywords: ['dns', 'lookup', 'records', 'a record', 'mx record', 'txt record', 'nameserver'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
