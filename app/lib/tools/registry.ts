@@ -902,6 +902,18 @@ export const tools: Tool[] = [
     status: 'live',
     requires: 'network',
   },
+  {
+    id: 'network-uptime',
+    title: 'Website Uptime Checker',
+    category: 'network',
+    slug: 'uptime',
+    tag: 'server',
+    description:
+      'Check whether a website is currently reachable, its status code, and response time.',
+    keywords: ['uptime', 'status checker', 'website up or down', 'reachability', 'availability'],
+    status: 'live',
+    requires: 'network',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
