@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const style = computed(() =>
-  props.columns ? { gridTemplateColumns: `repeat(${props.columns}, minmax(0, 1fr))` } : undefined,
+  props.columns ? { '--stat-columns': String(props.columns) } : undefined,
 )
 </script>
 

@@ -1192,6 +1192,25 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-statistics-calculator',
+    title: 'Statistics Calculator',
+    category: 'math',
+    slug: 'statistics-calculator',
+    tag: 'client',
+    description:
+      'Paste a list of numbers to get count, sum, mean, median, mode, range, variance, standard deviation, and quartiles instantly.',
+    keywords: [
+      'mean calculator',
+      'median calculator',
+      'standard deviation calculator',
+      'variance calculator',
+      'mode calculator',
+      'quartile calculator',
+      'descriptive statistics',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
