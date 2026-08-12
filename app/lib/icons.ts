@@ -102,6 +102,8 @@ export const UI_ICON = {
   engine: 'mdi:cog-outline',
   swapVertical: 'mdi:swap-vertical',
   backspace: 'mdi:backspace-outline',
+  zoomIn: 'mdi:magnify-plus-outline',
+  zoomOut: 'mdi:magnify-minus-outline',
 } as const
 
 /**

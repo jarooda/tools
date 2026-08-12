@@ -1171,6 +1171,27 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-graph-plotter',
+    title: 'Equation Solver / Graph Plotter',
+    category: 'math',
+    slug: 'graph-plotter',
+    tag: 'client',
+    description:
+      'Plot up to 3 functions of x, find roots numerically, and evaluate any function at a point — with pan/zoom on the graph.',
+    keywords: [
+      'graph plotter',
+      'equation solver',
+      'function grapher',
+      'plot a function',
+      'root finder',
+      'zero finder',
+      'x-intercept',
+      'evaluate function',
+      'mathjs',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
