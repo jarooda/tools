@@ -220,8 +220,8 @@ const FUNCTION_BUTTONS = [
   { key: 'sin', label: 'sin', insert: 'sin(' },
   { key: 'cos', label: 'cos', insert: 'cos(' },
   { key: 'tan', label: 'tan', insert: 'tan(' },
-  { key: 'sqrt', label: '√', ariaLabel: 'Square root', insert: 'sqrt(' },
   { key: 'pow', label: 'xʸ', ariaLabel: 'Power', insert: '^' },
+  { key: 'sqrt', label: '√', ariaLabel: 'Square root', insert: 'sqrt(' },
   { key: 'ln', label: 'ln', ariaLabel: 'Natural log', insert: 'log(' },
   { key: 'log', label: 'log', ariaLabel: 'Log base 10', insert: 'log10(' },
   { key: 'factorial', label: 'n!', ariaLabel: 'Factorial', insert: '!' },
@@ -256,90 +256,135 @@ const FUNCTION_BUTTONS = [
         />
       </div>
 
-      <Field label="Expression" html-for="sc-expression" class="sc__expr-field">
-        <Input
-          id="sc-expression"
-          ref="inputRef"
-          v-model="expression"
-          class="sc__expr-input"
-          spellcheck="false"
-          autocomplete="off"
-          placeholder="0"
-          @keydown="onInputKeydown"
-        />
-      </Field>
+      <div class="sc__screen">
+        <Field label="Expression" html-for="sc-expression" class="sc__expr-field">
+          <Input
+            id="sc-expression"
+            ref="inputRef"
+            v-model="expression"
+            class="sc__expr-input"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="0"
+            @keydown="onInputKeydown"
+          />
+        </Field>
 
-      <div v-if="!domainErrorMessage" class="sc__result">
-        <div class="sc__readout" :class="{ 'sc__readout--committed': committed }">
-          {{ resultText }}
+        <div v-if="!domainErrorMessage" class="sc__result">
+          <div class="sc__readout" :class="{ 'sc__readout--committed': committed }">
+            {{ resultText }}
+          </div>
+          <Button
+            v-if="resultText"
+            variant="ghost"
+            size="sm"
+            aria-label="Copy result"
+            @click="copyResult(resultText)"
+          >
+            <template #icon>
+              <Icon :name="resultCopied ? UI_ICON.check : UI_ICON.copy" size="15" />
+            </template>
+          </Button>
         </div>
-        <Button
-          v-if="resultText"
-          variant="ghost"
-          size="sm"
-          aria-label="Copy result"
-          @click="copyResult(resultText)"
-        >
-          <template #icon>
-            <Icon :name="resultCopied ? UI_ICON.check : UI_ICON.copy" size="15" />
-          </template>
-        </Button>
       </div>
-      <Alert v-else tone="danger">{{ domainErrorMessage }}</Alert>
+      <Alert v-if="domainErrorMessage" tone="danger">{{ domainErrorMessage }}</Alert>
 
-      <div class="sc__grid sc__grid--functions">
-        <Button variant="ghost" size="md" class="sc__ac" aria-label="All clear" @click="allClear">
-          AC
-        </Button>
-        <Button variant="ghost" size="md" aria-label="Backspace" @click="backspace">
-          <template #icon><Icon :name="UI_ICON.backspace" size="18" /></template>
-        </Button>
-        <Button variant="ghost" size="md" aria-label="Open parenthesis" @click="insertText('(')">
-          (
-        </Button>
-        <Button variant="ghost" size="md" aria-label="Close parenthesis" @click="insertText(')')">
-          )
-        </Button>
-        <Button variant="ghost" size="md" aria-label="Percent" @click="insertText('%')"> % </Button>
-        <Button
-          v-for="fn in FUNCTION_BUTTONS"
-          :key="fn.key"
-          variant="ghost"
-          size="md"
-          :aria-label="fn.ariaLabel"
-          @click="insertText(fn.insert)"
-        >
-          {{ fn.label }}
-        </Button>
-      </div>
+      <div class="sc__keypads">
+        <div class="sc__functions">
+          <div class="sc__grid sc__grid--functions">
+            <Button
+              v-for="fn in FUNCTION_BUTTONS"
+              :key="fn.key"
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey"
+              :aria-label="fn.ariaLabel"
+              @click="insertText(fn.insert)"
+            >
+              {{ fn.label }}
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey"
+              aria-label="Open parenthesis"
+              @click="insertText('(')"
+            >
+              (
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey"
+              aria-label="Close parenthesis"
+              @click="insertText(')')"
+            >
+              )
+            </Button>
+          </div>
+          <div class="sc__grid sc__grid--utility">
+            <Button
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey sc__ac"
+              aria-label="All clear"
+              @click="allClear"
+            >
+              AC
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey"
+              aria-label="Backspace"
+              @click="backspace"
+            >
+              <template #icon><Icon :name="UI_ICON.backspace" size="18" /></template>
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              class="sc__fnkey"
+              aria-label="Percent"
+              @click="insertText('%')"
+            >
+              %
+            </Button>
+          </div>
+        </div>
 
-      <div class="sc__grid sc__grid--keypad">
-        <Button variant="secondary" size="lg" @click="insertText('7')">7</Button>
-        <Button variant="secondary" size="lg" @click="insertText('8')">8</Button>
-        <Button variant="secondary" size="lg" @click="insertText('9')">9</Button>
-        <Button variant="secondary" size="lg" aria-label="Divide" @click="insertText('/')">
-          ÷
-        </Button>
+        <div class="sc__grid sc__grid--keypad">
+          <Button variant="secondary" size="lg" @click="insertText('7')">7</Button>
+          <Button variant="secondary" size="lg" @click="insertText('8')">8</Button>
+          <Button variant="secondary" size="lg" @click="insertText('9')">9</Button>
+          <Button variant="secondary" size="lg" aria-label="Divide" @click="insertText('/')">
+            ÷
+          </Button>
 
-        <Button variant="secondary" size="lg" @click="insertText('4')">4</Button>
-        <Button variant="secondary" size="lg" @click="insertText('5')">5</Button>
-        <Button variant="secondary" size="lg" @click="insertText('6')">6</Button>
-        <Button variant="secondary" size="lg" aria-label="Multiply" @click="insertText('*')">
-          ×
-        </Button>
+          <Button variant="secondary" size="lg" @click="insertText('4')">4</Button>
+          <Button variant="secondary" size="lg" @click="insertText('5')">5</Button>
+          <Button variant="secondary" size="lg" @click="insertText('6')">6</Button>
+          <Button variant="secondary" size="lg" aria-label="Multiply" @click="insertText('*')">
+            ×
+          </Button>
 
-        <Button variant="secondary" size="lg" @click="insertText('1')">1</Button>
-        <Button variant="secondary" size="lg" @click="insertText('2')">2</Button>
-        <Button variant="secondary" size="lg" @click="insertText('3')">3</Button>
-        <Button variant="secondary" size="lg" aria-label="Subtract" @click="insertText('-')">
-          −
-        </Button>
+          <Button variant="secondary" size="lg" @click="insertText('1')">1</Button>
+          <Button variant="secondary" size="lg" @click="insertText('2')">2</Button>
+          <Button variant="secondary" size="lg" @click="insertText('3')">3</Button>
+          <Button variant="secondary" size="lg" aria-label="Subtract" @click="insertText('-')">
+            −
+          </Button>
 
-        <Button variant="secondary" size="lg" class="sc__zero" @click="insertText('0')"> 0 </Button>
-        <Button variant="secondary" size="lg" @click="insertText('.')">.</Button>
-        <Button variant="secondary" size="lg" aria-label="Add" @click="insertText('+')"> + </Button>
+          <Button variant="secondary" size="lg" class="sc__zero" @click="insertText('0')">
+            0
+          </Button>
+          <Button variant="secondary" size="lg" @click="insertText('.')">.</Button>
+          <Button variant="secondary" size="lg" aria-label="Add" @click="insertText('+')">
+            +
+          </Button>
 
-        <Button variant="primary" size="lg" class="sc__equals" @click="commit">=</Button>
+          <Button variant="primary" size="lg" class="sc__equals" @click="commit">=</Button>
+        </div>
       </div>
 
       <OutputPanel
@@ -421,6 +466,20 @@ const FUNCTION_BUTTONS = [
   flex-wrap: wrap;
   gap: 0.35rem;
 }
+.sc__screen {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.16),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.5);
+}
+[data-theme='dark'] .sc__screen {
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 hsl(0 0% 100% / 0.04);
+}
 .sc__expr-field :deep(.jl-field__label) {
   position: absolute;
   width: 1px;
@@ -432,6 +491,19 @@ const FUNCTION_BUTTONS = [
   white-space: nowrap;
   border: 0;
 }
+.sc__expr-field :deep(.jl-input-wrap) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+.sc__expr-field :deep(.jl-input-wrap:hover) {
+  border-color: transparent;
+}
+.sc__expr-field :deep(.jl-input-wrap:focus-within) {
+  border-color: transparent;
+  box-shadow: var(--ring-focus);
+}
 .sc__expr-input :deep(input) {
   font-family: var(--font-mono);
   font-size: var(--text-lg);
@@ -442,9 +514,13 @@ const FUNCTION_BUTTONS = [
   justify-content: space-between;
   gap: 0.75rem;
   min-height: 2.75rem;
-  padding: 0 0.25rem;
+  padding: var(--space-2) 0.25rem 0;
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
 }
 .sc__readout {
+  flex: 1 1 auto;
+  text-align: right;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: clamp(1.5rem, 5vw, 2.25rem);
@@ -456,18 +532,39 @@ const FUNCTION_BUTTONS = [
 .sc__readout--committed {
   color: var(--text-primary);
 }
+.sc__fnkey {
+  background: var(--surface-sunken);
+  box-shadow: none;
+  color: var(--text-secondary);
+}
 .sc__ac {
   color: var(--danger);
+}
+.sc__keypads {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.sc__functions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 .sc__grid {
   display: grid;
   gap: 0.5rem;
 }
 .sc__grid--functions {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.sc__grid--utility {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
 }
 .sc__grid--keypad {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
 }
 .sc__zero {
   grid-column: span 2;
@@ -477,5 +574,16 @@ const FUNCTION_BUTTONS = [
 }
 .sc__mono {
   font-family: var(--font-mono);
+}
+
+@media (min-width: 900px) {
+  .sc__keypads {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .sc__functions,
+  .sc__grid--keypad {
+    flex: 1 1 0;
+  }
 }
 </style>
