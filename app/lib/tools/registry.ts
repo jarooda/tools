@@ -1131,6 +1131,27 @@ export const tools: Tool[] = [
     ],
     status: 'live',
   },
+  {
+    id: 'math-bmi-calorie-calculator',
+    title: 'BMI & Calorie Calculator',
+    category: 'math',
+    slug: 'bmi-calorie-calculator',
+    tag: 'client',
+    description:
+      'Calculate BMI and category, plus daily calorie needs (BMR/TDEE) with Mifflin-St Jeor and activity-level targets for maintaining, losing, or gaining weight.',
+    keywords: [
+      'bmi calculator',
+      'body mass index',
+      'calorie calculator',
+      'bmr calculator',
+      'tdee calculator',
+      'mifflin-st jeor',
+      'daily calorie needs',
+      'weight loss calculator',
+      'maintenance calories',
+    ],
+    status: 'live',
+  },
 ]
 
 /** Route path for a tool, e.g. `/convert/temperature`. */
