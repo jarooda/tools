@@ -46,6 +46,12 @@ const props = withDefaults(
     /** Hide the download button (some tools only want copy). */
     noDownload?: boolean
     inputInvalid?: boolean
+    /**
+     * Whether the output pane's `aria-live` region is active. Set to `false`
+     * for tools that recompute on every keystroke, so screen readers don't
+     * re-announce the whole output on every character typed.
+     */
+    live?: boolean
   }>(),
   {
     output: '',
@@ -64,6 +70,7 @@ const props = withDefaults(
     downloadMime: 'text/plain;charset=utf-8',
     noDownload: false,
     inputInvalid: false,
+    live: true,
   },
 )
 
@@ -108,6 +115,7 @@ const { downloadText } = useDownload()
           :ready="ready"
           :empty="empty"
           :error="error"
+          :live="live"
           :empty-title="emptyTitle"
           :empty-description="emptyDescription"
         >

@@ -16,6 +16,7 @@ const props = withDefaults(
     disabled?: boolean
     invalid?: boolean
     placeholder?: string
+    ariaLabel?: string
   }>(),
   {
     modelValue: null,
@@ -30,6 +31,7 @@ const props = withDefaults(
     disabled: false,
     invalid: false,
     placeholder: '',
+    ariaLabel: undefined,
   },
 )
 
@@ -131,6 +133,7 @@ const cls = computed(() =>
       :placeholder="placeholder"
       :disabled="disabled"
       :aria-invalid="invalid || undefined"
+      :aria-label="ariaLabel"
       @input="onInput"
       @blur="onBlur"
       @keydown="onKey"

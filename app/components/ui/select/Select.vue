@@ -40,21 +40,21 @@ const isPlaceholder = computed(
   () => props.placeholder != null && (props.modelValue === '' || props.modelValue == null),
 )
 
-function onChange(event: Event) {
-  emit('update:modelValue', (event.target as HTMLSelectElement).value)
-}
+const proxyValue = computed({
+  get: () => props.modelValue,
+  set: (value: string) => emit('update:modelValue', value),
+})
 </script>
 
 <template>
   <span class="jl-select-wrap">
     <select
+      v-model="proxyValue"
       class="jl-select"
       :class="`jl-select--${props.size}`"
       :data-placeholder="isPlaceholder || undefined"
-      :value="props.modelValue"
       :disabled="props.disabled"
       v-bind="$attrs"
-      @change="onChange"
     >
       <option v-if="props.placeholder" value="" disabled>{{ props.placeholder }}</option>
       <template

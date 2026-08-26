@@ -1,4 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+@import '../../components/ui/table/table.css';
+@import '../../components/ui/tabs/tabs.css';
+@import '../../components/ui/checkbox/checkbox.css';
+@import '../../components/ui/resizable/resizable.css';
+@import '../../components/ui/scroll-area/scroll-area.css';
+@import '../../components/ui/accordion/accordion.css';
+@import '../../components/ui/responsive-table/responsive-table.css';
+@import '../../components/ui/stat/stat.css';
+@import '../../components/ui/stepper/stepper.css';
+@import '../../components/ui/collapsible/collapsible.css';
+@import '../../components/ui/divider/divider.css';
+@import '../../components/ui/chart/chart.css';
+@import '../../components/ui/pagination/pagination.css';
 
 /* ============================================================
    JLDS Design System — design tokens & base styles
@@ -341,4 +354,22 @@ body {
   --sheet-handle-w: 36px; /* grab handle width                */
   --sheet-handle-h: 4px; /* grab handle height               */
   --sheet-max-h: 92dvh; /* sheet never covers the full view */
+}
+
+/* ============================================================
+   Shared utility classes.
+   ============================================================ */
+
+/* Visually hidden but still available to screen readers — for aria-live
+   announcer regions and similar. Prefer this over a page-local copy. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

@@ -19,6 +19,10 @@ export const CATEGORY_ICON: Record<CategorySlug, string> = {
   generate: 'mdi:auto-fix',
   color: 'mdi:palette-outline',
   media: 'mdi:play-circle-outline',
+  dev: 'mdi:code-tags',
+  network: 'mdi:speedometer',
+  datetime: 'mdi:calendar-clock',
+  math: 'mdi:calculator-variant',
 }
 
 /** App-chrome / action icons used across the shell and tool pages. */
@@ -59,6 +63,7 @@ export const UI_ICON = {
   pause: 'mdi:pause',
   stop: 'mdi:stop',
   volumeOff: 'mdi:volume-off',
+  lap: 'mdi:flag-outline',
   qrcode: 'mdi:qrcode',
   qrScan: 'mdi:qrcode-scan',
   camera: 'mdi:camera-outline',
@@ -82,6 +87,23 @@ export const UI_ICON = {
   emptyFile: 'mdi:file-upload-outline',
   /** Empty-state glyph for tools awaiting an uploaded audio/video file. */
   emptyMedia: 'mdi:video-plus-outline',
+  typescript: 'mdi:language-typescript',
+  dns: 'mdi:dns-outline',
+  domain: 'mdi:web',
+  portOpen: 'mdi:lan-connect',
+  portClosed: 'mdi:lan-disconnect',
+  portTimeout: 'mdi:lan-pending',
+  httpHeaders: 'mdi:format-list-bulleted-type',
+  siteUp: 'mdi:web-check',
+  siteDown: 'mdi:web-off',
+  browser: 'mdi:web',
+  os: 'mdi:laptop',
+  device: 'mdi:cellphone-link',
+  engine: 'mdi:cog-outline',
+  swapVertical: 'mdi:swap-vertical',
+  backspace: 'mdi:backspace-outline',
+  zoomIn: 'mdi:magnify-plus-outline',
+  zoomOut: 'mdi:magnify-minus-outline',
 } as const
 
 /**

@@ -1,11 +1,22 @@
 import { CATEGORY_ICON } from '@/lib/icons'
 
 /**
- * The 8 top-level tool categories. The `slug` is the first URL segment
+ * The top-level tool categories. The `slug` is the first URL segment
  * (e.g. `/convert/temperature`) and the folder name under `app/pages/`.
  */
 export type CategorySlug =
-  'convert' | 'image' | 'pdf' | 'text' | 'encode' | 'generate' | 'color' | 'media'
+  | 'convert'
+  | 'image'
+  | 'pdf'
+  | 'text'
+  | 'encode'
+  | 'generate'
+  | 'color'
+  | 'media'
+  | 'dev'
+  | 'network'
+  | 'datetime'
+  | 'math'
 
 export interface Category {
   slug: CategorySlug
@@ -63,6 +74,30 @@ export const categories: Category[] = [
     title: 'Audio & Video',
     description: 'Convert, trim, and extract media entirely in-browser.',
     icon: CATEGORY_ICON.media,
+  },
+  {
+    slug: 'dev',
+    title: 'Developer Tools',
+    description: 'Format, test, and inspect code snippets, cron jobs, and configs.',
+    icon: CATEGORY_ICON.dev,
+  },
+  {
+    slug: 'network',
+    title: 'Network & Performance',
+    description: 'Check your connection, look up network info, and inspect endpoints.',
+    icon: CATEGORY_ICON.network,
+  },
+  {
+    slug: 'datetime',
+    title: 'Date & Time',
+    description: 'Convert timestamps, calculate durations, and work across time zones.',
+    icon: CATEGORY_ICON.datetime,
+  },
+  {
+    slug: 'math',
+    title: 'Math & Finance',
+    description: 'Calculate, convert, and plan — from scientific math to loans and interest.',
+    icon: CATEGORY_ICON.math,
   },
 ]
 
